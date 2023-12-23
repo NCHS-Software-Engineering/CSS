@@ -1,1 +1,0 @@
-This is the app that will allow the admins (i.e. teachers) to set the upcomming schedual

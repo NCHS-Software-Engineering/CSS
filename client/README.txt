@@ -1,1 +1,0 @@
-This is the app that contains the frontend of what will be displayed on the clock (i.e. the monitor)
