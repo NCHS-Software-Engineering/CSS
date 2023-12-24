@@ -6,15 +6,20 @@ const portNum = 8000; // Change this number in order to change which port the se
 const serverSocket = new webSocket.Server({port : portNum}); // represents the server socket
 
 
+const connections = new Set(); // A set containing all of the client sockets
+
+
 serverSocket.on('connection', (clientSocket) => onConnect(clientSocket)); // runs when a new client connects
 
 function onConnect(clientSocket)
 {
-    console.log("A client has connected!");
+    connections.add(clientSocket); // store the client socket
 
-    clientSocket.on('close', (clientSocket) => onClose(clientSocket)); // runs when a client disconnects
+    console.log("Num Clients (add): " + connections.size); // DEBUG
+
+    clientSocket.on('close', () => onClose(clientSocket)); // runs when a client disconnects
 }
 function onClose (clientSocket)
 {
-    console.log("A client closed their connection :(");
+    connections.delete(clientSocket); // remove the client socket
 }
