@@ -1,25 +1,30 @@
-var webSocket = require("ws"); // import websockets
-var fileSystem = require("fs"); // import filesystem
+const WebSocket = require("ws"); // import websockets
+const FileSystem = require("fs"); // import filesystem
 
 const portNum = 8000; // Change this number in order to change which port the server is listening on
-
-const serverSocket = new webSocket.Server({port : portNum}); // represents the server socket
-
+const wss = new WebSocket.Server({port : portNum}); // represents the server socket
 
 const connections = new Set(); // A set containing all of the client sockets
-
-
-serverSocket.on('connection', (clientSocket) => onConnect(clientSocket)); // runs when a new client connects
-
-function onConnect(clientSocket)
+// send information to all connections
+function broadCast()
 {
-    connections.add(clientSocket); // store the client socket
-
-    console.log("Num Clients (add): " + connections.size); // DEBUG
-
-    clientSocket.on('close', () => onClose(clientSocket)); // runs when a client disconnects
+    connections.forEach(ws => {
+        ws.send("Server Connection Count: " + connections.size);
+    });
 }
-function onClose (clientSocket)
+
+// runs when a new client connects
+wss.on('connection', (ws) => 
 {
-    connections.delete(clientSocket); // remove the client socket
-}
+    connections.add(ws); // store the client socket
+
+    broadCast();
+
+    // runs when a client disconnects
+    ws.on('close', () => 
+    {
+        connections.delete(ws); // remove the client socket
+
+        broadCast();
+    }); 
+}); 
