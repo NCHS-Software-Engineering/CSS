@@ -75,10 +75,15 @@ function App()
       }
       else // display the countdown
       {
-        const currentTime = new Date(); // the current time at function execution
-        const finishTime = new Date(currentTime.getTime()); // custom Date object with the time being the end of the current period
-        var temp;
+        const tempDate = new Date();
+        var currentTime = 0; // the current time on this machine (in ms)
+        var finishTime = 0; // the time at the end of the period (in ms)
+        
+        currentTime += tempDate.getHours() * 60 * 60 * 1000; // convert hours to miliseconds
+        currentTime += tempDate.getMinutes() * 60 * 1000; // convert minutes to miliseconds
+        currentTime += tempDate.getSeconds() * 1000; // convert seconds to miliseconds
 
+        var temp;
         if (passingPeriod.current === true)
         {
           temp = schedule.current[period.current].start.split(":");
@@ -87,13 +92,15 @@ function App()
         {
           temp = schedule.current[period.current].end.split(":");
         }
+        
+        finishTime += parseInt(temp[0]) * 60 * 60 * 1000; // convert hours to miliseconds
+        finishTime += parseInt(temp[1]) * 60 * 1000; // convert minutes to miliseconds
 
-        finishTime.setHours(parseInt(temp[0]));
-        finishTime.setMinutes(parseInt(temp[1]) + currentTime.getTimezoneOffset()); // remember to take timezones into account
-        finishTime.setSeconds(0);
+        console.log(schedule.current[period.current].name);
+        console.log(finishTime - currentTime);
 
-        const deltaTime = new Date(finishTime.getTime() - currentTime.getTime());
-        if (deltaTime.getTime() <= 0)
+        const deltaTime = finishTime - currentTime;
+        if (deltaTime <= 0)
         {
           if (period.current + 1 >= schedule.current.length && passingPeriod.current === false) // no period's left in list
           {
@@ -117,10 +124,14 @@ function App()
         } // TODO: add an else-if statment that will check if there are 5 minutes left and have some sort of indicator turn on (e.g. numbers turn red)
         else
         {
+          const hours = Math.floor(deltaTime / (60 * 60 * 1000));
+          const minutes = Math.floor(deltaTime / (60 * 1000));
+          const seconds = Math.floor(deltaTime / (1000));
+
           var tempDisplay = "";
-          if (deltaTime.getHours() > 0) tempDisplay += deltaTime.getHours().toString().padStart(2, "0") + ":";
-          if (deltaTime.getHours() > 0 || deltaTime.getMinutes() > 0)tempDisplay += deltaTime.getMinutes().toString().padStart(2, "0") + ":";
-          tempDisplay += deltaTime.getSeconds().toString().padStart(2, "0");
+          if (hours > 0) tempDisplay += hours.toString().padStart(2, "0") + ":"; // display hours if 1 hour or more is left
+          if (minutes > 0) tempDisplay += (minutes % 60).toString().padStart(2, "0") + ":"; // display minutes if 1 minute or more is left
+          tempDisplay += (seconds % 60).toString().padStart(2, "0"); // ad the seconds display
 
           setCountdown(tempDisplay);
         }
