@@ -59,7 +59,8 @@ function getCurrentSchedule(callback)
         scheduleKey = defaultWeek[tempDate.getDay()];
     }
 
-    const res = schedules[scheduleKey];
+    var res = schedules[scheduleKey];
+    if (!res) res = [];
 
     callback(res);
 
@@ -77,7 +78,7 @@ function getCurrentSchedule(callback)
     }
 }
 
-getCurrentSchedule((sch) => {today = sch;}); // initialize today's schedule
+getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
 
 
 // ----- WebSocket Managment -----
@@ -94,7 +95,7 @@ async function broadCast() // send information to all connections
 }
 async function updateClient(ws) // send information to an individual client
 {
-    ws.send(today);
+    ws.send(JSON.stringify(today));
 }
 
 // runs when a new client connects
@@ -118,9 +119,9 @@ wss.on('connection', (ws) =>
 // every day at midnight ...
 const job = Scheduler.scheduleJob("0 0 0 0 0", () =>
 {
-    getCurrentSchedule((sch) => 
+    getCurrentSchedule((res) => 
     {
-        today = sch; // reset today's schedule (it's a new day)
+        today = res; // reset today's schedule (it's a new day)
         broadCast(); // broadCast the changes to any connected clients
     });
 });
