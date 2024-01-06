@@ -76,7 +76,7 @@ function App()
       else // display the countdown
       {
         const currentTime = new Date(); // the current time at function execution
-        const finishTime = new Date(currentTime.getTime());
+        const finishTime = new Date(currentTime.getTime()); // custom Date object with the time being the end of the current period
         var temp;
 
         if (passingPeriod.current === true)
@@ -88,9 +88,8 @@ function App()
           temp = schedule.current[period.current].end.split(":");
         }
 
-        // custom Date object with the time being the end of the current period
         finishTime.setHours(parseInt(temp[0]));
-        finishTime.setMinutes(parseInt(temp[1]));
+        finishTime.setMinutes(parseInt(temp[1]) + currentTime.getTimezoneOffset()); // remember to take timezones into account
         finishTime.setSeconds(0);
 
         const deltaTime = new Date(finishTime.getTime() - currentTime.getTime());
