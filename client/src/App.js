@@ -96,9 +96,6 @@ function App()
         finishTime += parseInt(temp[0]) * 60 * 60 * 1000; // convert hours to miliseconds
         finishTime += parseInt(temp[1]) * 60 * 1000; // convert minutes to miliseconds
 
-        console.log(schedule.current[period.current].name);
-        console.log(finishTime - currentTime);
-
         const deltaTime = finishTime - currentTime;
         if (deltaTime <= 0)
         {
