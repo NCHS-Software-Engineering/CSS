@@ -117,7 +117,7 @@ wss.on('connection', (ws) =>
 
 
 // every day at midnight ...
-const job = Scheduler.scheduleJob("0 1 * * *", () =>
+const job = Scheduler.scheduleJob("0 0 * * *", () =>
 {
     getCurrentSchedule((res) => 
     {

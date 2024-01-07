@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef} from "react";
 function App()
 {
   const schedule = useRef([]); // the schedule that the coundown is based on (it is an array of objects)
+  const day = useRef(0) // the day of the week
   const period = useRef(0) // the index of the schedule array
   const periodName = useRef("");
   const passingPeriod = useRef(false); // wether this is a passing period 
@@ -28,24 +29,26 @@ function App()
   // runs every time a new schedule is received
   function scheduleInit() 
   {
+    const tempDate = new Date();
+    day.current = tempDate.getDay();
+    
     if (schedule.current.length === 0) // if the schedule is empty
     {
       schoolOut.current = true;
       return;
     }
     
-    const tempTime = new Date();
     // determin the current period and wether it is a passing period
     for (let i = 0; i < schedule.current.length; i++)
     {
       const startTime = schedule.current[i].start.replace(":",""); // e.g. "07:25" => "0725"
       const endTime = schedule.current[i].end.replace(":",""); // e.g. "13:45" => "1345"
 
-      if ((tempTime.getHours() * 100) + tempTime.getMinutes() < parseInt(endTime))
+      if ((tempDate.getHours() * 100) + tempDate.getMinutes() < parseInt(endTime))
       {
         period.current = i;
 
-        if (tempTime.getHours() < parseInt(startTime)) // passing period
+        if (tempDate.getHours() < parseInt(startTime)) // passing period
         {
           passingPeriod.current = true;
           periodName.current = "Before School";
@@ -69,13 +72,15 @@ function App()
   {
     const interval =  setInterval(() => 
     {
+      const tempDate = new Date();
+      if (tempDate.getDay() != day.current) scheduleInit(); // reinitialize the schedule if it is a new day
+      
       if (schoolOut.current === true) // just display the time
       {
-        setCountdown((new Date()).getTime());
+        setCountdown(tempDate.toTimeString());
       }
       else // display the countdown
       {
-        const tempDate = new Date();
         var currentTime = 0; // the current time on this machine (in ms)
         var finishTime = 0; // the time at the end of the period (in ms)
         
