@@ -46,8 +46,8 @@ function getCurrentSchedule(callback)
 
     const tempDate = new Date();
     dateKey = tempDate.getMonth() * 100;
-    dateKey += tempDate.getDay();
-    
+    dateKey += tempDate.getDate();
+
     if (calendar[dateKey]) // check special schedules first
     { 
         scheduleKey = calendar[dateKey]['schedule'];
@@ -69,7 +69,7 @@ function getCurrentSchedule(callback)
     // get yesterday's date info
     tempDate.setDate(tempDate.getDate() - 1);
     dateKey = tempDate.getMonth() * 100;
-    dateKey += tempDate.getDay();
+    dateKey += tempDate.getDate();
 
     if (calendar[dateKey] && calendar[dateKey]['repeating'] === false)
     {
@@ -79,7 +79,6 @@ function getCurrentSchedule(callback)
 }
 
 getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
-
 
 // ----- WebSocket Managment -----
 
