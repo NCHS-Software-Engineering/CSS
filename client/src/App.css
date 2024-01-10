@@ -3,7 +3,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #224fa8;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -15,4 +15,25 @@
 
 .App-link {
   color: #61dafb;
+}
+
+h1 {
+  color: red;
+
+}
+
+@keyframes fancyAnim {
+  0% {background-color: red;}
+  50% {background-color: yellow;}
+  100% {background-color: red;}
+}
+
+
+p {
+  color: white;
+  font-size: 200px;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+
+  animation: fancyAnim 4s;
+  animation-iteration-count: infinite;
 }
