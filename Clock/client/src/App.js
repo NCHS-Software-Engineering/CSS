@@ -14,17 +14,22 @@ function App()
 
   const portNum = 8000; // Change this number in order to change which port the server is listening on
   const serverUrl = 'ws://localhost:' + portNum; // may need to change this if we host the server on a different url
-  // Deal with WebSocket stuff. should run only once at the start
+  
+  // Deal with WebSocket stuff. should run only once at the start ()
   useEffect(() =>
   {
+    console.log("hi");
+
     const ws = new WebSocket(serverUrl); // represents the client socket
 
     ws.addEventListener("message", e => 
     {
       schedule.current = JSON.parse(e.data);
       scheduleInit();
+
+      return () => {ws.close();};
     });
-  }, []);
+  }, [serverUrl]);
 
   // runs every time a new schedule is received
   function scheduleInit() 
@@ -79,7 +84,7 @@ function App()
     const interval =  setInterval(() => 
     {
       const tempDate = new Date();
-      if (tempDate.getDay() != day.current) scheduleInit(); // reinitialize the schedule if it is a new day
+      if (tempDate.getDay() !== day.current) scheduleInit(); // reinitialize the schedule if it is a new day
       
       if (schoolOut.current === true) // just display the time
       {
@@ -145,6 +150,8 @@ function App()
         }
       }  
     }, 1000); // every ~1 sec
+
+    return () => clearInterval(interval);
   }, []);
 
 
