@@ -19,13 +19,12 @@
 
 h1 {
   color: red;
-
 }
 
 @keyframes fancyAnim {
-  0% {background-color: red;}
-  50% {background-color: yellow;}
-  100% {background-color: red;}
+  0% {background-color: red; font-size: 200px; rotate: 1 1 0 0deg;} 
+  50% {background-color: yellow; font-size: 250px; rotate: 1 1 0 360deg;}
+  100% {background-color: red; font-size: 200px; rotate: 1 1 0 0deg;}
 }
 
 

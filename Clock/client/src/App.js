@@ -51,7 +51,14 @@ function App()
         if (tempDate.getHours() < parseInt(startTime)) // passing period
         {
           passingPeriod.current = true;
-          periodName.current = "Before School";
+          if (i === 0)
+          {
+            periodName.current = "Before School";
+          }
+          else
+          {
+            periodName.current = "Passing Period";
+          }
         }
         else // regular period
         {
@@ -63,7 +70,6 @@ function App()
         return;
       }
     }
-
     schoolOut.current = true; // no periods left, so school must be over
   }
 
