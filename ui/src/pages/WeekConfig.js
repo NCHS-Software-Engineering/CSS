@@ -20,7 +20,7 @@ function WeekConfig() {
     };
 
     return (
-        <div className="App">
+        <div className="Content">
             <header className="App-header">
                 <h1>Configure Week</h1>
             </header>

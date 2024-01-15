@@ -4,7 +4,7 @@ import './App.css';
 
 function ScheduleConfig() {
     return (
-        <div className="App">
+        <div className="Content">
             <header className="App-header">
                 <h1>Configure Schedules</h1>
             </header>

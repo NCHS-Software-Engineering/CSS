@@ -53,7 +53,7 @@
 
 .Sidebar {
   height: 100%;
-  width: 160px; /* Set the width of the sidebar */
+  width: 20%; /* Set the width of the sidebar */
   align-items: center;
   justify-content: center;
   position: fixed; /* Fixed Sidebar (stay in place on scroll) */

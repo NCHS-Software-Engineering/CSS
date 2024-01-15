@@ -16,7 +16,7 @@ function Login() {
                 <input className="col-75" type="text" id="passwd" name="passwd"></input><br />
             </form>
             <br></br>
-            <a href="/home">
+            <a href="/week">
               <button className="button" type="submit" id="login" onClick="">Continue</button>
             </a>
         </header>
