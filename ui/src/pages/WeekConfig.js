@@ -33,6 +33,7 @@ function WeekConfig() {
             </header>
             <div className="Dropdown">
                 <select className="select" value={selectedWeek} onChange={handleWeekChange}>
+                    <option value="Edit Default">Edit Default</option>
                     {generateWeekOptions()}
                 </select>
             </div>
