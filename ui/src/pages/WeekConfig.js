@@ -9,7 +9,10 @@ function WeekConfig() {
         const currentWeek = new Date(); // Assuming you have a function to get the current week number
 
         for (let i = 0; i < 10; i++) {
-            options.push(<option key={i} value={i}>Week {i}</option>);
+            const startDate = new Date(currentWeek.getFullYear(), currentWeek.getMonth(), currentWeek.getDate() + (i * 7));
+            const endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6);
+            const optionText = `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`;
+            options.push(<option key={i} value={i}>{optionText}</option>);
         }
 
         return options;
@@ -18,7 +21,6 @@ function WeekConfig() {
     const handleWeekChange = (event) => {
         setSelectedWeek(event.target.value);
     };
-
     return (
         <div className="Content">
             <header className="App-header">
@@ -26,7 +28,8 @@ function WeekConfig() {
             </header>
             <div className="Dropdown">
                 <select className="select select-week" value={selectedWeek} onChange={handleWeekChange}>
-                    {generateWeekOptions()}
+                    <option value="Edit Default">Edit Default</option>
+                    {generateWeekOptions() }
                 </select>
             </div>
             <div className="List">
@@ -34,9 +37,13 @@ function WeekConfig() {
                     <tbody>
                         <tr>
                             <td>Monday</td>
+                            
                             <td>
                                 <select className="select">
                                     <option value=""></option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="SOAR">SOAR</option>
+                                    <option value="Half Day">Half Day</option>
                                 </select>
                             </td>
                         </tr>
@@ -45,6 +52,9 @@ function WeekConfig() {
                             <td>
                                 <select className="select">
                                     <option value=""></option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="SOAR">SOAR</option>
+                                    <option value="Half Day">Half Day</option>
                                 </select>
                             </td>
                         </tr>
@@ -53,6 +63,9 @@ function WeekConfig() {
                             <td>
                                 <select className="select">
                                     <option value=""></option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="SOAR">SOAR</option>
+                                    <option value="Half Day">Half Day</option>
                                 </select>
                             </td>
                         </tr>
@@ -61,6 +74,9 @@ function WeekConfig() {
                             <td>
                                 <select className="select">
                                     <option value=""></option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="SOAR">SOAR</option>
+                                    <option value="Half Day">Half Day</option>
                                 </select>
                             </td>
                         </tr>
@@ -69,11 +85,18 @@ function WeekConfig() {
                             <td>
                                 <select className="select">
                                     <option value=""></option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="SOAR">SOAR</option>
+                                    <option value="Half Day">Half Day</option>
                                 </select>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div className='List'>
+                <button className="button">Use Default</button>
+                <button className="button">Save</button>
             </div>
         </div>
     );
