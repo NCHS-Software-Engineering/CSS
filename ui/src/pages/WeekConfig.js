@@ -25,7 +25,7 @@ function WeekConfig() {
                 <h1>Configure Week</h1>
             </header>
             <div className="Dropdown">
-                <select value={selectedWeek} onChange={handleWeekChange}>
+                <select className="select select-week" value={selectedWeek} onChange={handleWeekChange}>
                     {generateWeekOptions()}
                 </select>
             </div>
@@ -35,7 +35,7 @@ function WeekConfig() {
                         <tr>
                             <td>Monday</td>
                             <td>
-                                <select>
+                                <select className="select">
                                     <option value=""></option>
                                 </select>
                             </td>
@@ -43,7 +43,7 @@ function WeekConfig() {
                         <tr>
                             <td>Tuesday</td>
                             <td>
-                                <select>
+                                <select className="select">
                                     <option value=""></option>
                                 </select>
                             </td>
@@ -51,7 +51,7 @@ function WeekConfig() {
                         <tr>
                             <td>Wednesday</td>
                             <td>
-                                <select>
+                                <select className="select">
                                     <option value=""></option>
                                 </select>
                             </td>
@@ -59,7 +59,7 @@ function WeekConfig() {
                         <tr>
                             <td>Thursday</td>
                             <td>
-                                <select>
+                                <select className="select">
                                     <option value=""></option>
                                 </select>
                             </td>
@@ -67,23 +67,7 @@ function WeekConfig() {
                         <tr>
                             <td>Friday</td>
                             <td>
-                                <select>
-                                    <option value=""></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Saturday</td>
-                            <td>
-                                <select>
-                                    <option value=""></option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Sunday</td>
-                            <td>
-                                <select>
+                                <select className="select">
                                     <option value=""></option>
                                 </select>
                             </td>

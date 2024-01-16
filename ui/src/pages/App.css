@@ -5,12 +5,17 @@
   --grey: #666465;
 }
 
+
 .App {
   background: var(--night);
   height: 100%;
   background-size: cover;
   font-family: Verdana, sans-serif;
   min-height : 100vh;
+}
+
+.App-link {
+  color: var(--dusk);
 }
 
 .App-header {
@@ -21,35 +26,34 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  min-height: 20vh;
+  min-height: 30vh;
+  cursor: context-menu;
+  line-height: 10px;
+}
+
+.logo {
+  height: 40px; /* Controls the size of the logo */
+  padding-top: 20px;
 }
 
 .App-menu {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: right;
+  text-align: right;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  min-height: 50vh;
+  min-height: 60vh;
 
-  margin: 25vh;
+  background: var(--dusk);
   border-radius: 12px;
-  padding: 20px;
+  padding-right: 40vh;
+  padding-left: 40vh;
+  margin-right: 35vh;
+  margin-left: 35vh;
 }
 
-.col-25 {
-  float: left;
-  width: 25%;
-  margin-top: 6px;
-}
-
-.col-75 {
-  float: left;
-  width: 75%;
-  margin-top: 6px;
-}
 
 .Sidebar {
   height: 100%;
@@ -70,7 +74,6 @@
   padding: 0px 10px;
 }
 
-
 .Dropdown {
   align-items: center;
   text-align: center;
@@ -90,26 +93,93 @@
   padding: 50px;
 }
 
+
 .Table {
   border-collapse: collapse;
   border: none;
 }
 
+th, td {
+  padding-left: 40px;
+  padding-bottom: 10px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--night);
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: var(--blood);; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blood); 
+}
+
+
 .button {
   background-color: var(--blood); 
   color: white; 
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
+  border: 2px outset var(--night);
   cursor: pointer;
-  font-size: calc(5px + 2vmax);
+  font-size: 20px;
 }
 
 .button:hover {
   background-color: white;
-  border: 2px solid var(--blood);
+  border: 2px inset var(--blood);
   color: var(--blood);
 }
 
-.App-link {
-  color: var(--dusk);
+.button-sidebar {
+  width: 250px;
+  margin-top: 15px;
+}
+
+
+.select {
+  width: 200px;
+  text-align: center;
+  appearance: none;
+  padding: 15px;
+  background-color: white;
+  color: var(--night);
+  border: 1px solid var(--grey);
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  font-size: 15px;
+
+  /* Dropdown Arrow */
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem top 50%;
+  background-size: 0.65rem auto;
+}
+
+
+.select-week {
+  width: 150px;
+}
+
+.box {
+  width: 150px;
+  text-align: center;
+  padding: 15px;
+  border: 1px solid var(--grey);
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.x-png {
+  width: 15px;
 }

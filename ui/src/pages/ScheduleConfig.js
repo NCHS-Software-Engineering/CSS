@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import x from '../x.png';
 
 
 function ScheduleConfig() {
@@ -9,7 +10,7 @@ function ScheduleConfig() {
                 <h1>Configure Schedules</h1>
             </header>
             <div className="Dropdown">
-                <select>
+                <select className="select">
                     <option value=""></option>
                 </select>
             </div>
@@ -25,59 +26,75 @@ function ScheduleConfig() {
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                         <tr>
-                            <td><input type="text" placeholder = "period name"/></td>
-                            <td><input type="time" /></td>
-                            <td><input type="time" /></td>
-                            <td><button>Delete</button></td>
+                            <td><input className="box" type="text" placeholder = "Period Name"/></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><input className="box" type="time" /></td>
+                            <td><button className="button">
+                                <img className="x-png" src={x} alt="x.png" border="0" />
+                                </button></td>
                         </tr>
                     </tbody>
                 </table>
                 
             </div>
             <div className='List'>
-                <button>Add Period</button>
+                <button className="button">Add Period</button>
             </div>
         </div>
     );
