@@ -21,18 +21,21 @@ h1 {
   color: red;
 }
 
+/*
 @keyframes fancyAnim {
   0% {background-color: red; font-size: 200px; rotate: 1 1 0 0deg;} 
   50% {background-color: yellow; font-size: 250px; rotate: 1 1 0 360deg;}
   100% {background-color: red; font-size: 200px; rotate: 1 1 0 0deg;}
 }
-
+*/
 
 p {
   color: white;
-  font-size: 200px;
+  font-size: 100px;
   font-family: "Comic Sans MS", "Comic Sans", cursive;
 
+  /*
   animation: fancyAnim 4s;
   animation-iteration-count: infinite;
+  */
 }

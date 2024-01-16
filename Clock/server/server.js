@@ -4,6 +4,12 @@
 const WebSocket = require("ws"); // import websockets
 const FileSystem = require("fs"); // import filesystem
 const Scheduler = require("node-schedule"); // import 
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 const connections = new Set(); // A set containing all of the client sockets
 var today; // today's schedule
@@ -124,3 +130,76 @@ const job = Scheduler.scheduleJob("0 0 * * *", () =>
         broadCast(); // broadCast the changes to any connected clients
     });
 });
+
+
+// ----- HTTP  -----
+
+
+const httpPortNum = 8500;
+
+// let the 'admin' get the various json files
+app.get("/schedules", (req, res) =>{
+    res.json(JSON.parse(FileSystem.readFileSync("files/schedules.json")));
+});
+app.get("/defaultWeek", (req, res) =>{
+    res.json(JSON.parse(FileSystem.readFileSync("files/defaultWeek.json")));
+});
+app.get("/calendar", (req, res) =>{
+    res.json(JSON.parse(FileSystem.readFileSync("files/calendar.json")));
+});
+
+// TODO: will probably need some sort of authentication system
+// TODO: verify that the files are in a valid format??? (or maybe just trust the 'admin')
+// let the 'admin' set the various json files
+app.put("/schedules", (req, res) =>{
+    FileSystem.writeFileSync("files/schedules.json", JSON.stringify(req.body)); // update server file
+    
+    // update the other files if needed
+    const defaultWeek = JSON.parse(FileSystem.readFileSync("files/defaultWeek.json"));
+    const calendar = JSON.parse(FileSystem.readFileSync("files/calendar.json"));
+
+    for (let i = 0; i < 7; i++)
+    {
+        if (req.body[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+    }
+    for (const key in calendar)
+    {
+        if (calendar[key].schedule !== null && req.body[calendar[key].schedule] === undefined) delete calendar[key];
+    }
+    
+    FileSystem.writeFileSync("files/defaultWeek.json", JSON.stringify(defaultWeek));
+    FileSystem.writeFileSync("files/calendar.json", JSON.stringify(calendar));
+
+    // send update to all clients
+    getCurrentSchedule((res) => 
+    {
+        today = res;
+        broadCast();
+    });
+
+    res.send("SERVER: schedule confirmation"); // send confirmation to 'admin';
+});
+app.put("/defaultWeek", (req, res) =>{
+    FileSystem.writeFileSync("files/defaultWeek.json", JSON.stringify(req.body));
+
+    getCurrentSchedule((res) => 
+    {
+        today = res;
+        broadCast();
+    });
+
+    res.send("SERVER: defaultWeek confirmation");
+});
+app.put("/calendar", (req, res) =>{
+    FileSystem.writeFileSync("files/calendar.json", JSON.stringify(req.body));
+
+    getCurrentSchedule((res) => 
+    {
+        today = res;
+        broadCast();
+    });
+
+    res.send("SERVER: calendar confirmation");
+});
+
+app.listen(httpPortNum);
