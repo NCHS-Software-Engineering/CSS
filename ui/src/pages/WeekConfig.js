@@ -21,6 +21,11 @@ function WeekConfig() {
     const handleWeekChange = (event) => {
         setSelectedWeek(event.target.value);
     };
+
+    const sendAlert = () => {
+        alert('Saved!');
+    }
+
     return (
         <div className="Content">
             <header className="App-header">
@@ -95,7 +100,7 @@ function WeekConfig() {
             </div>
             <div className='List'>
                 <button className="button">Use Default</button>
-                <button className="button">Save</button>
+                <button type="button" className="button" onClick={sendAlert}>Save</button>
             </div>
         </div>
     );

@@ -6,6 +6,10 @@ import x from '../x.png';
 function ScheduleConfig() {
     const [selectedOption, setSelectedOption] = useState('');
 
+    const sendAlert = () => {
+        alert('Saved!');
+    }
+
     return (
         <div className="Content">
             <header className="App-header">
@@ -100,11 +104,11 @@ function ScheduleConfig() {
             </div>
             <div className='List'>
                 <button className="button">Add Period</button>
-                <button className="button">Save</button>
-            </div>
+                <button type="button" className="button" onClick={sendAlert}>Save</button>
             <div>
                 
             </div>
+        </div>
         </div>
     );
     
