@@ -39,19 +39,16 @@
 .App-menu {
   display: flex;
   flex-direction: column;
-  align-items: right;
-  text-align: right;
+  align-items: center; /* Aligns the input boxes + button block */
+  text-align: right;  /* Aligns button with input boxes */
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-  min-height: 60vh;
 
   background: var(--dusk);
   border-radius: 12px;
-  padding-right: 40vh;
-  padding-left: 40vh;
-  margin-right: 35vh;
-  margin-left: 35vh;
+  margin: 5vh 40vh;
+  padding: 10vh
 }
 
 
@@ -128,15 +125,14 @@ th, td {
   color: white; 
   padding: 15px;
   border-radius: 10px;
-  border: 2px outset var(--night);
+  border: 2px inset var(--night);
   cursor: pointer;
   font-size: 20px;
 }
 
 .button:hover {
-  background-color: white;
-  border: 2px inset var(--blood);
-  color: var(--blood);
+  background-color: #880808c5;
+  border: 2px inset var(--night);
 }
 
 .button-sidebar {
@@ -146,7 +142,7 @@ th, td {
 
 
 .select {
-  width: 200px;
+  width: 20em;
   text-align: center;
   appearance: none;
   padding: 15px;
@@ -167,12 +163,9 @@ th, td {
 }
 
 
-.select-week {
-  width: 150px;
-}
 
 .box {
-  width: 150px;
+  width: 10em;
   text-align: center;
   padding: 15px;
   border: 1px solid var(--grey);

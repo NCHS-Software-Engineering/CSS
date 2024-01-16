@@ -25,7 +25,7 @@ function WeekConfig() {
                 <h1>Configure Week</h1>
             </header>
             <div className="Dropdown">
-                <select className="select select-week" value={selectedWeek} onChange={handleWeekChange}>
+                <select className="select" value={selectedWeek} onChange={handleWeekChange}>
                     {generateWeekOptions()}
                 </select>
             </div>

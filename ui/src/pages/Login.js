@@ -10,6 +10,7 @@ function Login() {
           <h1>Login</h1>
         </header>
         <body className="App-menu">
+          <div>
             <form id="login">
                 <label  for="username">Username: </label>
                 <input  type="text" id="username" name="username"></input>
@@ -22,6 +23,7 @@ function Login() {
             <a href="/week">
               <button className="button" type="submit" id="login" onClick="">Continue</button>
             </a>
+          </div>
         </body>
       </div>
     );
