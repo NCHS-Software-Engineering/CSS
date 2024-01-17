@@ -150,7 +150,7 @@ app.get("/calendar", (req, res) =>{
 
 // TODO: will probably need some sort of authentication system
 // TODO: verify that the files are in a valid format??? (or maybe just trust the 'admin')
-// let the 'admin' set the various json files
+// let 'admin' send over the modified json files
 app.put("/schedules", (req, res) =>{
     FileSystem.writeFileSync("files/schedules.json", JSON.stringify(req.body)); // update server file
     

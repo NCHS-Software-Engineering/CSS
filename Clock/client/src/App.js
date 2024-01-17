@@ -6,8 +6,8 @@ function App()
   const schedule = useRef([]); // the schedule that the coundown is based on (it is an array of objects)
   const day = useRef(0) // the day of the week
   const period = useRef(0) // the index of the schedule array
-  const periodName = useRef("");
-  const passingPeriod = useRef(false); // wether this is a passing period 
+  const periodName = useRef(""); // e.g. "P1", "P2", "SOAR", "P3", etc.
+  const passingPeriod = useRef(false); // whether this is a passing period 
   const schoolOut = useRef(true); // true when the school day is over or there is no school
   const [countdown, setCountdown] = useState(); // countdown until the end of the current period (displayed)
 

@@ -10,7 +10,7 @@ function CalendarPage()
 
     const [tableMonth, setTableMonth] = useState(0);
 
-    const [selectedDateKey, setSelectedDateKey] = useState(1);
+    const [selectedDateKey, setSelectedDateKey] = useState(-1);
 
 
     const today = new Date(); // todays date / time info
@@ -168,14 +168,12 @@ function CalendarPage()
 
         return (
             <div>
-                {dateString}
-                <br/>
-                <select defaultValue={scheduleType} onChange={(e) => {updateScheduleType(e); submitCalendar(e);}}>
+                <p>{dateString}</p>
+                <select value={scheduleType} onChange={(e) => {updateScheduleType(e); submitCalendar();}}>
                     <option>DEFAULT</option>
                     <option>Special: One-Time</option>
                     <option>Special: Repeating</option>
                 </select>
-                <br/>
                 {optionalScheduleSelect()}
             </div>
         );
@@ -192,8 +190,11 @@ function CalendarPage()
         {
             if (scheduleType !== "DEFAULT")
             {
+                var defaultValue = null;
+                if (calendar[selectedDateKey]) defaultValue = calendar[selectedDateKey].schedule;
+                console.log(defaultValue);
                 return (
-                <ScheduleDropdown callback={(res)=>{schedule = res; submitCalendar();}} />
+                <ScheduleDropdown defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
                 );
             }
 
@@ -212,14 +213,14 @@ function CalendarPage()
             else if (scheduleType === "Special: One-Time")
             {
                 const copiedCalendar = {...calendar};
-                copiedCalendar[selectedDateKey] = {schedule:[schedule], repeating:false};
+                copiedCalendar[selectedDateKey] = {schedule:schedule, repeating:false};
                 setCalendar(copiedCalendar);
                 updateServerCalendar(copiedCalendar);
             }
             else if (scheduleType === "Special: Repeating")
             {
                 const copiedCalendar = {...calendar};
-                copiedCalendar[selectedDateKey] = {schedule:[schedule], repeating:true};
+                copiedCalendar[selectedDateKey] = {schedule:schedule, repeating:true};
                 setCalendar(copiedCalendar);
                 updateServerCalendar(copiedCalendar);
             }
