@@ -10,6 +10,10 @@ function ScheduleConfig() {
         alert('Saved!');
     }
 
+    const deleteAlert = () => {
+        alert('Delete Period Functionality Not Implemented');
+    }
+
     return (
         <div className="Content">
             <header className="App-header">
@@ -39,7 +43,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -47,7 +51,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -55,7 +59,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -63,7 +67,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -71,7 +75,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -79,7 +83,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -87,7 +91,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
@@ -95,7 +99,7 @@ function ScheduleConfig() {
                             <td><input className="box" type="text" placeholder = "Period Name"/></td>
                             <td><input className="box" type="time" /></td>
                             <td><input className="box" type="time" /></td>
-                            <td><button className="button">
+                            <td><button onClick={deleteAlert} className="button">
                                 <img className="x-png" src={x} alt="x.png" border="0" />
                                 </button></td>
                         </tr>
