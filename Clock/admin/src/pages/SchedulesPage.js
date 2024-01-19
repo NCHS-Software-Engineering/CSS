@@ -5,19 +5,15 @@ import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
 
 
-// TODO: will need logic to turn all of the inputed data into a new 'schedules' JSON file
-// TODO: will need to actualy update the server
-// TODO: send the user back to the home page when the defaultWeek is updated? (some form of user feedback)
 function SchedulesPage()
 {
-    const [schedules, setSchedules] = useState({});
-    const [selection, setSelection] = useState(null);
+    const [schedules, setSchedules] = useState({}); // All the schedules (initially recieved from the server)
+    const [selection, setSelection] = useState(null); // The name of the schedule currently being modified (or a new empty schedule)
 
-    const [tempScheduleName, setTempScheduleName] = useState("");
-    const [tempSchedule, setTempSchedule] = useState([]);
+    const [tempScheduleName, setTempScheduleName] = useState(""); // The name of the schedule can be set by the user if it is a new schedule
+    const [tempSchedule, setTempSchedule] = useState([]); // the contents of the schedule being modified / created
 
     const baseURL = "http://localhost:8500/"; // This will likly need to be changed for a production build
-
 
 
     // TODO: and authorization header can be used to make sure that this user has admin credentials
@@ -34,8 +30,7 @@ function SchedulesPage()
     }
 
 
-
-
+    // gets schedules JSON object from server
     useEffect(() => {
         fetch(`${baseURL}schedules`)
         .then((res) => res.json())
@@ -43,27 +38,30 @@ function SchedulesPage()
         );
     }, []);
 
-
+    // called when a new schedule is selected from the schedule dropdown for modification
     function changeSelection(newSelection)
     {
         setSelection(newSelection);
         setTempScheduleName(newSelection);
+        if (document.getElementById("ScheduleNameInput")) document.getElementById("ScheduleNameInput").value = "";
 
-        if (newSelection === null)
+        if (newSelection === null) // an EMPTY schedule will contain no initial schedule data
         {
             setTempSchedule([]);
         }
-        else
+        else // and existing schedule will auto-populate with the existing schedule data
         {
             setTempSchedule(schedules[newSelection]);
         }
     }
 
+    // If this is a new schedule, the schedule name can be chosen by the user
     function changeScheduleName(e)
     {
         setTempScheduleName(e.target.value);
     }
 
+    // The function to get an ordered list of all of the created periods 
     function displayEditor()
     {
         const periods = tempSchedule;
@@ -75,7 +73,7 @@ function SchedulesPage()
             for (let i = 0; i < periods.length; i++)
             {
                 const element = periods[i];
-
+                // create a PeriodEditor component with all of the initial values needed
                 displayArr.push(<PeriodEditor id={i} name={element.name} start={element.start} end={element.end} callback={periodEditUpdate} />);
             }
         }
@@ -83,20 +81,21 @@ function SchedulesPage()
         return displayArr;
     }
 
+    // Called whenever a PeriodEditor is modified. Updates the currently selected schedule accordingly.
     function periodEditUpdate(res)
     {
         const index = res.id;
         delete res.id;
 
-        const newTempSchedule = tempSchedule;
+        const newTempSchedule = [...tempSchedule]; // create a shallow copy of tempSchedule to be modified
         newTempSchedule[index] = res;
         
         setTempSchedule(newTempSchedule);
     }
 
-    function addPeriod()
+    function addPeriod() // Add on a new empty period
     {
-        const newTempSchedule = [...tempSchedule]; // create a shallow copy
+        const newTempSchedule = [...tempSchedule]; 
         const p = {};
         p.name = "";
         p.start = newTempSchedule.length > 0 ? newTempSchedule[newTempSchedule.length - 1].start : "00:00";
@@ -106,7 +105,7 @@ function SchedulesPage()
         
         setTempSchedule(newTempSchedule);
     }
-    function deletePeriod()
+    function deletePeriod() // Deletes the last period in the schedule
     {
         const newTempSchedule = [...tempSchedule];
         
@@ -115,50 +114,55 @@ function SchedulesPage()
         setTempSchedule(newTempSchedule);
     }
 
+    // This function will return a button to delete the schedule if the user is modifying an old schedule (i.e. a prexisting schedule is selected)
+    // BUT, will return a text input field for the schedule name if the user is creating a new schedule (i.e. empty is selected)
     function specialInput() // delete schedule or name schedule
     {
-        if (selection === null) // field for nameing schedule
+        // -- field for nameing schedule --
+        if (selection === null) 
         {
             return <input id="ScheduleNameInput" type="text" placeholder="Schedule Name" onInput={changeScheduleName}></input>;
         }
 
-        // button for deleteing schedule
+        // -- button for deleteing schedule --
         return(
             <button onClick={() => {
                 if (window.confirm("Are you sure that you want to delete schedule \"" + selection + "\" ?"))
                 {
-                    const copiedSchedules = {...schedules};
-                    delete copiedSchedules[selection];
+                    const copiedSchedules = {...schedules}; // shallow copy
+                    delete copiedSchedules[selection]; // delete the selected schedule from the objec storeing all the schedules
 
-                    setSchedules(copiedSchedules);
-                    updateServerSchedules(copiedSchedules);
-                    changeSelection(null);
+                    setSchedules(copiedSchedules); // update original
+                    updateServerSchedules(copiedSchedules); // update the server with the new schedules JSON object
+                    changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
                 }
             }}>DELETE SCHEDULE</button>
         );
     }
 
+    // check schedule validity and update the server with the new schedule JSON object
     function submitSchedule()
     {
-        // check schedule validity
-        if (tempScheduleName === null || tempScheduleName === "" || tempScheduleName === "EMPTY")
+        // -- check schedule validity -- (The user will not be allowed to submit and an error message will be displayed)
+        if (tempScheduleName === null || tempScheduleName === "" || tempScheduleName === "EMPTY") // invalid schedule name
         {
             window.alert("Invalid Schedule Name!");
             return;
         }
 
-        if (selection === null && schedules[tempScheduleName])
+        if (selection === null && schedules[tempScheduleName]) // Schedule name already exists (no duplicate schedules)
         {
             window.alert("Invalid Schedule Name!\nThe Schedule \"" + tempScheduleName + "\" Already Exists!");
             return;
         }
 
-        if (!tempSchedule || tempSchedule.length === 0)
+        if (!tempSchedule || tempSchedule.length === 0) // the schedule is empty
         {
             window.alert("Input Periods!");
             return;
         }
 
+        // Check to see if the period start/end times conflict
         var prevTime = "00:00";
         for (let i = 0; i < tempSchedule.length; i++)
         {
@@ -182,8 +186,8 @@ function SchedulesPage()
             }
         }
 
-        // update server
-        if (selection === null)
+        // -- update server & reset states --
+        if (selection === null) // if this is a completely new schedule
         {
             const copiedSchedules = {...schedules};
             copiedSchedules[tempScheduleName] = tempSchedule;
@@ -193,7 +197,7 @@ function SchedulesPage()
 
             window.alert("Added New Schedule");
         }
-        else if (selection === tempScheduleName)
+        else if (selection === tempScheduleName) // if an prexisting schdule is being modified
         {
             const copiedSchedules = {...schedules};
             copiedSchedules[tempScheduleName] = tempSchedule;
@@ -210,7 +214,7 @@ function SchedulesPage()
         <div>
             <Link to = "/"> home link </Link>
 
-            <ScheduleDropdown callback = {changeSelection} />
+            <ScheduleDropdown defaultValue={selection} callback={changeSelection} />
 
             {specialInput()}
 

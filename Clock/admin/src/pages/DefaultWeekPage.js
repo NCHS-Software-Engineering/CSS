@@ -9,10 +9,9 @@ import ScheduleDropdown from "../components/ScheduleDropdown";
 // TODO: send the user back to the home page when the defaultWeek is updated? (some form of user feedback)
 function DefaultWeekPage() 
 {
-    const [defaultWeek, setDefaultWeek] = useState({});
+    const [defaultWeek, setDefaultWeek] = useState({}); // the current default-week (initially recieved from the server)
   
     const baseURL = "http://localhost:8500/"; // This will likly need to be changed for a production build
-
 
 
     // TODO: and authorization header can be used to make sure that this user has admin credentials
@@ -29,7 +28,7 @@ function DefaultWeekPage()
     }
 
 
-
+    // gets defaultWeek JSON object from server
     useEffect(() => {
         fetch(`${baseURL}defaultWeek`)
         .then((res) => res.json())
@@ -37,14 +36,14 @@ function DefaultWeekPage()
         );
     }, []);
   
-
+    // replaces the schedule of a certain day ([0, 1, 2, 3, 4, 5, 6] --> (Sunday, Monday, Tuesday, etc))
     function setDay(day, schedule)
     {
         const copiedDefaultWeek = {...defaultWeek};
         copiedDefaultWeek[day] = schedule;
         setDefaultWeek(copiedDefaultWeek);
     }
-
+    // update the server and notify the user that the server has been updated
     function submitDefaultWeek()
     {
         updateServerDefaultWeek(defaultWeek);

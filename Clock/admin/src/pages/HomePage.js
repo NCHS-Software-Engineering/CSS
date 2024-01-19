@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef} from "react";
+import React from "react";
 import { Link } from 'react-router-dom';
 
 
 function HomePage()
 {
+    // Takes you to all of the other pages
     return(
         <div>
             <h1>HomePage</h1>

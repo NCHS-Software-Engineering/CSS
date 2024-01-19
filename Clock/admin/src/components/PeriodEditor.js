@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-//TODO: restrict time within a min / max range (might be easier to do in SchedulesPage???)
+
 function PeriodEditor(params = null) // param.id, params.name, params.start, params.end, params.callback
 {
-    const [name, setName] = useState("");
-    const [start, setStart] = useState("0:00");
-    const [end, setEnd] = useState("23:59");
+    const [name, setName] = useState(""); // The name of this period
+    const [start, setStart] = useState("00:00"); // the start time of this period
+    const [end, setEnd] = useState("23:59"); // the end time of this period
 
+    // runs once at startup, initializes states as per the parameters passed by the parent component
     useEffect(() => {
         if (params)
         {
@@ -28,6 +29,7 @@ function PeriodEditor(params = null) // param.id, params.name, params.start, par
         }
     },[]);
 
+    // The following functions are called when an edit to the period is made. A callback is sent to the parent component.
     function updateName()
     {
         const element = document.getElementById("name" + params.id);
