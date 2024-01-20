@@ -1,41 +1,62 @@
+:root {
+  --night: #121216;
+  --dusk: #2f2f36;
+  --blood: #880808;
+  --grey: #666465;
+}
+
 .App {
-  text-align: center;
-}
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 
-.App-header {
-  background-color: #224fa8;
+  display:  flex;
+
+  background: var(--night);
+  height: 100%;
+  font-family: Verdana, sans-serif;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+.Title {
+  background: var(--dusk);
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+  height: 15vh;
+  width: 100vw;
+  
+  color: var(--blood);
+  font-size: 5vh;
 }
 
-h1 {
-  color: red;
-}
+.Content {
+  background: var(--grey);
 
-/*
-@keyframes fancyAnim {
-  0% {background-color: red; font-size: 200px; rotate: 1 1 0 0deg;} 
-  50% {background-color: yellow; font-size: 250px; rotate: 1 1 0 360deg;}
-  100% {background-color: red; font-size: 200px; rotate: 1 1 0 0deg;}
-}
-*/
+  display: flex;
 
-p {
-  color: white;
-  font-size: 100px;
-  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  justify-content: center;
+  align-items: center;
 
-  /*
-  animation: fancyAnim 4s;
-  animation-iteration-count: infinite;
-  */
+  position: absolute;
+  top: 25vh;
+  left: 10vw;
+  height: 55vh; /* true height = width + (2 * padding) */
+  width: 75vw; /* true width = width + (2 * padding) */
+  border-radius: 3vh;
+
+  padding: 2.5vw;
+
+  color: ivory;
+  text-align: center;
+  position: absolute;
+
+  font-size: 12.5vh;
 }

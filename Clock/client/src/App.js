@@ -88,7 +88,7 @@ function App()
       
       if (schoolOut.current === true) // just display the time
       {
-        setCountdown(tempDate.toTimeString());
+        setCountdown(tempDate.getHours().toString().padStart(2, "0") + ":" + tempDate.getMinutes().toString().padStart(2, "0") + ":" + tempDate.getSeconds().toString().padStart(2, "0"));
       }
       else // display the countdown
       {
@@ -99,7 +99,7 @@ function App()
         currentTime += tempDate.getMinutes() * 60 * 1000; // convert minutes to miliseconds
         currentTime += tempDate.getSeconds() * 1000; // convert seconds to miliseconds
 
-        var temp;
+        var temp; // parse out data for finish time
         if (passingPeriod.current === true)
         {
           temp = schedule.current[period.current].start.split(":");
@@ -113,13 +113,13 @@ function App()
         finishTime += parseInt(temp[1]) * 60 * 1000; // convert minutes to miliseconds
 
         const deltaTime = finishTime - currentTime;
-        if (deltaTime <= 0)
+        if (deltaTime <= 0) // period ends
         {
           if (period.current + 1 >= schedule.current.length && passingPeriod.current === false) // no period's left in list
           {
-            schoolOut.current = true;
+            schoolOut.current = true; // school day is over
           }
-          else
+          else // transition to next period/passing-period
           {
             if (passingPeriod.current === false)
             {
@@ -135,7 +135,7 @@ function App()
 
           setCountdown(0); // period over
         } // TODO: add an else-if statment that will check if there are 5 minutes left and have some sort of indicator turn on (e.g. numbers turn red)
-        else
+        else // display countdown
         {
           const hours = Math.floor(deltaTime / (60 * 60 * 1000));
           const minutes = Math.floor(deltaTime / (60 * 1000));
@@ -161,10 +161,12 @@ function App()
   {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>{periodName.current}</h1> 
+        <div className='Title'>
+          <h1>{periodName.current}</h1>
+        </div>
+        <div className='Content'> 
           <p>{countdown}</p>
-        </header>
+        </div>
       </div>
     );
   }
@@ -172,10 +174,12 @@ function App()
   {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>No School</h1> 
+        <div className='Title'>
+          <h1>No School</h1>
+        </div>
+        <div className='Content'> 
           <p>{countdown}</p>
-        </header>
+        </div>
       </div>
     );
   }
