@@ -149,7 +149,7 @@ function App()
           setCountdown(tempDisplay);
         }
       }  
-    }, 1000); // every ~1 sec
+    }, 100); // every ~0.1 sec
 
     return () => clearInterval(interval);
   }, []);

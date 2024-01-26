@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
+
+import "../styles/App.css";
 
 
 function SchedulesPage()
@@ -121,12 +122,12 @@ function SchedulesPage()
         // -- field for nameing schedule --
         if (selection === null) 
         {
-            return <input id="ScheduleNameInput" type="text" placeholder="Schedule Name" onInput={changeScheduleName}></input>;
+            return <input className="box" id="ScheduleNameInput" type="text" placeholder="Schedule Name" onInput={changeScheduleName}></input>;
         }
 
         // -- button for deleteing schedule --
         return(
-            <button onClick={() => {
+            <button className="button" onClick={() => {
                 if (window.confirm("Are you sure that you want to delete schedule \"" + selection + "\" ?"))
                 {
                     const copiedSchedules = {...schedules}; // shallow copy
@@ -211,31 +212,36 @@ function SchedulesPage()
 
 
     return(
-        <div>
-            <Link to = "/"> home link </Link>
+        <div className="Content">
+            <header className="App-header">
+                <h1>Schedules</h1>
+            </header>
 
-            <ScheduleDropdown defaultValue={selection} callback={changeSelection} />
+            <div className="List">
+                <ScheduleDropdown defaultValue={selection} callback={changeSelection} />
 
-            {specialInput()}
+                {specialInput()}
+            </div>
+            <div className="List">
+                <table className="Table">
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Start</th>
+                            <th>End</th>
+                        </tr>
+                    </thead>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Period</th>
-                        <th>Start</th>
-                        <th>End</th>
-                    </tr>
-                </thead>
-
-                <tbody key={selection}>
-                    {displayEditor()}
-                </tbody>
-            </table>
-
-            <button onClick={addPeriod}>Add Period</button>
-            <button onClick={deletePeriod}>Delete Period</button>
-            <br/>
-            <button onClick={submitSchedule}>Submit form</button>
+                    <tbody key={selection}>
+                        {displayEditor()}
+                    </tbody>
+                </table>
+            </div>
+            <div className="List">
+                <button className="button" onClick={addPeriod}>Add Period</button>
+                <button className="button" onClick={deletePeriod}>Delete Period</button>
+                <button className="button" onClick={submitSchedule}>Submit form</button>
+            </div>
         </div>
     );
 }

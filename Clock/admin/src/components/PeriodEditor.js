@@ -83,13 +83,13 @@ function PeriodEditor(params = null) // param.id, params.name, params.start, par
     return(
         <tr key={params.id}>
             <td>
-                <input type="text" id={"name" + params.id} placeholder="Period Name" onInput={updateName}></input>
+                <input className="box" type="text" id={"name" + params.id} placeholder="Period Name" onInput={updateName}></input>
             </td>
             <td>
-                <input type="time" id={"start" + params.id} onChange={updateStart}></input>
+                <input className="box" type="time" id={"start" + params.id} onChange={updateStart}></input>
             </td>
             <td>
-                <input type="time" id={"end" + params.id} onChange={updateEnd}></input>
+                <input className="box" type="time" id={"end" + params.id} onChange={updateEnd}></input>
             </td>
         </tr>
     );

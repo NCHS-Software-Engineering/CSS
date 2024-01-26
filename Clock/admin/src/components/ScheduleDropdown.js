@@ -52,7 +52,7 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
 
 
     return (
-        <select id="dropdown" onChange={updateSelection} onClick={getSchedules}> 
+        <select className="select" id="dropdown" onChange={updateSelection} onClick={getSchedules}> 
             <option value={null} style={{ fontWeight: 'bold' }}>EMPTY</option> {/* Should always be an EMPTY schedule with a value of null */}
             {displayDropdown()} 
         </select>

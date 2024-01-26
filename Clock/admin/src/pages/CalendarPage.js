@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
+
+import "../styles/App.css";
+
 
 // TODO: User feedback is important! (through CSS maybe?)
 function CalendarPage()
@@ -107,7 +109,7 @@ function CalendarPage()
             {
                 const dateKey = (incrementDate.getMonth() * 100) + incrementDate.getDate(); // calculate dateKey for that date
 
-                var backgroundStyle = {background:"#ffffff"}; // shading in for user feedback (i.e. default schedule, 1 time special schedule, or reapeating special schedule)
+                var backgroundStyle = {}; // shading in for user feedback (i.e. default schedule, 1 time special schedule, or reapeating special schedule)
                 var selectedStyle = {fontWeight:"normal"}; // Give user feedback as to which date is currently selected for editing
                 var schName = ""; // The name of the "Special Schedule" for that day (if any)
 
@@ -180,12 +182,18 @@ function CalendarPage()
         // What actualy gets displayed
         return (
             <div>
+                <p>Date Selected: </p>
                 <p>{dateString}</p>
-                <select value={scheduleType} onChange={(e) => {updateScheduleType(e); submitCalendar();}}>
+
+                <br/>
+
+                <p>Schedule Type: </p>
+                <select className="select" value={scheduleType} onChange={(e) => {updateScheduleType(e); submitCalendar();}}>
                     <option>DEFAULT</option>
                     <option>Special: One-Time</option>
                     <option>Special: Repeating</option>
                 </select>
+
                 {optionalScheduleSelect()}
             </div>
         );
@@ -208,7 +216,10 @@ function CalendarPage()
                 if (calendar[selectedDateKey]) defaultValue = calendar[selectedDateKey].schedule;
                 console.log(defaultValue);
                 return (
-                <ScheduleDropdown defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
+                    <div>
+                        <p>Schedule: </p>
+                        <ScheduleDropdown defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
+                    </div>
                 );
             }
 
@@ -243,34 +254,43 @@ function CalendarPage()
         }
     }
 
+    // TODO: <Link to = "/"> home link </Link>
     return(
-        <div>
-            <Link to = "/"> home link </Link>
+        <div className="Content">
+            <header className="App-header">
+                <h1>Event Calendar</h1>
+            </header>
 
-            <button onClick={todayButton}>Today</button>
-            <button onClick={previousButton}>Previous Month</button>
-            <button onClick={nextButton}>Next Month</button>
-            <h1>Month: {numToMonth(tableMonth)}</h1>
+            <div className="List">
+                <div className="Calendar-Bar">
+                    <button className="button" onClick={todayButton}>Today</button>
+                    <button className="button" onClick={previousButton}>Previous Month</button>
+                    <button className="button" onClick={nextButton}>Next Month</button>
+                    <h1>{numToMonth(tableMonth)}</h1>
+                </div>
+            </div>
+            <div className="List">
+                <table className="Table">
+                    <thead>
+                        <tr>
+                            <th>Sunday</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                        </tr>
+                    </thead>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sunday</th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                        <th>Saturday</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {displayMonth(tableMonth)}
-                </tbody>
-            </table>
-
-            {displayEditor()}
+                    <tbody>
+                        {displayMonth(tableMonth)}
+                    </tbody>
+                </table>
+            </div>
+            <div className="List">
+                {displayEditor()}
+            </div>
         </div>
     );
 }

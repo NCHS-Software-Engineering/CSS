@@ -92,7 +92,7 @@ getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
 const portNum = 8000; // Change this number in order to change which port the server is listening on
 const wss = new WebSocket.Server({port : portNum}); // represents the server socket
 
-async function broadCast() // send information to all connections
+async function broadcast() // send information to all connections
 {
     connections.forEach(ws => {
         updateClient(ws);
@@ -127,7 +127,7 @@ const job = Scheduler.scheduleJob("0 0 * * *", () =>
     getCurrentSchedule((res) => 
     {
         today = res; // reset today's schedule (it's a new day)
-        broadCast(); // broadCast the changes to any connected clients
+        broadcast(); // broadcast the changes to any connected clients
     });
 });
 
@@ -174,7 +174,7 @@ app.put("/schedules", (req, res) =>{
     getCurrentSchedule((res) => 
     {
         today = res;
-        broadCast();
+        broadcast();
     });
 
     res.send("SERVER: schedule confirmation"); // send confirmation to 'admin';
@@ -185,7 +185,7 @@ app.put("/defaultWeek", (req, res) =>{
     getCurrentSchedule((res) => 
     {
         today = res;
-        broadCast();
+        broadcast();
     });
 
     res.send("SERVER: defaultWeek confirmation");
@@ -196,7 +196,7 @@ app.put("/calendar", (req, res) =>{
     getCurrentSchedule((res) => 
     {
         today = res;
-        broadCast();
+        broadcast();
     });
 
     res.send("SERVER: calendar confirmation");
