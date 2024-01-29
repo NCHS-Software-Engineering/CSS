@@ -101,6 +101,10 @@
     padding-left: 40px;
     padding-bottom: 10px;
   }
+
+  tbody {
+    cursor: pointer;
+  }
   
   /* Scrollbar */
   ::-webkit-scrollbar {
