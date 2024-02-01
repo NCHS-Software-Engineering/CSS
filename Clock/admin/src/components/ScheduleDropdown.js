@@ -6,9 +6,9 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
     const [schedules, setSchedules] = useState({}); // All of the created schedules
     const [selection, setSelection] = useState(params.defaultValue); // The name of the selected schedule
 
-    const baseURL = "http://localhost:8500/"; // This will likly need to be changed for a production build
+    const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
 
-    // Initialy get the schedules from the server
+    // Initially get the schedules from the server
     useEffect(() => {
         getSchedules();
     }, []);
