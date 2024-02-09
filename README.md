@@ -1,6 +1,6 @@
-# Clock UI
+# Classroom Scheduling System
 
-Clock UI is a dynamic web application designed to allow teachers to modify and preview schedules on a clock interface. It is currently designed to run on desktop computers with Windows or Mac OS.
+The CSS is a dynamic web application designed to allow teachers to modify and preview schedules on a clock interface. It is currently designed to run on desktop computers through a web browser.
 
 ## Getting Started
 
@@ -28,7 +28,7 @@ The application uses JSON files for data storage of the schedules.
 
 ## Contributing
 
-This project is done by Nick Patel, Eric Gu, Nicole Liang, and Michael Mihailov. 
-Client: Mr. Hayes
-Mentor: Mr. Rutkas
-Teacher: Dr. Miller
+Authors: Michael Mihailov, Eric Gu, Nick Patel, Nicole Liang
+Client: Mr. Kevin Hayes
+Mentor: Mr. Clint Rutkas
+Teacher: Dr. Derek Miller
