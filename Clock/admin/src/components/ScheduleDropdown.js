@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 
-function ScheduleDropdown(params = null) // params.defaultValue, params.callback, params.nullSelectionName
+function ScheduleDropdown(params = null) // params.defaultValue, params.callback
 {
     const [schedules, setSchedules] = useState({}); // All of the created schedules
     const [selection, setSelection] = useState(params.defaultValue); // The name of the selected schedule
@@ -45,7 +45,7 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
             if (params && params.callback)
             {
                 // send the selected schedule back to the parent component using a callback
-                params.callback((e.target.value === params.nullSelectionName || e.target.value === "null" || e.target.value === null) ? null : e.target.value)
+                params.callback((e.target.value === "EMPTY" || e.target.value === "null" || e.target.value === null) ? null : e.target.value)
             }
         }
     }
@@ -53,7 +53,7 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
 
     return (
         <select className="select" id="dropdown" onChange={updateSelection} onClick={getSchedules}> 
-            <option value={null} style={{ fontWeight: 'bold' }}>{params.nullSelectionName}</option> {/* Should always be an EMPTY schedule with a value of null */}
+            <option value={null} style={{ fontWeight: 'bold' }}>EMPTY</option> {/* Should always be an EMPTY schedule with a value of null */}
             {displayDropdown()} 
         </select>
     );

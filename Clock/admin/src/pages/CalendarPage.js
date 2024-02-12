@@ -133,7 +133,7 @@ function CalendarPage()
                 {
                     if (calendar[dateKey])
                     {
-                        if (calendar[dateKey].schedule === null) schName = "NO SCHEDULE";
+                        if (calendar[dateKey].schedule === null) schName = "EMPTY";
                         else schName = calendar[dateKey].schedule;
                     }
                 }
@@ -218,7 +218,7 @@ function CalendarPage()
                 return (
                     <div>
                         <p>Schedule: </p>
-                        <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
+                        <ScheduleDropdown defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
                     </div>
                 );
             }
