@@ -18,8 +18,6 @@ function App()
   // Deal with WebSocket stuff. should run only once at the start ()
   useEffect(() =>
   {
-    console.log("hi");
-
     const ws = new WebSocket(serverUrl); // represents the client socket
 
     ws.addEventListener("message", e => 

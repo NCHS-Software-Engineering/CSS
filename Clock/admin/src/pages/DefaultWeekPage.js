@@ -68,43 +68,43 @@ function DefaultWeekPage()
                         <tr>
                             <td>Monday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[1]} callback={(res)=>{setDay(1, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[1]} callback={(res)=>{setDay(1, res)}} />
                             </td>
                         </tr>
                         <tr>
                             <td>Tuesday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[2]} callback={(res)=>{setDay(2, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[2]} callback={(res)=>{setDay(2, res)}} />
                             </td>
                         </tr>
                         <tr>
                             <td>Wednesday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[3]} callback={(res)=>{setDay(3, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[3]} callback={(res)=>{setDay(3, res)}} />
                             </td>
                         </tr>
                         <tr>
                             <td>Thursday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[4]} callback={(res)=>{setDay(4, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[4]} callback={(res)=>{setDay(4, res)}} />
                             </td>
                         </tr>
                         <tr>
                             <td>Friday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[5]} callback={(res)=>{setDay(5, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[5]} callback={(res)=>{setDay(5, res)}} />
                             </td>
                         </tr>
                         <tr>
                             <td>Saturday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[6]} callback={(res)=>{setDay(6, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[6]} callback={(res)=>{setDay(6, res)}} />
                             </td>
                         </tr>
                         <tr>
                             <td>Sunday</td>
                             <td>
-                                <ScheduleDropdown defaultValue={defaultWeek[0]} callback={(res)=>{setDay(0, res)}} />
+                                <ScheduleDropdown nullSelectionName={"NO SCHEDULE"} defaultValue={defaultWeek[0]} callback={(res)=>{setDay(0, res)}} />
                             </td>
                         </tr>
                     </tbody>

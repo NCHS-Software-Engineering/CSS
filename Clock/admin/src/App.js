@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Sidebar from './components/Sidebar';
 import PreviewPage from './pages/PreviewPage';
+import LayoutPage from './pages/LayoutPage';
 import CalendarPage from './pages/CalendarPage';
 import DefaultWeekPage from './pages/DefaultWeekPage';
 import LoginPage from './pages/LoginPage';
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element = {<LoginPage />} /> {/* Take user to home page by default */}
 
           <Route path="/preview" element = {<><Sidebar /><PreviewPage /></>} />
+          <Route path="/layout" element = {<><Sidebar /><LayoutPage /></>} />
           <Route path="/calendar" element = {<><Sidebar /><CalendarPage /></>} />
           <Route path="/defaultWeek" element = {<><Sidebar /><DefaultWeekPage /></>} />
           <Route path="/schedules" element = {<><Sidebar /><SchedulesPage /></>} />
