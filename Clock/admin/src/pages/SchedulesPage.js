@@ -48,7 +48,7 @@ function SchedulesPage()
 
         if (newSelection === null) // an EMPTY schedule will contain no initial schedule data
         {
-            setTempSchedule([{name:"", start:"00:00", end:"00:00"}]); // blank schedule with 1 blank period
+            setTempSchedule([]);
         }
         else // and existing schedule will auto-populate with the existing schedule data
         {
@@ -106,14 +106,11 @@ function SchedulesPage()
         
         setTempSchedule(newTempSchedule);
     }
-    function deletePeriod(index = -1) // Deletes the last period in the schedule
+    function deletePeriod() // Deletes the last period in the schedule
     {
         const newTempSchedule = [...tempSchedule];
         
-        if (newTempSchedule.length > 0) 
-        {
-            newTempSchedule.pop();
-        }
+        if (newTempSchedule.length > 0) newTempSchedule.pop();
 
         setTempSchedule(newTempSchedule);
     }
@@ -148,7 +145,7 @@ function SchedulesPage()
     function submitSchedule()
     {
         // -- check schedule validity -- (The user will not be allowed to submit and an error message will be displayed)
-        if (tempScheduleName === null || tempScheduleName === "" || tempScheduleName === "NEW SCHEDULE") // invalid schedule name
+        if (tempScheduleName === null || tempScheduleName === "" || tempScheduleName === "EMPTY") // invalid schedule name
         {
             window.alert("Invalid Schedule Name!");
             return;
@@ -221,7 +218,7 @@ function SchedulesPage()
             </header>
 
             <div className="List">
-                <ScheduleDropdown nullSelectionName={"NEW SCHEDULE"} defaultValue={selection} callback={changeSelection} />
+                <ScheduleDropdown defaultValue={selection} callback={changeSelection} />
 
                 {specialInput()}
             </div>
