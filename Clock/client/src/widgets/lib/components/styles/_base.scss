@@ -1,0 +1,165 @@
+
+.daniel-szulc-weather-widget {
+
+  height: 520px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  position: relative;
+
+  .weather-widget{
+
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+
+  .loading-area{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .weather-widget {
+
+    .background {
+      margin: 0;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      z-index: 0;
+      border-radius: 30px;
+      overflow: hidden;
+      background: -webkit-linear-gradient($background-gradient);
+      background: linear-gradient($background-gradient);
+
+      &::after {
+        position: absolute;
+        top: 90%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        content: "";
+        width: 150%;
+        height: 130%;
+        margin: 0;
+        background: -webkit-linear-gradient($background-gradient);
+        background: linear-gradient($background-gradient);
+        border-radius: 100%;
+        float: left;
+      }
+    }
+
+
+
+  .content {
+    position: relative;
+    height: 16%;
+  }
+
+  .weather-icon{
+    height:37%;
+  }
+
+  .light-font{
+    color: $font-second-color;
+    position: relative; top: -0.25em; font-size: 80%;
+  }
+
+  .current-weather{
+    all: inherit;
+    height:25%;
+    color: $font-second-color;
+    position: relative;
+    .light-font{
+      font-weight: 400;
+    }
+    h1{
+      padding: 0;
+    }
+  }
+
+  .details{
+    position: relative;
+    height: 22%;
+    width: 100%;
+    flex-direction: column;
+    margin: 0;
+    display: table;
+
+    .light-font{
+      font-weight: 200;
+      font-size: 20px;
+    }
+
+    .detail-item{
+      padding: 5px;
+      height: 100%;
+      width: 33.33%;
+      display: table-cell;
+      vertical-align: middle;
+      text-align:center;
+      div {
+        vertical-align: middle;
+        text-align:center;
+        display:flex;
+        height: 50%;
+        width: 100%;
+      }
+      h4{
+        display: inline-block;
+        vertical-align: middle;
+        line-height: normal;
+        font-weight: 400;
+        font-size: 13px;
+        width: 100%;
+        margin: auto;
+      }
+      h2{
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 30px;
+        text-align:center;
+        width: 100%;
+      }
+    }
+  }
+
+  @for $index from 1 through 6 {
+    h#{$index}{
+      color: $font-color;
+      text-align: center;
+    }
+  }
+
+  h1{
+    font-size: 55px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding: 0;
+    font-weight: 900;
+    span {&.light-font{
+      display: inline-block;
+      width: 0;
+    }}
+  }
+  h2{
+    font-size: 30px;
+    padding: 5%;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    font-weight: 900;
+  }
+
+  h3{
+    font-size: 23px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    font-weight: 400;
+  }
+  }
+}
+
+
