@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import "../styles/App.css";
+import WidgetMenuItem from "../components/WidgetMenuItem";
 
 
 // TODO: fix dragging so that the dragging indicators stay with the selected widget better
@@ -16,6 +17,9 @@ function LayoutPage()
     const [selectedCol, setSelectedCol] = useState(-1);
 
     const [selectedDraggable, setSelectedDraggable] = useState(0); // 0 == null, 1 == up, 2 == right, 3 == down, 4 == left
+
+    const [selectedWidget, setSelectedWidget] = useState(null);
+
 
     // TODO: widgetList must be stored on the server
     const [widgetList, setWidgetList] = useState([]); // The list of all widget locations/data
@@ -211,6 +215,10 @@ function LayoutPage()
         setWidgetList(widgetListCopy);
     }
 
+    function selectWidget(key)
+    {
+        console.log(key);
+    }
 
     return(
         <div className="Content">
@@ -227,6 +235,10 @@ function LayoutPage()
             </div>
 
             <button onClick={addWidget}>add-temp</button>
+
+            <div>
+                <WidgetMenuItem img={"./images/logo.png"} name={"hello!"} callback={selectWidget}/>
+            </div>
         </div>
     );
 }
