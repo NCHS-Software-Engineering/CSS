@@ -124,6 +124,10 @@
     background: var(--blood); 
   }
   
+
+  .Button {
+    color: var(--blood);
+  }
   
   .button {
     background-color: var(--blood); 

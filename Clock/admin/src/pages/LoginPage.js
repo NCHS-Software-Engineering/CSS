@@ -1,6 +1,7 @@
 import "../styles/App.css";
 import { Link } from 'react-router-dom';
 import logo from '../images/logo.png';
+import { Button } from '@mui/material';
 
 function LoginPage() {
     return (
@@ -21,7 +22,7 @@ function LoginPage() {
             </form>
             <br /><br />
             <Link to="/preview">
-              <button className="button" id="login">Continue</button> {/* No Real Functionality Yet */}
+              <Button className="Button" color='primary' variant="contained">Continue</Button> {/* No Real Functionality Yet */}
             </Link>
           </div>
         </body>
