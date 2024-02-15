@@ -1,17 +1,50 @@
-import { Link } from 'react-router-dom';
 import "../styles/App.css";
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
-function Sidebar() {
+
+/* Code pulled from  https://mui.com/material-ui/react-tabs/#nav-tabs */
+function LinkTab(props) {
     return (
-        <div className="Sidebar">
-            <Link to="/preview"><button className="button button-sidebar" width="400">Preview</button></Link>
-            <Link to="/calendar"><button className="button button-sidebar">Calendar</button></Link>
-            <Link to="/defaultWeek"><button className="button button-sidebar">Default Week</button></Link>
-            <Link to="/schedules"><button className="button button-sidebar">Schedules</button></Link>
-            
-            <Link to="/"><button className="button button-sidebar">Log Out</button></Link>
-        </div>
+      <Tab
+        component="a"
+        aria-current={props.selected && 'page'}
+        {...props}
+        sx={{color: "primary.contrast"}}
+      />
+    );
+};
+
+LinkTab.propTypes = {
+    selected: PropTypes.bool,
+};
+
+export default function Sidebar() {
+    const [value, setValue] = React.useState('/');
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    return (
+        <Box sx={{ width: '20%', typography: 'body1' }}>
+            <Tabs 
+                orientation="vertical"
+                value={value}
+                onChange={handleChange}
+                textColor="secondary"
+                indicatorColor="secondary"
+                sx={{ display: 'flex' }}
+            >
+                <LinkTab label="Preview" href="/preview" />
+                <LinkTab label="Calendar" href="/calendar" />
+                <LinkTab label="Default" href="/defaultWeek" />
+                <LinkTab label="Schedules" href="/schedules" />
+                <LinkTab label="Log Out" href="/" />
+            </Tabs>
+        </Box>
     );
 }
-
-export default Sidebar;
