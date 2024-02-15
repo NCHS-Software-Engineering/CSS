@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import "../styles/App.css";
 import WidgetMenuItem from "../components/WidgetMenuItem";
+import WidgetDraggableItem from "../components/WidgetDraggableItem";
 
 
 // TODO: fix dragging so that the dragging indicators stay with the selected widget better
@@ -238,6 +239,7 @@ function LayoutPage()
 
             <div>
                 <WidgetMenuItem img={"./images/logo.png"} name={"hello!"} callback={selectWidget}/>
+                <WidgetDraggableItem img={"hi"} name={"hi!"} />
             </div>
         </div>
     );
