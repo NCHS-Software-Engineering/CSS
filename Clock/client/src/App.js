@@ -3,7 +3,7 @@ import React from 'react';
 import RTC from './widgets/RTC.js';
 import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";
-import WeatherWidget from "./widgets/react-weather-widget/src/lib/components/WeatherWidget.js";
+import WeatherWidget from './widgets/components/weather/index.jsx';
 
 function App() {
     return (
@@ -13,13 +13,7 @@ function App() {
             </div>
             <div className='Content'> 
                 <p><Countdown/></p>
-                <WeatherWidget
-                    provider='openMeteo'
-                    autoLocate="gps"
-                    tempUnit="C"
-                    windSpeedUnit="kmph"
-                    lang="en"
-                />
+                <p><WeatherWidget/></p>
             </div>
         </div>
     );
