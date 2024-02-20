@@ -3,10 +3,20 @@
     margin: 0;
 }
 
+.Content{
+    display: flex;
+}
+
+.Widget-Menu{
+    width: 150px;
+    height: 100px;
+    overflow-y: auto;
+
+    border: 1px solid black;
+}
+
 table {
     border-collapse: collapse;
-
-
 }
 
 td {

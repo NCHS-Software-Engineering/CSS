@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 
-function PeriodEditor(params = null) // param.id, params.name, params.start, params.end, params.callback
+function PeriodEditor(params = null) // params.id, params.name, params.start, params.end, params.callback
 {
     const [name, setName] = useState(""); // The name of this period
     const [start, setStart] = useState("00:00"); // the start time of this period

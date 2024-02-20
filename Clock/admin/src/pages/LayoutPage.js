@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 import "../styles/App.css";
-import WidgetMenuItem from "../components/WidgetMenuItem";
-import WidgetDraggableItem from "../components/WidgetDraggableItem";
+import WidgetBox from "../components/WidgetBox";
+import CountdownConfig from "../components/CountdownConfig";
 
 
 // TODO: fix dragging so that the dragging indicators stay with the selected widget better
@@ -25,12 +25,7 @@ function LayoutPage()
     // TODO: widgetList must be stored on the server
     const [widgetList, setWidgetList] = useState([]); // The list of all widget locations/data
 
-    function addWidget() // TODO NOTE: temporary function
-    {
-        const widgetListCopy = [... widgetList];
-        widgetListCopy.push({"row":selectedRow,"col":selectedCol,"width":1,"height":1,"data":<p>temp</p>})
-        setWidgetList(widgetListCopy);
-    }
+
     
     function generateTable() // the table that represents the layout of the widgets
     {
@@ -86,6 +81,18 @@ function LayoutPage()
                             setSelectedRow(r);
                             setSelectedCol(c);
                         }
+                    } onMouseUp={ () =>
+                        {
+                            if (selectedWidget)
+                            {
+                                const widgetListCopy = [... widgetList];
+                                widgetListCopy.push({"type":selectedWidget, "row":r,"col":c,"width":1,"height":1,"data":<p>{selectedWidget}</p>});
+                                setWidgetList(widgetListCopy);
+
+                                setSelectedRow(r);
+                                setSelectedCol(c);
+                            }
+                        }
                     }></td>);
                 }
             }
@@ -102,16 +109,17 @@ function LayoutPage()
         const draggableSize = 10; // TODO: set as a circle with a diameter of 10px temporarily (make it look nicer)
         // svg images are cool
         return(
-                [<svg onMouseDown={()=>setSelectedDraggable(1)} id="topDrag" fill="green" height={draggableSize} width={draggableSize} style={{position:"absolute", top:(-(draggableSize / 2)), left:(-(draggableSize / 2)) + rectWidth / 2}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
-                <svg onMouseDown={()=>setSelectedDraggable(2)} id="rightDrag" fill="green" height={draggableSize} width={draggableSize} style={{position:"absolute", top:(-(draggableSize / 2)) + rectHeight / 2, left:(-(draggableSize / 2)) + rectWidth}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
-                <svg onMouseDown={()=>setSelectedDraggable(3)} id="bottomDrag" fill="green" height={draggableSize} width={draggableSize} style={{position:"absolute", top:(-(draggableSize / 2)) + rectHeight, left:(-(draggableSize / 2)) + rectWidth / 2}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
-                <svg onMouseDown={()=>setSelectedDraggable(4)} id="leftDrag" fill="green" height={draggableSize} width={draggableSize} style={{position:"absolute", top:(-(draggableSize / 2)) + rectHeight / 2, left:(-(draggableSize / 2))}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>]
+                [<svg onMouseDown={()=>setSelectedDraggable(1)} id="topDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)), left:(-(draggableSize / 2)) + rectWidth / 2}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
+                <svg onMouseDown={()=>setSelectedDraggable(2)} id="rightDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)) + rectHeight / 2, left:(-(draggableSize / 2)) + rectWidth}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
+                <svg onMouseDown={()=>setSelectedDraggable(3)} id="bottomDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)) + rectHeight, left:(-(draggableSize / 2)) + rectWidth / 2}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
+                <svg onMouseDown={()=>setSelectedDraggable(4)} id="leftDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)) + rectHeight / 2, left:(-(draggableSize / 2))}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>]
         );
     }
 
     // deselect any draggables when the mouse button is raised
     document.body.onmouseup = function() {
         setSelectedDraggable(0);
+        setSelectedWidget(null);
     }
 
     // check to see if mouse movement is sufficient to resize the selected widget
@@ -216,9 +224,23 @@ function LayoutPage()
         setWidgetList(widgetListCopy);
     }
 
-    function selectWidget(key)
+    function generateConfigurationForm() // The form for modifying the selected widget (e.g. changing the color of the widget)
     {
-        console.log(key);
+        // go through all widgets to find the selected widget
+        for (const w  of widgetList)
+        {
+            if (selectedRow === w.row && selectedCol === w.col)
+            {
+                switch (w.type)
+                {
+                    case "countdown": 
+                        return <CountdownConfig config={w.config} callback={(res) => {w.config = res;}}/>;
+                    case "clock":
+                    case "periodName":
+                    case "default": console.log("Widget Type ERROR (This should not print)");
+                }
+            }
+        }
     }
 
     return(
@@ -235,11 +257,16 @@ function LayoutPage()
                 </table>
             </div>
 
-            <button onClick={addWidget}>add-temp</button>
+            <div className="Widget-Menu">
+                <WidgetBox img={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
+                <WidgetBox img={"Clock"} type={"clock"} callback={setSelectedWidget}/>
+                <WidgetBox img={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
+                <WidgetBox img={"TextBox"} type={"textbox"} callback={setSelectedWidget}/>
+                <WidgetBox img={"Weather"} type={"weather"} callback={setSelectedWidget}/>
+            </div>
 
             <div>
-                <WidgetMenuItem img={"./images/logo.png"} name={"hello!"} callback={selectWidget}/>
-                <WidgetDraggableItem img={"hi"} name={"hi!"} />
+                {generateConfigurationForm()}
             </div>
         </div>
     );
