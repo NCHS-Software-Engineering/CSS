@@ -6,6 +6,13 @@ import Countdown from "./widgets/Countdown.js";
 import WeatherWidget from './widgets/components/weather/index.jsx';
 
 function App() {
+    const [inputValue, setInputValue] = useState('Naperville');
+    const [location, setLocation] = useState('Naperville');
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        setLocation(inputValue);
+    }
     return (
         <div className="App">
             <div className='Title'>
@@ -13,7 +20,14 @@ function App() {
             </div>
             <div className='Content'> 
                 <p><Countdown/></p>
-                <p><WeatherWidget/></p>
+            </div>
+            <div>
+                <form onSubmit={handleFormSubmit}>
+                    <input type="text" value={inputValue} 
+                    onChange={(e)=>{setInputValue(e.target.value)}}/>
+                    <button type="submit">Update Location</button>
+                </form>
+                <p><WeatherWidget location={location}/></p>
             </div>
         </div>
     );
