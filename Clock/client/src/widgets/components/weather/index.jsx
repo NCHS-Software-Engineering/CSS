@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, {useState, useEffect} from "react";
 import './index.css';
 
 import axios from 'axios';
 
-import { ReactComponentElement as MoonSVG} from '../../assets/svgs/dark_mode_FILL1_wght400_GRAD0_opsz24.svg'
-import { ReactComponentElement as CloudSVG} from '../../assets/svgs/cloudy_FILL1_wght400_GRAD0_opsz24.svg'
+import {ReactComponent as MoonSVG} from '../../assets/svgs/dark_mode_FILL1_wght400_GRAD0_opsz24.svg'
+import {ReactComponent as CloudSVG} from '../../assets/svgs/cloud_FILL1_wght400_GRAD0_opsz24.svg'
 
 const WeatherWidget = ({location}) => {
     const [weatherData, setWeatherData] = useState(null);
 
     useEffect(() => {
         if(location.length){
-            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=37e1ff1b9e12fbd215a7b5f22ca17eef&&unites=metric`)
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=37e1ff1b9e12fbd215a7b5f22ca17eef&&units=metric`)
             .then((response) => {
                 setWeatherData(response.data);
             }).catch((error) => {
