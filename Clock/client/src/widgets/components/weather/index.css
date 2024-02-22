@@ -19,6 +19,14 @@
     height:80px;
 }
 
+.sun {
+    background-color:orange;
+    filter:drop-shadow(0 0 20px rgba(255,165,0,0.8));
+    width:70px;
+    height:70px;
+    border-radius:50%;
+}
+
 @keyframes moveCloud {
   0%, 
   100%{
