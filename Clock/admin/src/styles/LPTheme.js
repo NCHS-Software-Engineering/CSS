@@ -1,5 +1,6 @@
 import { alpha } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
+import '@fontsource/inter';
 
 export const brand = {
   50: '#F0F7FF',
@@ -129,6 +130,7 @@ const getDesignTokens = (mode) => ({
       }),
     },
   },
+
   typography: {
     fontFamily: ['"Inter", "sans-serif"'].join(','),
     h1: {

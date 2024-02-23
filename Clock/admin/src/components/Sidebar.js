@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography'
 
 
 /* Code pulled from  https://mui.com/material-ui/react-tabs/#nav-tabs */
@@ -31,6 +32,7 @@ export default function Sidebar() {
 
     return (
         <Box sx={{ width: '20%', typography: 'body1' }}>
+            <Typography variant="body1">
             <Tabs 
                 orientation="vertical"
                 value={value}
@@ -45,6 +47,7 @@ export default function Sidebar() {
                 <LinkTab label="Schedules" href="/schedules" />
                 <LinkTab label="Log Out" href="/" />
             </Tabs>
+            </Typography>
         </Box>
     );
 }

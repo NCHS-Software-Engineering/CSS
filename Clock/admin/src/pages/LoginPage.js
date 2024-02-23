@@ -5,6 +5,7 @@ import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 
 function LoginPage() {
+  /*
   return(
     <div style={{ width: '100%' }} >
       <img className="logo" src={logo} alt="logo" />
@@ -17,9 +18,9 @@ function LoginPage() {
       > {"Login"} </Box>
 
     </div>
-  );
+  ); */
 
-  /*
+
     return (
       <div className="App">
         <header className="App-header">
@@ -38,13 +39,12 @@ function LoginPage() {
             </form>
             <br /><br />
             <Link to="/preview">
-              <Button className="Button" color='primary' variant="contained">Continue</Button> {/* No Real Functionality Yet *//*}
+              <Button className="Button" color='primary' variant="contained">Continue</Button> {/* No Real Functionality Yet */}
             </Link>
           </div>
         </body>
       </div>
     );
-    */
   }
   
   export default LoginPage;
