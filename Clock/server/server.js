@@ -13,6 +13,7 @@ app.use(express.json());
 
 const connections = new Set(); // A set containing all of the client sockets
 var today; // today's schedule
+var weather;
 
 
 // ----- File Managment -----
@@ -91,6 +92,17 @@ function getCurrentSchedule(callback)
 
 getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
 
+// ----- Weather Data Management -----
+
+function getCurrentWeather(callback)
+{
+    fetch(`https://api.weather.gov/gridpoints/LOT/58,67/forecast/hourly`)
+    .then((res) => res.json())
+    .then((data) => {weather = data.properties.periods[0]; callback(weather);});
+}
+
+getCurrentWeather();
+
 // ----- WebSocket Managment -----
 
 
@@ -105,7 +117,7 @@ async function broadcast() // send information to all connections
 }
 async function updateClient(ws) // send information to an individual client
 {
-    ws.send(JSON.stringify({schedule:today, layout:JSON.parse(FileSystem.readFileSync("files/layout.json"))}));
+    ws.send(JSON.stringify({schedule:today, layout:JSON.parse(FileSystem.readFileSync("files/layout.json")), weather:weather}));
 }
 
 // runs when a new client connects
@@ -134,6 +146,12 @@ const job = Scheduler.scheduleJob("0 0 * * *", () =>
         today = res; // reset today's schedule (it's a new day)
         broadcast(); // broadcast the changes to any connected clients
     });
+});
+
+// every 30 minutes ...
+const weatherJob = Scheduler.scheduleJob("/30 * * * *", () =>
+{
+    getCurrentWeather(broadcast());
 });
 
 
