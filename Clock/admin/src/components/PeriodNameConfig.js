@@ -5,34 +5,28 @@ import { SketchPicker } from "react-color";
 
 // TODO: The "Color Pickers" should be deselected when a new component is chosen
 
-// The component for configuring a "countdown widget" 
-function CountdownConfig(params=null) // params.config, params.callback
+// The component for configuring a "clock widget" 
+function PeriodName(params=null) // params.config, params.callback
 {
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
-    const [displaySeconds, setDisplaySeconds] = useState((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
-    const [displaySecondsLastMinute, setDisplaySecondsLastMinute] = useState((params.config && params.config.displaySecondsLastMinute) ? params.config.displaySecondsLastMinute : false); // should the seconds be displayed in the last minute of the countdown 
 
     const [displayBackgroundColorPicker, setDisplayBackgroundColorPicker] = useState("none");
     const [displayTextColorPicker, setDisplayTextColorPicker] = useState("none");
-    const [displaySecondCheckbox, setDisplaySecondCheckbox] = useState("initial");
 
     useEffect(() =>
     {
         setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
         setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
-        setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
-        setDisplaySecondsLastMinute((params.config && params.config.displaySecondsLastMinute) ? params.config.displaySecondsLastMinute : false); // should the seconds be displayed in the last minute of the countdown     
 
         //setDisplayBackgroundColorPicker("none");
         //setDisplayTextColorPicker("none");
-        setDisplaySecondCheckbox(((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false) ? "none" : "initial");
     }, [params]);
 
     useEffect(() =>
     {
-        params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds, "displaySecondsLastMinute":displaySecondsLastMinute});
-    }, [backgroundColor, textColor, displaySeconds, displaySecondsLastMinute]);
+        params.callback({"backgroundColor":backgroundColor, "textColor":textColor});
+    }, [backgroundColor, textColor]);
 
 
     return (
@@ -69,27 +63,8 @@ function CountdownConfig(params=null) // params.config, params.callback
                     />
                 </div>
             </div>
-            <div> {/* Seconds display selection */}
-                <p>Display Seconds: </p>
-                <input type="checkbox" checked={displaySeconds}
-                    onChange={ () => 
-                    {
-                        setDisplaySeconds(!displaySeconds);
-                        setDisplaySecondCheckbox((displaySecondCheckbox === "none") ? "initial" : "none");
-                    }
-                }></input>
-            </div>
-            <div style={{display:displaySecondCheckbox}}> {/* Seconds display (for last minute) selection */}
-                <p>Display Seconds (for the last minute): </p>
-                <input type="checkbox" checked={displaySecondsLastMinute}
-                    onChange={() => 
-                    {
-                        setDisplaySecondsLastMinute(!displaySecondsLastMinute);
-                    }
-                }></input>
-            </div>
         </div>
     );
 }
 
-export default CountdownConfig;
+export default PeriodName;

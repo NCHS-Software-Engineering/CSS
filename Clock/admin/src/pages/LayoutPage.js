@@ -3,10 +3,14 @@ import React, { useState, useEffect } from "react";
 import "../styles/App.css";
 import WidgetBox from "../components/WidgetBox";
 import CountdownConfig from "../components/CountdownConfig";
+import ClockConfig from "../components/ClockConfig";
+import PeriodName from "../components/PeriodNameConfig";
 
 
-// TODO: fix dragging so that the dragging indicators stay with the selected widget better
-// TODO: fix the table to make sure that all compnents stal the same size
+// TODO: add dragging at corners
+// TODO: of the widget itself
+// TODO: fix the table to make sure that all compnents stay the same size (NOTE: done?)
+// TODO: add "config components" for more widgets
 function LayoutPage() 
 {
     // The size of the grid
@@ -26,7 +30,32 @@ function LayoutPage()
     const [widgetList, setWidgetList] = useState([]); // The list of all widget locations/data
 
 
+    const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
+
+    // TODO: and authorization header can be used to make sure that this user has admin credentials
+    function updateServerLayout(info) // Sends the schedules to the server 
+    {
+        console.log(info);
+
+        fetch(`${baseURL}layout`,
+        {
+            method:"PUT",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(info)
+        });
+    }
+
+    // gets defaultWeek JSON object from server
+    useEffect(() => {
+        fetch(`${baseURL}layout`)
+        .then((res) => res.json())
+        .then((data) => {setWidgetList(data);}
+        );
+    }, []);
     
+
     function generateTable() // the table that represents the layout of the widgets
     {
         const rowList = []; // list of all rows
@@ -53,7 +82,7 @@ function LayoutPage()
                                 setSelectedRow(r);
                                 setSelectedCol(c);
                             }
-                        } rowSpan={w.height} colSpan={w.width}>{renderDraggables(r, c, rectWidth, rectHeight)}{w.data}</td>);
+                        } rowSpan={w.height} colSpan={w.width}>{renderDraggables(r, c, rectWidth, rectHeight)}{w.type}</td>);
                         
                         empty = false;
                         break;
@@ -86,7 +115,7 @@ function LayoutPage()
                             if (selectedWidget)
                             {
                                 const widgetListCopy = [... widgetList];
-                                widgetListCopy.push({"type":selectedWidget, "row":r,"col":c,"width":1,"height":1,"data":<p>{selectedWidget}</p>});
+                                widgetListCopy.push({"type":selectedWidget, "row":r,"col":c,"width":1,"height":1});
                                 setWidgetList(widgetListCopy);
 
                                 setSelectedRow(r);
@@ -227,19 +256,33 @@ function LayoutPage()
     function generateConfigurationForm() // The form for modifying the selected widget (e.g. changing the color of the widget)
     {
         // go through all widgets to find the selected widget
-        for (const w  of widgetList)
+        for (let i = 0; i < widgetList.length; i++)
         {
+            const w = {... widgetList[i]};
+
             if (selectedRow === w.row && selectedCol === w.col)
             {
                 switch (w.type)
                 {
                     case "countdown": 
-                        return <CountdownConfig config={w.config} callback={(res) => {w.config = res;}}/>;
+                        return <CountdownConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "clock":
+                        return <ClockConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
+                        return <PeriodName config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "default": console.log("Widget Type ERROR (This should not print)");
                 }
             }
+        }
+
+        function changeWidgetConfig(widget, config, index)
+        {
+            widget.config = config;
+            const widgetListCopy = [... widgetList];
+            widgetListCopy.splice(index, 1);
+            widgetListCopy.push(widget);
+
+            setWidgetList(widgetListCopy);
         }
     }
 
@@ -268,6 +311,8 @@ function LayoutPage()
             <div>
                 {generateConfigurationForm()}
             </div>
+
+            <button onClick={() => {updateServerLayout(widgetList);}}>Temporary Save Button</button>
         </div>
     );
 }

@@ -6,8 +6,21 @@
 }
 
 .App {
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: lightblue;
+}
+
+
+/*
+.App {
+  margin: 0; 
+  padding: 0; 
 
   display:  flex;
 
@@ -48,8 +61,8 @@
   position: absolute;
   top: 25vh;
   left: 10vw;
-  height: 55vh; /* true height = width + (2 * padding) */
-  width: 75vw; /* true width = width + (2 * padding) */
+  height: 55vh; // true height = width + (2 * padding)
+  width: 75vw; // true width = width + (2 * padding)
   border-radius: 3vh;
 
   padding: 2.5vw;
@@ -60,3 +73,5 @@
 
   font-size: 12.5vh;
 }
+
+*/

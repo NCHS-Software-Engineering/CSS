@@ -39,6 +39,11 @@ if (FileSystem.existsSync("files/calendar.json") === false) // create an empty d
     const data = {};
     FileSystem.writeFileSync("files/calendar.json", JSON.stringify(data));
 }
+if (FileSystem.existsSync("files/layout.json") === false) // create an empty dictionary of all dates
+{
+    const data = [];
+    FileSystem.writeFileSync("files/layout.json", JSON.stringify(data));
+}
 
 function getCurrentSchedule(callback)
 {    
@@ -100,7 +105,7 @@ async function broadcast() // send information to all connections
 }
 async function updateClient(ws) // send information to an individual client
 {
-    ws.send(JSON.stringify(today));
+    ws.send(JSON.stringify({schedule:today, layout:JSON.parse(FileSystem.readFileSync("files/layout.json"))}));
 }
 
 // runs when a new client connects
@@ -146,6 +151,9 @@ app.get("/defaultWeek", (req, res) =>{
 });
 app.get("/calendar", (req, res) =>{
     res.json(JSON.parse(FileSystem.readFileSync("files/calendar.json")));
+});
+app.get("/layout", (req, res) =>{
+    res.json(JSON.parse(FileSystem.readFileSync("files/layout.json")));
 });
 
 // TODO: will probably need some sort of authentication system
@@ -200,6 +208,13 @@ app.put("/calendar", (req, res) =>{
     });
 
     res.send("SERVER: calendar confirmation");
+});
+app.put("/layout", (req, res) =>{
+    FileSystem.writeFileSync("files/layout.json", JSON.stringify(req.body));
+
+    broadcast();
+
+    res.send("SERVER: layout confirmation");
 });
 
 app.listen(httpPortNum);
