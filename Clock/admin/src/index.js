@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { darkTheme } from "./styles/darkTheme";
 import getLPTheme from "./styles/LPTheme";
 
 

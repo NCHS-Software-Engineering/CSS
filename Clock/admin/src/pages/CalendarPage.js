@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
 import "../styles/App.css";
+import Box from '@mui/material/Box';
 
 
 // TODO: User feedback is important! (through CSS maybe?)
@@ -256,6 +257,7 @@ function CalendarPage()
 
     // TODO: <Link to = "/"> home link </Link>
     return(
+        <Box sx={{ width: '85%', height: '100%', typography: 'body1', border: '1px dashed grey' }}>
         <div className="Content">
             <header className="App-header">
                 <h1>Event Calendar</h1>
@@ -269,7 +271,6 @@ function CalendarPage()
                     <h1>{numToMonth(tableMonth)}</h1>
                 </div>
             </div>
-            <div className="List">
                 <table className="Table">
                     <thead>
                         <tr>
@@ -291,7 +292,7 @@ function CalendarPage()
             <div className="List">
                 {displayEditor()}
             </div>
-        </div>
+        </Box>
     );
 }
 
