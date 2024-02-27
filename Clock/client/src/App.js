@@ -15,6 +15,8 @@ function App() {
 
     const [widgetList, setWidgetList] = useState([]);
 
+    const [weather, setWeather] = useState([]);
+
 
     const portNum = 8000; // Change this number in order to change which port the server is listening on
     const serverUrl = 'ws://localhost:' + portNum; // may need to change this if we host the server on a different url
@@ -30,6 +32,8 @@ function App() {
 
             setSchedule(data.schedule);
             setWidgetList(data.layout);
+            setWeather(data.weather);
+            console.log(weather);   
 
             return () => {ws.close();};
         });

@@ -98,8 +98,9 @@ function getCurrentWeather(callback)
 {
     fetch(`https://api.weather.gov/gridpoints/LOT/58,67/forecast/hourly`)
     .then((res) => res.json())
-    .then((data) => {weather = data.properties.periods[0]; callback(weather);});
+    .then((data) => {weather = data.properties.periods[0];});
 }
+
 
 getCurrentWeather();
 
@@ -151,7 +152,8 @@ const job = Scheduler.scheduleJob("0 0 * * *", () =>
 // every 30 minutes ...
 const weatherJob = Scheduler.scheduleJob("/30 * * * *", () =>
 {
-    getCurrentWeather(broadcast());
+    getCurrentWeather(broadcast);
+    console.log("Weather Updated");
 });
 
 
