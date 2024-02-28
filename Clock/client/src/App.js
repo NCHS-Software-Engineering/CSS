@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import RTC from './widgets/RTC.js';
 import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";
-import WeatherWidget from './widgets/components/weather/index.jsx';
+import WeatherWidget from './widgets/components/weather/indextemp.jsx';
 import Timekeeper from './components/Timekeeper.js';
 
 
@@ -33,8 +33,7 @@ function App() {
             setSchedule(data.schedule);
             setWidgetList(data.layout);
             setWeather(data.weather);
-            console.log(weather);   
-
+            
             return () => {ws.close();};
         });
     }, [serverUrl]);
