@@ -12,12 +12,12 @@ function WeatherWidget(props = null) // props.weatherData
         if (!props) return;
         if (props.weatherData) setWeatherData(props.weatherData);
 
-        console.log("hello", props.weatherData);
+        // console.log("hello", props.weatherData);
     }, [props]);
 
     if(!weatherData) return <div>Loading...</div>
 
-    const isDayTime = weatherData.isDayTime
+    const isDayTime = weatherData.isDaytime
     const cloudSize = 51
 
     return (
@@ -29,7 +29,7 @@ function WeatherWidget(props = null) // props.weatherData
             <div className='temperature'>{weatherData.temperature}°</div>
             <div className='weather'>{weatherData.shortForecast}</div>
             <div className='location'>Naperville</div>
-            <div className='humidity'>Humidity: {weatherData.relativeHumidity.value}</div>
+            <div className='humidity'>Humidity: {weatherData.relativeHumidity.value}%</div>
         </div>
     );
 }
