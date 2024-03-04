@@ -13,6 +13,7 @@ function App() {
     const [countdown, setCountdown] = useState(null);
     const [periodName, setPeriodName] = useState("");
 
+    const [siteLayout, setSiteLayout] = useState({backgroundColor: "#000000"});
     const [widgetList, setWidgetList] = useState([]);
 
     const [weather, setWeather] = useState([]);
@@ -31,7 +32,8 @@ function App() {
             const data = JSON.parse(e.data);
 
             setSchedule(data.schedule);
-            setWidgetList(data.layout);
+            setSiteLayout(data.layout.site);
+            setWidgetList(data.layout.widgetList);
             setWeather(data.weather);
             
             return () => {ws.close();};
@@ -64,7 +66,7 @@ function App() {
     }
 
     return (     
-        <div className="App">
+        <div className="App" style={{backgroundColor:siteLayout.backgroundColor}}>
             <Timekeeper schedule={schedule} countdownCallback={setCountdown} periodNameCallback={setPeriodName}/>
             {renderWidgetList()}
         </div>

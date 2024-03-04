@@ -4,7 +4,8 @@ import "../styles/App.css";
 import WidgetBox from "../components/WidgetBox";
 import CountdownConfig from "../components/CountdownConfig";
 import ClockConfig from "../components/ClockConfig";
-import PeriodName from "../components/PeriodNameConfig";
+import PeriodNameConfig from "../components/PeriodNameConfig";
+import SiteConfig from "../components/SiteConfig";
 
 
 // TODO: add dragging at corners
@@ -21,29 +22,33 @@ function LayoutPage()
     const [selectedRow, setSelectedRow] = useState(-1);
     const [selectedCol, setSelectedCol] = useState(-1);
 
-    const [selectedDraggable, setSelectedDraggable] = useState(0); // 0 == null, 1 == up, 2 == right, 3 == down, 4 == left
+    const [downX, setDownX] = useState(-1);
+    const [downY, setDownY] = useState(-1);
+
+    const [selectedDraggable, setSelectedDraggable] = useState(-1); // 0 == movement, 1 == up, 2 == right, 3 == down, 4 == left, 5 == top-right, 6 == bottom-right, 7 == bottom-left, 8 == top-left
 
     const [selectedWidget, setSelectedWidget] = useState(null);
 
 
-    // TODO: widgetList must be stored on the server
     const [widgetList, setWidgetList] = useState([]); // The list of all widget locations/data
+    const [siteLayout, setSiteLayout] = useState({backgroundColor:"#000000"});
+
+    const [loading, setLoading] = useState(true);
+
 
 
     const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
 
     // TODO: and authorization header can be used to make sure that this user has admin credentials
-    function updateServerLayout(info) // Sends the schedules to the server 
-    {
-        console.log(info);
-
+    function updateServerLayout(siteData, widgetData) // Sends the schedules to the server 
+    { 
         fetch(`${baseURL}layout`,
         {
             method:"PUT",
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({site: siteData, widgetList: widgetData})
         });
     }
 
@@ -51,7 +56,7 @@ function LayoutPage()
     useEffect(() => {
         fetch(`${baseURL}layout`)
         .then((res) => res.json())
-        .then((data) => {setWidgetList(data);}
+        .then((data) => {setWidgetList(data.widgetList); setSiteLayout(data.site); setLoading(false);}
         );
     }, []);
     
@@ -77,12 +82,45 @@ function LayoutPage()
                         const rectWidth = 50 * w.width + (w.width - 1) * 3; // td width + borders in between        (This one too)
                         const rectHeight = 50 * w.height + (w.height - 1) * 3; // TODO: This must change when CSS changes ^^^
 
-                        colList.push(<td id={r + "." + c} style={{... specialStyle, width:rectWidth, height:rectHeight}} onClick={ () => 
+                        colList.push(<td id={r + "." + c} style={{... specialStyle, width:rectWidth, height:rectHeight}} 
+                            onMouseDown={ (e) => 
                             {
                                 setSelectedRow(r);
                                 setSelectedCol(c);
-                            }
-                        } rowSpan={w.height} colSpan={w.width}>{renderDraggables(r, c, rectWidth, rectHeight)}{w.type}</td>);
+                                setDownX(e.clientX);
+                                setDownY(e.clientY);
+
+                                const selectMargin = 10; // number of pixels for selecting the element
+
+                                const rect = document.getElementById(r + "." + c).getBoundingClientRect();
+
+                                const top = (e.clientY < rect.top + selectMargin) ? true : false;
+                                const right = (e.clientX > rect.right - selectMargin) ? true : false;
+                                const bottom = (e.clientY > rect.bottom - selectMargin) ? true : false;
+                                const left = (e.clientX < rect.left + selectMargin) ? true : false;
+
+                                var draggableNum = 0;
+                                if (top) 
+                                {
+                                    draggableNum = 1;
+                                    if (right) draggableNum = 5;
+                                    else if (left) draggableNum = 8;
+                                }
+                                else if (right) 
+                                {
+                                    draggableNum = 2;
+                                    if (bottom) draggableNum = 6;
+                                }
+                                else if (bottom) 
+                                {
+                                    draggableNum = 3;
+                                    if (left) draggableNum = 7
+                                }
+                                else if (left) draggableNum = 4;
+                                
+                                setSelectedDraggable(draggableNum);
+                            }}
+                        rowSpan={w.height} colSpan={w.width}>{w.type}</td>);
                         
                         empty = false;
                         break;
@@ -131,44 +169,46 @@ function LayoutPage()
         return rowList; // return the table information
     }
 
-    function renderDraggables(row, col, rectWidth, rectHeight) // render icons for resizeing the selected widget at the 4 edges
-    {
-        if (row !== selectedRow || col !== selectedCol) return; // only render if this is the selected element
-
-        const draggableSize = 10; // TODO: set as a circle with a diameter of 10px temporarily (make it look nicer)
-        // svg images are cool
-        return(
-                [<svg onMouseDown={()=>setSelectedDraggable(1)} id="topDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)), left:(-(draggableSize / 2)) + rectWidth / 2}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
-                <svg onMouseDown={()=>setSelectedDraggable(2)} id="rightDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)) + rectHeight / 2, left:(-(draggableSize / 2)) + rectWidth}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
-                <svg onMouseDown={()=>setSelectedDraggable(3)} id="bottomDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)) + rectHeight, left:(-(draggableSize / 2)) + rectWidth / 2}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>,
-                <svg onMouseDown={()=>setSelectedDraggable(4)} id="leftDrag" fill="green" height={draggableSize} width={draggableSize} style={{zIndex:"2", position:"absolute", top:(-(draggableSize / 2)) + rectHeight / 2, left:(-(draggableSize / 2))}}><circle cx={draggableSize / 2} cy={draggableSize / 2} r={draggableSize / 2}></circle></svg>]
-        );
-    }
 
     // deselect any draggables when the mouse button is raised
     document.body.onmouseup = function() {
-        setSelectedDraggable(0);
+        setSelectedDraggable(-1);
         setSelectedWidget(null);
+
+        setDownX(-1);
+        setDownY(-1);
     }
 
     // check to see if mouse movement is sufficient to resize the selected widget
     document.body.onmousemove = function(e) {
-        if (selectedDraggable === 0) return; // nothing is selected for resizeing
+        if (selectedDraggable === -1) return; // nothing is selected for resizeing
         const selectedTD = document.getElementById(selectedRow + "." + selectedCol); // find the seledted td element
         if (!selectedTD) return; // don't do anything if a widget isn't selected
 
         const rect = selectedTD.getBoundingClientRect(); // the bounding rect for the td element representing the widget
         const xThreshold = (rect.width / selectedTD.colSpan) * 0.6;
         const yThreshold = (rect.height / selectedTD.rowSpan) * 0.6;
-
+        
         // the new size / position of the widget upon resizeing
         var newXPos = selectedCol;
         var newYPos = selectedRow;
         var newWidth = selectedTD.colSpan;
         var newHeight = selectedTD.rowSpan;
 
+        // the desired movement if selectedDraggable === 0
+        var xDiff = 0;
+        var yDiff = 0;
+
         // check to see if resizeing should be attempted
-        if (selectedDraggable === 1) // check if the element must be resized (UP)
+        if (selectedDraggable === 0 && downX !== -1 && downY !== -1)
+        {
+            xDiff = (e.clientX - downX) / (rect.width / selectedTD.colSpan); xDiff = (xDiff < 0) ? Math.ceil(xDiff) : Math.floor(xDiff);
+            yDiff =(e.clientY - downY) / (rect.height / selectedTD.rowSpan); yDiff = (yDiff < 0) ? Math.ceil(yDiff) : Math.floor(yDiff);
+
+            newXPos += xDiff;
+            newYPos += yDiff;
+        }
+        if (selectedDraggable === 1 || selectedDraggable === 8 || selectedDraggable === 5) // check if the element must be resized (UP)
         {
             if (e.clientY < rect.top - yThreshold) // attempt to expand
             {
@@ -181,7 +221,7 @@ function LayoutPage()
                 newHeight--;
             }
         }
-        else if (selectedDraggable === 2) // check if the element must be resized (RIGHT)
+        if (selectedDraggable === 2 || selectedDraggable === 5 || selectedDraggable === 6) // check if the element must be resized (RIGHT)
         {
             if (e.clientX > rect.right + xThreshold) // attempt to expand
             {
@@ -192,7 +232,7 @@ function LayoutPage()
                 newWidth--;
             }
         }
-        else if (selectedDraggable === 3) // check if the element must be resized (DOWN)
+        if (selectedDraggable === 3 || selectedDraggable === 6 || selectedDraggable === 7) // check if the element must be resized (DOWN)
         {
             if (e.clientY > rect.bottom + yThreshold) // attempt to expand
             {
@@ -203,7 +243,7 @@ function LayoutPage()
                 newHeight--;
             }
         }
-        else if (selectedDraggable === 4) // check if the element must be resized (LEFT)
+        if (selectedDraggable === 4 || selectedDraggable === 7|| selectedDraggable === 8) // check if the element must be resized (LEFT)
         {
             if (e.clientX < rect.left - xThreshold) // attempt to expand
             {
@@ -215,9 +255,10 @@ function LayoutPage()
                 newXPos++;
                 newWidth--;
             }
-        } else (console.log("ERROR: This should not print"));
+        }
 
         // check if new location is valid
+        if (newXPos === selectedCol && newYPos === selectedRow && newWidth === selectedTD.colSpan && newHeight === selectedTD.rowSpan) return; // no changes in layout
         if (newXPos < 0 || newXPos + newWidth - 1 >= numColumns || newYPos < 0 || newYPos + newHeight - 1 >= numRows) return; // widget can't go outside of table bounds
         if (newWidth < 1 || newHeight < 1) return; // invalid width or height
 
@@ -241,6 +282,12 @@ function LayoutPage()
 
         if (isValid === false) return; // can't resize if it would overlap with another widget
 
+        if (selectedDraggable === 0) // The cursor "ancor" position for dragging needs to be updated
+        {
+            setDownX(downX + (xDiff * (rect.width / selectedTD.colSpan)));
+            setDownY(downY + (yDiff * (rect.height / selectedTD.rowSpan)));
+        }
+
         // update the widget-list
         const widgetListCopy = [... widgetList]; // shallow copy
         const oldWidget = widgetList[currentWidgetIndex]; // the old widget information
@@ -251,6 +298,7 @@ function LayoutPage()
         setSelectedCol(newXPos); // ^ same goes for xPos
 
         setWidgetList(widgetListCopy);
+        updateServerLayout(siteLayout, widgetListCopy);
     }
 
     function generateConfigurationForm() // The form for modifying the selected widget (e.g. changing the color of the widget)
@@ -269,11 +317,14 @@ function LayoutPage()
                     case "clock":
                         return <ClockConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
-                        return <PeriodName config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                        return <PeriodNameConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "default": console.log("Widget Type ERROR (This should not print)");
                 }
             }
         }
+
+        // if no widget is selected, allow modification of site config (e.g. the background color of the site)
+        return <SiteConfig config={siteLayout} callback={(res) => {setSiteLayout(res); updateServerLayout(res, widgetList)}}/>;
 
         function changeWidgetConfig(widget, config, index)
         {
@@ -283,8 +334,34 @@ function LayoutPage()
             widgetListCopy.push(widget);
 
             setWidgetList(widgetListCopy);
+            updateServerLayout(siteLayout, widgetListCopy);
         }
     }
+
+    function generateDeleteButton()
+    {
+        // go through all widgets to find the selected widget
+        for (let i = 0; i < widgetList.length; i++)
+        {
+            const w = {... widgetList[i]};
+
+            if (selectedRow === w.row && selectedCol === w.col)
+            {
+                return <button
+                    onClick={ () => {
+                        const widgetListCopy = [... widgetList];
+                        widgetListCopy.splice(i, 1);
+                        setWidgetList(widgetListCopy);
+                        updateServerLayout(siteLayout, widgetListCopy);
+                    }}
+                >IDK What to name the delete button, but here it is</button>
+            }
+        }
+    }
+
+
+
+    if (loading) return <></>; // don't render anything if info hasn't come from the server yet
 
     return(
         <div className="Content">
@@ -312,7 +389,10 @@ function LayoutPage()
                 {generateConfigurationForm()}
             </div>
 
-            <button onClick={() => {updateServerLayout(widgetList);}}>Temporary Save Button</button>
+            <div>
+                {generateDeleteButton()}
+            </div>
+
         </div>
     );
 }

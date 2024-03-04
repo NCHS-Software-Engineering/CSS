@@ -10,12 +10,10 @@ function Countdown(props = null) // props.deltaTime
   const [height, setHeight] = useState(1);
 
   useEffect(() => {
-      if (!props) return;
-
-      if (props.col) setCol(props.col + 1);
-      if (props.row) setRow(props.row + 1);
-      if (props.width) setWidth(props.width);
-      if (props.height) setHeight(props.height);
+      setCol(props.col + 1);
+      setRow(props.row + 1);
+      setWidth(props.width);
+      setHeight(props.height);
   }, [props]);
 
 
@@ -38,7 +36,7 @@ function Countdown(props = null) // props.deltaTime
     }
   }, [props])
   
-
+  
   return (
     <div className="Widget"
         style=

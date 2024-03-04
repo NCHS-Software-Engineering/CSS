@@ -42,7 +42,7 @@ if (FileSystem.existsSync("files/calendar.json") === false) // create an empty d
 }
 if (FileSystem.existsSync("files/layout.json") === false) // create an empty dictionary of all dates
 {
-    const data = [];
+    const data = {site:{backgroundColor:"#000000"}, widgetList:[]};
     FileSystem.writeFileSync("files/layout.json", JSON.stringify(data));
 }
 

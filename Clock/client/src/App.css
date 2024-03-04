@@ -16,6 +16,11 @@
   background-color: lightblue;
 }
 
+.Widget {
+  margin: 0;
+  text-align: center;
+}
+
 
 /*
 .App {

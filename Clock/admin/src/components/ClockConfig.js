@@ -15,8 +15,13 @@ function ClockConfig(params=null) // params.config, params.callback
     const [displayBackgroundColorPicker, setDisplayBackgroundColorPicker] = useState("none");
     const [displayTextColorPicker, setDisplayTextColorPicker] = useState("none");
 
+    
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds});}
+
     useEffect(() =>
     {
+        if (!params.config) runCallback();
+
         setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
         setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
         setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
@@ -27,7 +32,7 @@ function ClockConfig(params=null) // params.config, params.callback
 
     useEffect(() =>
     {
-        params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds});
+        runCallback();
     }, [backgroundColor, textColor, displaySeconds]);
 
 

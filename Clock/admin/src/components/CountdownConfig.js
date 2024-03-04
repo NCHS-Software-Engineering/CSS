@@ -17,22 +17,26 @@ function CountdownConfig(params=null) // params.config, params.callback
     const [displayTextColorPicker, setDisplayTextColorPicker] = useState("none");
     const [displaySecondCheckbox, setDisplaySecondCheckbox] = useState("initial");
 
+
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds, "displaySecondsLastMinute":displaySecondsLastMinute});}
+
     useEffect(() =>
     {
+        if (!params.config) runCallback();
+
         setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
         setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
         setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
         setDisplaySecondsLastMinute((params.config && params.config.displaySecondsLastMinute) ? params.config.displaySecondsLastMinute : false); // should the seconds be displayed in the last minute of the countdown     
 
-        //setDisplayBackgroundColorPicker("none");
-        //setDisplayTextColorPicker("none");
         setDisplaySecondCheckbox(((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false) ? "none" : "initial");
     }, [params]);
 
     useEffect(() =>
     {
-        params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds, "displaySecondsLastMinute":displaySecondsLastMinute});
+        runCallback();
     }, [backgroundColor, textColor, displaySeconds, displaySecondsLastMinute]);
+
 
 
     return (
