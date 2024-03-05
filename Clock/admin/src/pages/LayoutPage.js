@@ -6,6 +6,7 @@ import CountdownConfig from "../components/CountdownConfig";
 import ClockConfig from "../components/ClockConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
+import WeatherConfig from "../components/WeatherConfig";
 
 
 // TODO: add dragging at corners
@@ -35,6 +36,7 @@ function LayoutPage()
 
     const [loading, setLoading] = useState(true);
 
+    const [cursor, setCursor] = useState("auto");
 
 
     const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
@@ -82,7 +84,7 @@ function LayoutPage()
                         const rectWidth = 50 * w.width + (w.width - 1) * 3; // td width + borders in between        (This one too)
                         const rectHeight = 50 * w.height + (w.height - 1) * 3; // TODO: This must change when CSS changes ^^^
 
-                        colList.push(<td id={r + "." + c} style={{... specialStyle, width:rectWidth, height:rectHeight}} 
+                        colList.push(<td id={r + "." + c} style={{... specialStyle, width:rectWidth, height:rectHeight, cursor: cursor}} 
                             onMouseDown={ (e) => 
                             {
                                 setSelectedRow(r);
@@ -103,18 +105,31 @@ function LayoutPage()
                                 if (top) 
                                 {
                                     draggableNum = 1;
-                                    if (right) draggableNum = 5;
-                                    else if (left) draggableNum = 8;
+                                    if (right) 
+                                    {
+                                        draggableNum = 5;
+                                        setCursor("nesw-resize");
+                                    }
+                                    else if (left) {
+                                        draggableNum = 8;
+                                        setCursor("nwse-resize");
+                                    }
                                 }
                                 else if (right) 
                                 {
                                     draggableNum = 2;
-                                    if (bottom) draggableNum = 6;
+                                    if (bottom) {
+                                        draggableNum = 6;
+                                        setCursor("nwse-resize");
+                                    }
                                 }
                                 else if (bottom) 
                                 {
                                     draggableNum = 3;
-                                    if (left) draggableNum = 7
+                                    if (left) {
+                                        draggableNum = 7;
+                                        setCursor("nesw-resize");
+                                    }
                                 }
                                 else if (left) draggableNum = 4;
                                 
@@ -177,6 +192,8 @@ function LayoutPage()
 
         setDownX(-1);
         setDownY(-1);
+
+        setCursor("auto");
     }
 
     // check to see if mouse movement is sufficient to resize the selected widget
@@ -318,6 +335,8 @@ function LayoutPage()
                         return <ClockConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
                         return <PeriodNameConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                    case "weather":
+                        return <WeatherConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "default": console.log("Widget Type ERROR (This should not print)");
                 }
             }
@@ -354,7 +373,7 @@ function LayoutPage()
                         setWidgetList(widgetListCopy);
                         updateServerLayout(siteLayout, widgetListCopy);
                     }}
-                >IDK What to name the delete button, but here it is</button>
+                >remove widget</button>
             }
         }
     }

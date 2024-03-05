@@ -16,7 +16,7 @@ function App() {
     const [siteLayout, setSiteLayout] = useState({backgroundColor: "#000000"});
     const [widgetList, setWidgetList] = useState([]);
 
-    const [weather, setWeather] = useState([]);
+    const [weather, setWeather] = useState(null);
 
 
     const portNum = 8000; // Change this number in order to change which port the server is listening on
@@ -45,6 +45,8 @@ function App() {
     {
         const displayList = [];
 
+        // console.log(widgetList);
+
         for (const w of widgetList)
         {
             switch(w.type)
@@ -57,6 +59,9 @@ function App() {
                     break;
                 case "periodName":
                     displayList.push(<PeriodName periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    break;
+                case "weather":
+                    displayList.push(<WeatherWidget weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "default": console.log("Widget Type ERROR (This should not print)");
             }
