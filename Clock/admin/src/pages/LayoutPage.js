@@ -9,9 +9,6 @@ import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
 
 
-// TODO: add dragging at corners
-// TODO: of the widget itself
-// TODO: fix the table to make sure that all compnents stay the same size (NOTE: done?)
 // TODO: add "config components" for more widgets
 function LayoutPage() 
 {
@@ -83,16 +80,70 @@ function LayoutPage()
                     {
                         const rectWidth = 50 * w.width + (w.width - 1) * 3; // td width + borders in between        (This one too)
                         const rectHeight = 50 * w.height + (w.height - 1) * 3; // TODO: This must change when CSS changes ^^^
+                        
+                        const selectMargin = 10; // number of pixels for selecting the element // TODO: this should maybe be relative to the viewport
+
 
                         colList.push(<td id={r + "." + c} style={{... specialStyle, width:rectWidth, height:rectHeight, cursor: cursor}} 
+                            onMouseLeave={ () => 
+                            {
+                                setCursor("auto");
+                            }}
+                            onMouseMove={ (e) =>
+                            {
+                                var cursorDisplay = "move";
+
+                                const rect = document.getElementById(r + "." + c).getBoundingClientRect();
+
+                                const top = (e.clientY < rect.top + selectMargin) ? true : false;
+                                const right = (e.clientX > rect.right - selectMargin) ? true : false;
+                                const bottom = (e.clientY > rect.bottom - selectMargin) ? true : false;
+                                const left = (e.clientX < rect.left + selectMargin) ? true : false;
+
+                                if (top) 
+                                {
+                                    if (right) 
+                                    {
+                                        cursorDisplay = "nesw-resize";
+                                    }
+                                    else if (left) {
+                                        cursorDisplay = "nwse-resize";
+                                    }
+                                    else 
+                                    {
+                                        cursorDisplay = "ns-resize";
+                                    }
+                                }
+                                else if (right) 
+                                {
+                                    if (bottom) {
+                                        cursorDisplay = "nwse-resize";
+                                    }
+                                    else
+                                    {
+                                        cursorDisplay = "ew-resize";
+                                    }
+                                }
+                                else if (bottom) 
+                                {
+                                    if (left) {
+                                        cursorDisplay = "nesw-resize";
+                                    }
+                                    else
+                                    {
+                                        cursorDisplay = "ns-resize";
+                                    }
+                                }
+                                else if (left) cursorDisplay = "ew-resize";
+
+                                setCursor(cursorDisplay);
+                            }}
                             onMouseDown={ (e) => 
                             {
                                 setSelectedRow(r);
                                 setSelectedCol(c);
                                 setDownX(e.clientX);
                                 setDownY(e.clientY);
-
-                                const selectMargin = 10; // number of pixels for selecting the element
 
                                 const rect = document.getElementById(r + "." + c).getBoundingClientRect();
 
@@ -192,8 +243,6 @@ function LayoutPage()
 
         setDownX(-1);
         setDownY(-1);
-
-        setCursor("auto");
     }
 
     // check to see if mouse movement is sufficient to resize the selected widget

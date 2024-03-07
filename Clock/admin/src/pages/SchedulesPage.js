@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import DraggableList from "react-draggable-list";
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
@@ -48,7 +49,7 @@ function SchedulesPage()
 
         if (newSelection === null) // an EMPTY schedule will contain no initial schedule data
         {
-            setTempSchedule([{name:"", start:"00:00", end:"00:00"}]); // blank schedule with 1 blank period
+            setTempSchedule([]); // blank schedule
         }
         else // and existing schedule will auto-populate with the existing schedule data
         {
@@ -62,36 +63,70 @@ function SchedulesPage()
         setTempScheduleName(e.target.value);
     }
 
-    // The function to get an ordered list of all of the created periods 
+    // The function to get an draggable list of all of the created periods 
+    const [displayArr, setDisplayArr] = useState([]);
     function displayEditor()
     {
-        const periods = tempSchedule;
+        var foundDifference = false;
+        var newDisplayArr = [];
 
-        const displayArr = [];
-
-        if (periods)
+        if (tempSchedule.length < displayArr.length) foundDifference = true;
+        for (let i = 0; i < tempSchedule.length; i++)
         {
-            for (let i = 0; i < periods.length; i++)
-            {
-                const element = periods[i];
-                // create a PeriodEditor component with all of the initial values needed
-                displayArr.push(<PeriodEditor id={i} name={element.name} start={element.start} end={element.end} callback={periodEditUpdate} />);
-            }
+            newDisplayArr.push({ id:i, name:tempSchedule[i].name, start:tempSchedule[i].start, end:tempSchedule[i].end });
+
+            if (i >= displayArr.length || tempSchedule[i].name !== displayArr[i].name || tempSchedule[i].start !== displayArr[i].start || tempSchedule[i].end !== displayArr[i].end) foundDifference = true;
         }
-        
-        return displayArr;
-    }
 
-    // Called whenever a PeriodEditor is modified. Updates the currently selected schedule accordingly.
-    function periodEditUpdate(res)
-    {
-        const index = res.id;
-        delete res.id;
-
-        const newTempSchedule = [...tempSchedule]; // create a shallow copy of tempSchedule to be modified
-        newTempSchedule[index] = res;
+        if (foundDifference) setDisplayArr(newDisplayArr);
         
-        setTempSchedule(newTempSchedule);
+        
+        return <DraggableList 
+            itemKey="id"
+            template={PeriodEditor}
+            list={displayArr}
+            container={() => {return document.body;}}
+            commonProps={periodEditUpdate}
+            onMoveEnd={reposition}
+
+            constrainDrag = {true}
+        />;
+
+        // Called whenever a PeriodEditor is modified. Updates the currently selected schedule accordingly.
+        function periodEditUpdate(res)
+        {
+            if (res.delete)
+            {
+                const copiedTempSchedule = [...tempSchedule]; // create a shallow copy of tempSchedule to be modified
+                const index = res.id;
+                copiedTempSchedule.splice(index, 1);
+
+                setTempSchedule(copiedTempSchedule);
+                
+                return;
+            }
+
+            const index = res.id;
+            delete res.id;
+
+            const copiedTempSchedule = [...tempSchedule]; // create a shallow copy of tempSchedule to be modified
+            copiedTempSchedule[index] = res;
+            
+            setTempSchedule(copiedTempSchedule);
+        }
+
+        function reposition(res)
+        {
+            const newTempSchedule = [];
+
+            for (const i in res)
+            {
+                newTempSchedule.push({name:res[i].name, start:res[i].start, end:res[i].end});
+            }
+
+            setDisplayArr(res);
+            setTempSchedule(newTempSchedule);
+        }
     }
 
     function addPeriod() // Add on a new empty period
@@ -234,11 +269,9 @@ function SchedulesPage()
                             <th>End</th>
                         </tr>
                     </thead>
-
-                    <tbody key={selection}>
-                        {displayEditor()}
-                    </tbody>
                 </table>
+
+                {displayEditor()}
             </div>
             <div className="List">
                 <button className="button" onClick={addPeriod}>Add Period</button>
