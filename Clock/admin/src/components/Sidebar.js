@@ -1,17 +1,56 @@
 import { Link } from 'react-router-dom';
-import "../styles/App.css";
 
-function Sidebar() {
+import { Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+
+function Sidebar(props) // props.width 
+{
     return (
-        <div className="Sidebar">
-            <Link to="/preview"><button className="button button-sidebar" width="400">Preview</button></Link>
-            <Link to="/layout"><button className="button button-sidebar">Layout</button></Link>
-            <Link to="/calendar"><button className="button button-sidebar">Calendar</button></Link>
-            <Link to="/defaultWeek"><button className="button button-sidebar">Default Week</button></Link>
-            <Link to="/schedules"><button className="button button-sidebar">Schedules</button></Link>
-            
-            <Link to="/"><button className="button button-sidebar">Log Out</button></Link>
-        </div>
+        <Box sx={{width: props.width, paddingTop: 1, borderRight: 1, marginRight: 1}}>
+            <List>
+                <ListItem disablePadding>
+                    <Link to="/preview" style={{width: "100%"}}>
+                        <ListItemButton>
+                            <ListItemText primary={"Preview"}/>
+                        </ListItemButton>
+                    </Link>
+                </ListItem>
+                <ListItem disablePadding>
+                    <Link to="/layout" style={{width: "100%"}}>
+                        <ListItemButton>
+                            <ListItemText primary={"Layout"}/>
+                        </ListItemButton>
+                    </Link>
+                </ListItem>
+                <ListItem disablePadding>
+                    <Link to="/calendar" style={{width: "100%"}}>
+                        <ListItemButton>
+                            <ListItemText primary={"Calendar"}/>
+                        </ListItemButton>
+                    </Link>
+                </ListItem>
+                <ListItem disablePadding>
+                    <Link to="/defaultWeek" style={{width: "100%"}}>
+                        <ListItemButton>
+                            <ListItemText primary={"Default Week"}/>
+                        </ListItemButton>
+                    </Link>
+                </ListItem>
+                <ListItem disablePadding>
+                    <Link to="/schedules" style={{width: "100%"}}>
+                        <ListItemButton>
+                            <ListItemText primary={"Schedules"}/>
+                        </ListItemButton>
+                    </Link>
+                </ListItem>
+                <ListItem disablePadding>
+                    <Link to="/" style={{width: "100%"}}>
+                        <ListItemButton>
+                            <ListItemText primary={"Log Out"}/>
+                        </ListItemButton>
+                    </Link>
+                </ListItem>
+            </List>
+        </Box>
     );
 }
 

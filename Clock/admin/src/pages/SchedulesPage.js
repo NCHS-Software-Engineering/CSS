@@ -5,6 +5,7 @@ import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
 
 import "../styles/App.css";
+import { Box, Button, Paper, TextField } from "@mui/material";
 
 
 function SchedulesPage()
@@ -14,6 +15,9 @@ function SchedulesPage()
 
     const [tempScheduleName, setTempScheduleName] = useState(""); // The name of the schedule can be set by the user if it is a new schedule
     const [tempSchedule, setTempSchedule] = useState([]); // the contents of the schedule being modified / created
+
+    const [IDs, setIDs] = useState(new Set());
+    const [nextID, setNextID] = useState(0);
 
     const baseURL = "http://localhost:8500/"; // This will likly need to be changed for a production build
 
@@ -45,16 +49,23 @@ function SchedulesPage()
     {
         setSelection(newSelection);
         setTempScheduleName(newSelection);
-        if (document.getElementById("ScheduleNameInput")) document.getElementById("ScheduleNameInput").value = "";
 
-        if (newSelection === null) // an EMPTY schedule will contain no initial schedule data
+        var newTempSchedule = [];
+        if (newSelection !== null)
         {
-            setTempSchedule([]); // blank schedule
+            newTempSchedule = [... schedules[newSelection]];
         }
-        else // and existing schedule will auto-populate with the existing schedule data
+
+        const indexList = [];
+        for (let i = 0; i < newTempSchedule.length; i++)
         {
-            setTempSchedule(schedules[newSelection]);
+            indexList.push(i);
+            newTempSchedule[i].id = i;
         }
+
+        setIDs(new Set(indexList));
+        setNextID(indexList.length);
+        setTempSchedule(newTempSchedule);
     }
 
     // If this is a new schedule, the schedule name can be chosen by the user
@@ -64,27 +75,12 @@ function SchedulesPage()
     }
 
     // The function to get an draggable list of all of the created periods 
-    const [displayArr, setDisplayArr] = useState([]);
     function displayEditor()
     {
-        var foundDifference = false;
-        var newDisplayArr = [];
-
-        if (tempSchedule.length < displayArr.length) foundDifference = true;
-        for (let i = 0; i < tempSchedule.length; i++)
-        {
-            newDisplayArr.push({ id:i, name:tempSchedule[i].name, start:tempSchedule[i].start, end:tempSchedule[i].end });
-
-            if (i >= displayArr.length || tempSchedule[i].name !== displayArr[i].name || tempSchedule[i].start !== displayArr[i].start || tempSchedule[i].end !== displayArr[i].end) foundDifference = true;
-        }
-
-        if (foundDifference) setDisplayArr(newDisplayArr);
-        
-        
-        return <DraggableList 
+        return <DraggableList
             itemKey="id"
             template={PeriodEditor}
-            list={displayArr}
+            list={tempSchedule}
             container={() => {return document.body;}}
             commonProps={periodEditUpdate}
             onMoveEnd={reposition}
@@ -95,37 +91,35 @@ function SchedulesPage()
         // Called whenever a PeriodEditor is modified. Updates the currently selected schedule accordingly.
         function periodEditUpdate(res)
         {
-            if (res.delete)
-            {
-                const copiedTempSchedule = [...tempSchedule]; // create a shallow copy of tempSchedule to be modified
-                const index = res.id;
-                copiedTempSchedule.splice(index, 1);
-
-                setTempSchedule(copiedTempSchedule);
-                
-                return;
-            }
-
-            const index = res.id;
-            delete res.id;
+            var index = 0;
 
             const copiedTempSchedule = [...tempSchedule]; // create a shallow copy of tempSchedule to be modified
-            copiedTempSchedule[index] = res;
-            
+            for (let i = 0; i < copiedTempSchedule.length; i++)
+            {
+                if (copiedTempSchedule[i].id === res.id)
+                {
+                    index = i;
+                }
+            }
+
+            if (res.delete)
+            {
+                copiedTempSchedule.splice(index, 1);
+                const copiedIDs = new Set(IDs);
+                copiedIDs.delete(res.id);
+                setIDs(copiedIDs);
+            }
+            else
+            {
+                copiedTempSchedule[index] = res;
+            }
+
             setTempSchedule(copiedTempSchedule);
         }
 
         function reposition(res)
         {
-            const newTempSchedule = [];
-
-            for (const i in res)
-            {
-                newTempSchedule.push({name:res[i].name, start:res[i].start, end:res[i].end});
-            }
-
-            setDisplayArr(res);
-            setTempSchedule(newTempSchedule);
+            setTempSchedule(res);
         }
     }
 
@@ -134,22 +128,21 @@ function SchedulesPage()
         const newTempSchedule = [...tempSchedule]; 
         const p = {};
         p.name = "";
-        p.start = newTempSchedule.length > 0 ? newTempSchedule[newTempSchedule.length - 1].start : "00:00";
+        p.start = newTempSchedule.length > 0 ? newTempSchedule[newTempSchedule.length - 1].end : "00:00";
         p.end = p.start;
+
+        var done = false;
+        var checkID = nextID;
+        while (!done)
+        {
+            if (IDs.has(checkID) === false) done = true;
+            else checkID++;
+        }
+        p.id = checkID;
+        setNextID(checkID + 1);
 
         newTempSchedule.push(p);
         
-        setTempSchedule(newTempSchedule);
-    }
-    function deletePeriod(index = -1) // Deletes the last period in the schedule
-    {
-        const newTempSchedule = [...tempSchedule];
-        
-        if (newTempSchedule.length > 0) 
-        {
-            newTempSchedule.pop();
-        }
-
         setTempSchedule(newTempSchedule);
     }
 
@@ -160,12 +153,12 @@ function SchedulesPage()
         // -- field for nameing schedule --
         if (selection === null) 
         {
-            return <input className="box" id="ScheduleNameInput" type="text" placeholder="Schedule Name" onInput={changeScheduleName}></input>;
+            return <TextField variant="filled" label="New Schedule Name" value={tempScheduleName} onInput={changeScheduleName}></TextField>;
         }
 
         // -- button for deleteing schedule --
         return(
-            <button className="button" onClick={() => {
+            <Button variant="contained" size="large" onClick={() => {
                 if (window.confirm("Are you sure that you want to delete schedule \"" + selection + "\" ?"))
                 {
                     const copiedSchedules = {...schedules}; // shallow copy
@@ -175,7 +168,7 @@ function SchedulesPage()
                     updateServerSchedules(copiedSchedules); // update the server with the new schedules JSON object
                     changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
                 }
-            }}>DELETE SCHEDULE</button>
+            }}>DELETE SCHEDULE</Button>
         );
     }
 
@@ -226,59 +219,60 @@ function SchedulesPage()
         }
 
         // -- update server & reset states --
+        const copiedSchedules = {...schedules};
+        copiedSchedules[tempScheduleName] = spliceScheduleIDs(tempSchedule);
+        setSchedules(copiedSchedules);
+        updateServerSchedules(copiedSchedules);
+        changeSelection(null);
+
         if (selection === null) // if this is a completely new schedule
         {
-            const copiedSchedules = {...schedules};
-            copiedSchedules[tempScheduleName] = tempSchedule;
-            setSchedules(copiedSchedules);
-            updateServerSchedules(copiedSchedules);
-            changeSelection(null);
-
             window.alert("Added New Schedule");
         }
         else if (selection === tempScheduleName) // if an prexisting schdule is being modified
-        {
-            const copiedSchedules = {...schedules};
-            copiedSchedules[tempScheduleName] = tempSchedule;
-            setSchedules(copiedSchedules);
-            updateServerSchedules(copiedSchedules);
-            changeSelection(null);
-
+        {          
             window.alert("Updated Schedule");
         }
     }
 
+    function spliceScheduleIDs(sch)
+    {
+        const copy = [... sch];
+
+        for (let i = 0; i < copy.length; i++)
+        {
+            copy[i] = {"name":copy[i].name, "start":copy[i].start, "end":copy[i].end};
+        }
+
+        return copy;
+    }
+
 
     return(
-        <div className="Content">
-            <header className="App-header">
+        <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+            <Box sx={{height: "10vh", textAlign: "center", lineHeight:"10vh", marginBottom: 3}}>
                 <h1>Schedules</h1>
-            </header>
+            </Box>
+            
+            <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 3, padding: 1, width: "14cm", maxWidth: "90%"}}>
+                <Box sx={{display: "flex", marginBottom: 1}}>
+                    <Box sx={{marginRight: 1}}>
+                        <ScheduleDropdown schedules={schedules} nullSelectionName={"NEW SCHEDULE"} defaultValue={selection} callback={changeSelection}/>
+                    </Box>
+                    {specialInput()}
+                </Box>
 
-            <div className="List">
-                <ScheduleDropdown nullSelectionName={"NEW SCHEDULE"} defaultValue={selection} callback={changeSelection} />
+                <Box sx={{width: "100%"}}>
+                    {displayEditor()}
+                </Box>
 
-                {specialInput()}
-            </div>
-            <div className="List">
-                <table className="Table">
-                    <thead>
-                        <tr>
-                            <th>Period</th>
-                            <th>Start</th>
-                            <th>End</th>
-                        </tr>
-                    </thead>
-                </table>
+                <Box>
+                    <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
+                </Box>
+            </Paper>
 
-                {displayEditor()}
-            </div>
-            <div className="List">
-                <button className="button" onClick={addPeriod}>Add Period</button>
-                <button className="button" onClick={deletePeriod}>Delete Period</button>
-                <button className="button" onClick={submitSchedule}>Submit form</button>
-            </div>
-        </div>
+            <Button variant="contained" size="large" onClick={submitSchedule}>Submit form</Button>
+        </Box>
     );
 }
 
