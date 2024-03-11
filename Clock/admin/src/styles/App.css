@@ -5,18 +5,17 @@
     --grey: #666465;
   }
   
-  
+  /*
   .App {
     background: var(--night);
     height: 100%;
     background-size: cover;
-    font-family: Verdana, sans-serif;
     min-height : 100vh;
   }
   
   .App-link {
     color: var(--dusk);
-  }
+  }*/
   
   .App-header {
     display: flex;
@@ -65,11 +64,6 @@
     padding-top: 20px;
   }
   
-  .Content {
-    margin-left: 160px; /* Same as the width of the sidebar */
-    padding: 0px 10px;
-  }
-  
   .Dropdown {
     align-items: center;
     text-align: center;
@@ -93,6 +87,7 @@
   .Table {
     border-collapse: collapse;
     border: none;
+    color: white;
   }
   
   th, td {
@@ -106,7 +101,7 @@
   
   /* Scrollbar */
   ::-webkit-scrollbar {
-    width: 20px;
+    width: 10px;
   }
   
   ::-webkit-scrollbar-track {
@@ -122,7 +117,7 @@
     background: var(--blood); 
   }
   
-
+  /*
   .Button {
     color: var(--blood);
   }
@@ -146,7 +141,7 @@
     width: 250px;
     margin-top: 15px;
   }
-  
+  */
   
   .select {
     width: 20em;
@@ -168,13 +163,11 @@
     background-position: right 0.7rem top 50%;
     background-size: 0.65rem auto;
   }
-  
-  
-  .box {
-    width: 10em;
+
+  .Box {
+    align-items: center;
     text-align: center;
-    padding: 15px;
-    border: 1px solid var(--grey);
-    border-radius: 8px;
-    font-size: 15px;
+    justify-content: center;
+    min-height: 100vh;
+    min-width: 85vw;
   }

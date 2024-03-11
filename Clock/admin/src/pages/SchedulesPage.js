@@ -4,6 +4,7 @@ import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
 
 import "../styles/App.css";
+import Box from '@mui/material/Box';
 
 
 function SchedulesPage()
@@ -212,6 +213,7 @@ function SchedulesPage()
 
 
     return(
+        <Box className="Box">
         <div className="Content">
             <header className="App-header">
                 <h1>Schedules</h1>
@@ -243,6 +245,7 @@ function SchedulesPage()
                 <button className="button" onClick={submitSchedule}>Submit form</button>
             </div>
         </div>
+        </Box>
     );
 }
 

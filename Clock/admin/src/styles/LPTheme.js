@@ -1,6 +1,5 @@
 import { alpha } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
-import '@fontsource/inter';
 
 export const brand = {
   50: '#F0F7FF',
@@ -57,6 +56,10 @@ export const green = {
 const getDesignTokens = (mode) => ({
   palette: {
     mode,
+    basic: {
+      main: '#121216',
+      contrast: '#FFFFFF',
+    },
     primary: {
       light: brand[200],
       main: brand[500],

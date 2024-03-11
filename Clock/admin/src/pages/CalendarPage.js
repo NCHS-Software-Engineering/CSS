@@ -257,7 +257,7 @@ function CalendarPage()
 
     // TODO: <Link to = "/"> home link </Link>
     return(
-        <Box sx={{ width: '85%', height: '100%', typography: 'body1', border: '1px dashed grey' }}>
+        <Box className='Box' sx={{ width: '100%', height: '100%' }}>
         <div className="Content">
             <header className="App-header">
                 <h1>Event Calendar</h1>

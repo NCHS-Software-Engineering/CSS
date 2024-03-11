@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
 import "../styles/App.css";
-
+import Box from '@mui/material/Box';
 
 function DefaultWeekPage() 
 {
@@ -50,6 +50,7 @@ function DefaultWeekPage()
 
 
     return(
+        <Box className='Box'>
         <div className="Content">
             <header className="App-header">
                 <h1>Default Week</h1>
@@ -114,6 +115,7 @@ function DefaultWeekPage()
                 <button className="button" onClick={submitDefaultWeek}>Submit form</button>
             </div>
         </div>
+        </Box>
     );
 }
 

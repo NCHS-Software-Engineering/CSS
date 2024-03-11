@@ -2,15 +2,9 @@ import "../styles/App.css";
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
-import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography'
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 
 
@@ -39,29 +33,29 @@ export default function Sidebar() {
     };
 
     return(
-        <Box sx={{ width: '15%', bgcolor: 'primary' }}>
-            <List style={{ color: '#FFFFFF' }}>
-                <ListItem disablePadding>
+        <Box sx={{ width: '15vw', bgcolor: 'basic.main', borderRight: 1, borderColor: 'primary.main' }} style={{ color: '#FFFFFF' }}>
+            <List >
+                <ListItem disablePadding sx={{ pl: 2 }}>
                     <LinkTab label="Preview" href="/preview" />
                 </ListItem>
                 <Divider />
 
-                <ListItem disablePadding>
+                <ListItem disablePadding sx={{ pl: 2 }}>
                     <LinkTab label="Calendar" href="/calendar" />
                 </ListItem>
                 <Divider />
                 
-                <ListItem disablePadding>
+                <ListItem disablePadding sx={{ pl: 2 }}>
                     <LinkTab label="Default" href="/defaultWeek" />
                 </ListItem>
                 <Divider />
 
-                <ListItem disablePadding>
+                <ListItem disablePadding sx={{ pl: 2 }}>
                     <LinkTab label="Schedules" href="/schedules" />
                 </ListItem>
                 <Divider />
 
-                <ListItem disablePadding>
+                <ListItem disablePadding sx={{ pl: 2 }}>
                     <LinkTab label="Log Out" href="/" />
                 </ListItem>
             </List>
