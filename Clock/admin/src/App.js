@@ -20,7 +20,7 @@ import { Box } from '@mui/material';
 function App() {
   // the routing to the various pages
   return (
-    <Box sx={{minWidth: "100%", height: "100%", paddingRight: 1}}>
+    <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
       <BrowserRouter>
         <Box sx={{display: 'flex', minWidth: "100%", minHeight: "100%"}}>
           <Sidebar width="10%" />
@@ -41,7 +41,6 @@ function App() {
           </Box>
         </Box>
       </BrowserRouter>
-
     </Box>
   );
 }

@@ -158,7 +158,7 @@ function SchedulesPage()
 
         // -- button for deleteing schedule --
         return(
-            <Button variant="contained" size="large" onClick={() => {
+            <Button variant="contained" size="large" sx={{backgroundColor: "#ff0000"}} onClick={() => {
                 if (window.confirm("Are you sure that you want to delete schedule \"" + selection + "\" ?"))
                 {
                     const copiedSchedules = {...schedules}; // shallow copy
