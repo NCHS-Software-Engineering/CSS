@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
-import { Box, Button, ButtonGroup, MenuItem, Paper, Select } from "@mui/material";
+import { Box, Button, ButtonGroup, MenuItem, Paper, Select, Typography } from "@mui/material";
 import AspectRatio from "@mui/joy/AspectRatio";
 
 
@@ -280,18 +280,19 @@ function CalendarPage()
             <Box sx={{height: "10vh", textAlign: "center", lineHeight:"10vh", marginBottom: 3}}>
                 <h1>Special Event Calendar</h1>
             </Box>
-
-            <Paper elevation={7} sx={{padding:1, width: "65%"}}>
+            <Paper elevation={7} sx={{padding:3, width: "80%"}}>
                 <Box sx={{display: "flex", marginBottom: 1}}>
-                    <Box sx={{display: "flex", width: "70%"}}>
+                    <Box sx={{display: "flex", width: "35%"}}>
                         <Button variant="outlined" size="medium" onClick={todayButton} sx={{marginRight: 1}}>Today</Button>
                         <ButtonGroup variant="outlined" size="medium" sx={{marginRight: 1}}>
                             <Button onClick={previousButton}>Previous Month</Button>
                             <Button onClick={nextButton}>Next Month</Button>
                         </ButtonGroup>
+                    </Box>
+                    <Box sx={{display: "flex", width: "30%", justifyContent: "center"}}>
                         <h1>{numToMonth(tableMonth)}</h1>
                     </Box>
-                    <Box sx={{width: "30%"}}>
+                    <Box sx={{display: "flex", width: "35%", minHeight: "100%", alignItems: "center", justifyContent: "center"}}>
                         <h3>Date Selected: {getSelectedDateString()}</h3>
                     </Box>
                 </Box>

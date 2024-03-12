@@ -18,7 +18,7 @@ import { Box } from '@mui/material';
 
 
 function App() {
-  // the routing to the various pages
+  // the routing to the svarious pages
   return (
     <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
       <BrowserRouter>
