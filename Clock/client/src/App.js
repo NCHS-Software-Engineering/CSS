@@ -45,8 +45,6 @@ function App() {
     {
         const displayList = [];
 
-        // console.log(widgetList);
-
         for (const w of widgetList)
         {
             switch(w.type)

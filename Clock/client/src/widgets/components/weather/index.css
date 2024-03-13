@@ -4,8 +4,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 250px;
-  padding: 20px;
+  min-width: 250px;
+  min-height: 250px;
   background: linear-gradient(to bottom, #0e1c26, #2a454b, #294861);
   color: white;
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
@@ -52,18 +52,13 @@
 }
 
 .temperature {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: bold;
     margin-top: 25px;
 }
 
-.feels-like {
-    font-size: 1rem;
-    margin-bottom: 20px;
-}
-
 .location {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
     margin-top: 5px;
 }
