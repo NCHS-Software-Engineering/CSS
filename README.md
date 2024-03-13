@@ -10,13 +10,22 @@ These instructions will guide you on how to get the project up and running on yo
 
 To make this work you need to download the latest versions of [Visual Studio Code](https://code.visualstudio.com/download), [Git](https://git-scm.com/downloads), and [Node.js](https://nodejs.org/en) if you do not have it downloaded already.
 
+## Dependencies
+@mui/material
+@mui/joy
+@emotion/react
+@emotion/styled
+react-color
+react-draggable-list
+react-router-dom
+
 ### Installation
 
 1. Open Visual Studio Code and clone the repository on a local computer.
 2. Open the repository when prompted.
 3. Split your terminal into three separate terminals for running the admin, client, and server respectively.
 4. Run `cd Clock/admin`, `cd Clock/client`, and `cd Clock/server` in each terminal respectively to change directory so it can find npm for each one.
-5. Run `npm update` in each terminal to install all the necessary dependencies.
+5. Run `npm update` in each terminal to update all dependencies.
 6. Once the installation is complete, run `npm run dev` in the server and run `npm start` in the other two to start the application.
 
 ## Usage
