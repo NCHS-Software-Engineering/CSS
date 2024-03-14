@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from "react";
 
-function RTC(props = null) // props.col, props.row, props.width, props.height, props.config
+function Date(props = null) // props.col, props.row, props.width, props.height, props.config
 {
     const [col, setCol] = useState(1);
     const [row, setRow] = useState(1);
@@ -20,14 +20,13 @@ function RTC(props = null) // props.col, props.row, props.width, props.height, p
     useEffect(() => {
         const interval = setInterval(() => {
             const tempDate = new Date();
+
+            let dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
     
-            let timeOptions = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
-    
-            let tempdisplay = tempDate.toLocaleTimeString('en-US', timeOptions);
+            let tempdisplay = tempDate.toLocaleDateString('en-US', dateOptions);
     
             if (!props.config.displaySeconds) {
-                timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
-                tempdisplay = tempDate.toLocaleTimeString('en-US', timeOptions);
+                tempdisplay = tempDate.toLocaleDateString('en-US', dateOptions);
             }
     
             setDisplay(tempdisplay);
@@ -53,4 +52,4 @@ function RTC(props = null) // props.col, props.row, props.width, props.height, p
     )    
 }
 
-export default RTC;
+export default Date;

@@ -1,6 +1,7 @@
 import './App.css';
 import React, {useEffect, useState} from "react";
 import RTC from './widgets/RTC.js';
+import Date from './widgets/Date.js';
 import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";
 import WeatherWidget from './widgets/components/weather/indexv2.jsx';
@@ -51,6 +52,9 @@ function App() {
             {
                 case "countdown": 
                     displayList.push(<Countdown deltaTime={countdown} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    break;
+                case "date": 
+                    displayList.push(<Date col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "clock":
                     displayList.push(<RTC col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);

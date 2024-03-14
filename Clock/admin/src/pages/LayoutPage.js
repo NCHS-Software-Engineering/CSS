@@ -4,6 +4,7 @@ import "../styles/App.css";
 import WidgetBox from "../components/WidgetBox";
 import CountdownConfig from "../components/CountdownConfig";
 import ClockConfig from "../components/ClockConfig";
+import DateConfig from "../components/DateConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
@@ -380,6 +381,8 @@ function LayoutPage()
                 {
                     case "countdown": 
                         return <CountdownConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                    case "date":
+                        return <DateConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "clock":
                         return <ClockConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
@@ -448,6 +451,7 @@ function LayoutPage()
             <div className="Widget-Menu">
                 <WidgetBox img={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
                 <WidgetBox img={"Clock"} type={"clock"} callback={setSelectedWidget}/>
+                <WidgetBox img={"Date"} type={"date"} callback={setSelectedWidget}/>
                 <WidgetBox img={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
                 <WidgetBox img={"TextBox"} type={"textbox"} callback={setSelectedWidget}/>
                 <WidgetBox img={"Weather"} type={"weather"} callback={setSelectedWidget}/>
