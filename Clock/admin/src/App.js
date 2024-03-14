@@ -23,7 +23,7 @@ function App() {
     <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
       <BrowserRouter>
         <Box sx={{display: 'flex', minWidth: "100%", minHeight: "100%"}}>
-          <Sidebar width="10%" />
+          <Sidebar width="10%"/>
           <Box sx={{width:"90%"}}>
             <Routes> {/* The paths to all of the pages are contained here */}
               

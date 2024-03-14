@@ -64,7 +64,7 @@ function PeriodEditor(props = null) // props.item.id, props.item.name, props.ite
                     <input style={{height: "100%"}} type="time" value={end} onChange={updateEnd}></input>
                 </Box>
                 <Box>
-                    <Button sx={{height: "100%"}} variant="outlined" onClick={() => {props.commonProps({"delete":true, "id":props.item.id});}}> del </Button>
+                    <Button sx={{height: "100%"}} variant="outlined" onClick={() => {props.commonProps({"delete":true, "id":props.item.id});}}> X </Button>
                 </Box>
             </Box>
         </Box>

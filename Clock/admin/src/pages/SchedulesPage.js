@@ -271,7 +271,7 @@ function SchedulesPage()
                 </Box>
             </Paper>
 
-            <Button variant="contained" size="large" onClick={submitSchedule}>Submit form</Button>
+            <Button variant="contained" size="large" onClick={submitSchedule}>Save</Button>
         </Box>
     );
 }

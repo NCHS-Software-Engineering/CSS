@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+import Link from '@mui/material/Link';
 import { useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
@@ -13,7 +14,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton } from '@mui/material';
 
 /**/
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -36,20 +37,29 @@ const closedMixin = (theme) => ({
     },
   });
 
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    // justifyContent: 'flex-end',
+    // padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+}));
+
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
-      width: drawerWidth,
-      flexShrink: 0,
-      whiteSpace: 'nowrap',
-      boxSizing: 'border-box',
-      ...(open && {
-        ...openedMixin(theme),
-        '& .MuiDrawer-paper': openedMixin(theme),
-      }),
-      ...(!open && {
-        ...closedMixin(theme),
-        '& .MuiDrawer-paper': closedMixin(theme),
-      }),
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        ...(open && {
+            ...openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme),
+        }),
+        ...(!open && {
+            ...closedMixin(theme),
+            '& .MuiDrawer-paper': closedMixin(theme),
+        }),
     }),
   );
 /**/
@@ -69,86 +79,91 @@ function Sidebar(props) // props.width
     //sx={{width: props.width, paddingTop: 1, marginRight: 1}}
 
     return (
-        <Box >
+        <Box>
             <Drawer variant="permanent" open={open}>
-                <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    edge="start"
-                    sx={{
-                    marginRight: 5,
-                    ...(open && { display: 'none' }),
-                    }}
-                >
-                    <MenuIcon />
-                </IconButton>
-                <IconButton onClick={handleDrawerClose}>
-                    <ChevronLeftRoundedIcon/>
-                </IconButton>
+                <DrawerHeader sx={{display: 'flex', alignItems: 'center', justifyContent: open ? 'end' : 'center'}}>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerOpen}
+                        sx={{
+                        ...(open && { display: 'none' }),
+                        }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <IconButton
+                        color="inherit"
+                        aria-label="close drawer"
+                        onClick={handleDrawerClose}
+                        sx={{
+                        mr: 1.75,
+                        ...(!open && { display: 'none'})
+                        }}
+                    >
+                        <ChevronLeftRoundedIcon/>
+                    </IconButton>
+                </DrawerHeader>
+                <Divider/>
                 <List>
                     <ListItem disablePadding>
-                        <Link to="/preview" style={{width: "100%"}}>
-                            <ListItemButton>
-                                <ListItemIcon>
+                        <Link href="/preview" underline="none" style={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <ImageRoundedIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={"Preview"}/>
+                                <ListItemText primary={"Preview"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <Divider/>
                     <ListItem disablePadding>
-                        <Link to="/layout" style={{width: "100%"}}>
-                            <ListItemButton>
-                                <ListItemIcon>
+                        <Link href="/layout" underline="none" style={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <DashboardRoundedIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={"Layout"}/>
+                                <ListItemText primary={"Layout"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <Divider/>
                     <ListItem disablePadding>
-                        <Link to="/calendar" style={{width: "100%"}}>
-                            <ListItemButton>
-                                <ListItemIcon>
+                        <Link href="/calendar" underline="none" style={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <CalendarTodayRoundedIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={"Calendar"}/>
+                                <ListItemText primary={"Calendar"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <Divider/>
                     <ListItem disablePadding>
-                        <Link to="/defaultWeek" style={{width: "100%"}}>
-                            <ListItemButton>
-                                <ListItemIcon>
+                        <Link href="/defaultWeek" underline="none" style={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <DateRangeRoundedIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={"Default Week"}/>
+                                <ListItemText primary={"Default Week"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <Divider/>
                     <ListItem disablePadding>
-                        <Link to="/schedules" style={{width: "100%"}}>
-                            <ListItemButton>
-                                <ListItemIcon>
+                        <Link href="/schedules" underline="none" style={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <ScheduleRoundedIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={"Schedules"}/>
+                                <ListItemText primary={"Schedules"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
                     <Divider/>
                     <ListItem disablePadding>
-                        <Link to="/" style={{width: "100%"}}>
-                            <ListItemButton>
-                                <ListItemIcon>
+                        <Link href="/" underline="none" style={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <LogoutRoundedIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={"Log Out"}/>
+                                <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>

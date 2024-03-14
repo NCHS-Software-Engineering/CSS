@@ -317,6 +317,7 @@ function CalendarPage()
                         </table>
                     </Box>
                 </AspectRatio>
+                <br />
                 <Box>
                     {displayEditor()}
                 </Box>

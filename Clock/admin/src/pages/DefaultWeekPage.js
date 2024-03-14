@@ -121,7 +121,7 @@ function DefaultWeekPage()
                 </table>
             </Paper>
             <Box>
-                <Button variant="contained" size="large" onClick={submitDefaultWeek}>Submit form</Button>
+                <Button variant="contained" size="large" onClick={submitDefaultWeek}>Save</Button>
             </Box>
         </Box>
     );
