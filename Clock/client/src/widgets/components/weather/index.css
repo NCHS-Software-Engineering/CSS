@@ -14,33 +14,33 @@
 .moon {
     fill:white;
     filter:drop-shadow(0 0 20px rgba(252,252,252,0.8));
-    min-width:80px;
-    min-height:80px;
+    min-width:70px;
+    min-height:70px;
 }
 
 .sun {
     background-color:orange;
     filter:drop-shadow(0 0 20px rgba(255,165,0,0.8));
-    min-width:70px;
-    min-height:70px;
+    min-width:60px;
+    min-height:60px;
     border-radius:50%;
 }
 
 @keyframes moveCloud {
   0%, 
   100%{
-      transform: translateX(-65px);
+      transform: translateX(-90px);
   }
   50% {
-      transform: translateX(65px);
+      transform: translateX(90px);
   }
 }
 
 .cloud {
     fill:lightblue;
     filter:drop-shadow(0 0 20px rgba(173,216,230,0.8));
-    min-width:80px;
-    min-height:80px;
+    min-width:70px;
+    min-height:70px;
     animation: moveCloud 8s ease-in-out infinite;
 }
 
@@ -52,13 +52,13 @@
 }
 
 .temperature {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
     margin-top: 25px;
 }
 
 .location {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     margin-top: 5px;
 }

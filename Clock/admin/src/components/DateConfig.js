@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import { SketchPicker } from "react-color";
 
-
 // TODO: The "Color Pickers" should be deselected when a new component is chosen
 
 // The component for configuring a "clock widget" 
