@@ -23,8 +23,8 @@ function App() {
     <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
       <BrowserRouter>
         <Box sx={{display: 'flex', minWidth: "100%", minHeight: "100%"}}>
-          <Sidebar width="10%"/>
-          <Box sx={{width:"90%"}}>
+          <Sidebar />
+          <Box sx={{width:"100%"}}>
             <Routes> {/* The paths to all of the pages are contained here */}
               
               <Route path="/" element = {<LoginPage />} /> {/* Take user to home page by default */}

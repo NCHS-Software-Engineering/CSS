@@ -1,7 +1,7 @@
-// import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { useState } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
@@ -13,7 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MuiDrawer from '@mui/material/Drawer';
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton } from '@mui/material';
 
-/**/
+
 const drawerWidth = 210;
 
 const openedMixin = (theme) => ({
@@ -62,9 +62,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         }),
     }),
   );
-/**/
 
-function Sidebar(props) // props.width 
+
+function Sidebar()
 {
     const [open, setOpen] = useState(true);
 
@@ -76,8 +76,6 @@ function Sidebar(props) // props.width
         setOpen(false);
     };
     
-    //sx={{width: props.width, paddingTop: 1, marginRight: 1}}
-
     return (
         <Box>
             <Drawer variant="permanent" open={open}>
@@ -107,20 +105,18 @@ function Sidebar(props) // props.width
                 <Divider/>
                 <List sx={{fontSize: '100'}}>
                     <ListItem disablePadding>
-                        <Link href="/preview" underline="none" style={{width: "100%"}} sx={{justifyContent: 'center'}}>
-                            <Box sx={{display: 'flex', justfiyContent: 'left'}}>
-                                <ListItemButton sx={{justifyContent: 'center'}}>
-                                    <ListItemIcon sx={{mr: 'auto', justifyContent: 'center'}}>
-                                        <ImageRoundedIcon/>
-                                    </ListItemIcon>
-                                    <ListItemText primary={"Preview"} sx={{ opacity: open ? 1 : 0 }}/>
-                                </ListItemButton>
-                            </Box>
+                        <Link component={RouterLink} to="/preview" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
+                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center'}}>
+                                    <ImageRoundedIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary={"Preview"} sx={{ opacity: open ? 1 : 0 }}/>
+                            </ListItemButton>
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link href="/layout" underline="none" style={{width: "100%"}} sx={{display: 'flex', flexDirection: 'row'}}>
-                            <ListItemButton sx={{ justifyContent: open ? 'center' : 'center'}}>
+                        <Link component={RouterLink} to="/layout" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{ justifyContent: 'center'}}>
                                 <ListItemIcon sx={{display: 'flex', justifyContent: 'center', }}>
                                     <DashboardRoundedIcon/>
                                 </ListItemIcon>
@@ -129,8 +125,8 @@ function Sidebar(props) // props.width
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link href="/calendar" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'center' : 'center'}}>
+                        <Link component={RouterLink} to="/calendar" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
                                     <CalendarTodayRoundedIcon/>
                                 </ListItemIcon>
@@ -139,8 +135,8 @@ function Sidebar(props) // props.width
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link href="/defaultWeek" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'center' : 'center'}}>
+                        <Link component={RouterLink} to="/defaultWeek" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <DateRangeRoundedIcon/>
                                 </ListItemIcon>
@@ -149,8 +145,8 @@ function Sidebar(props) // props.width
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link href="/schedules" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'center' : 'center'}}>
+                        <Link component={RouterLink} to="/schedules" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <ScheduleRoundedIcon/>
                                 </ListItemIcon>
@@ -160,8 +156,8 @@ function Sidebar(props) // props.width
                     </ListItem>
                     <Divider/>
                     <ListItem disablePadding>
-                        <Link href="/" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? (true ? 'center' : 'center') : 'center'}}>
+                        <Link component={RouterLink} to="/" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <LogoutRoundedIcon/>
                                 </ListItemIcon>
