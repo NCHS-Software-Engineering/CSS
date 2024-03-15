@@ -14,7 +14,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton } from '@mui/material';
 
 /**/
-const drawerWidth = 200;
+const drawerWidth = 210;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -105,21 +105,23 @@ function Sidebar(props) // props.width
                     </IconButton>
                 </DrawerHeader>
                 <Divider/>
-                <List>
+                <List sx={{fontSize: '100'}}>
                     <ListItem disablePadding>
-                        <Link href="/preview" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
-                                    <ImageRoundedIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary={"Preview"} sx={{ opacity: open ? 1 : 0 }}/>
-                            </ListItemButton>
+                        <Link href="/preview" underline="none" style={{width: "100%"}} sx={{justifyContent: 'center'}}>
+                            <Box sx={{display: 'flex', justfiyContent: 'left'}}>
+                                <ListItemButton sx={{justifyContent: 'center'}}>
+                                    <ListItemIcon sx={{mr: 'auto', justifyContent: 'center'}}>
+                                        <ImageRoundedIcon/>
+                                    </ListItemIcon>
+                                    <ListItemText primary={"Preview"} sx={{ opacity: open ? 1 : 0 }}/>
+                                </ListItemButton>
+                            </Box>
                         </Link>
                     </ListItem>
                     <ListItem disablePadding>
-                        <Link href="/layout" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
+                        <Link href="/layout" underline="none" style={{width: "100%"}} sx={{display: 'flex', flexDirection: 'row'}}>
+                            <ListItemButton sx={{ justifyContent: open ? 'center' : 'center'}}>
+                                <ListItemIcon sx={{display: 'flex', justifyContent: 'center', }}>
                                     <DashboardRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Layout"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -128,8 +130,8 @@ function Sidebar(props) // props.width
                     </ListItem>
                     <ListItem disablePadding>
                         <Link href="/calendar" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
+                            <ListItemButton sx={{justifyContent: open ? 'center' : 'center'}}>
+                                <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
                                     <CalendarTodayRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Calendar"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -138,7 +140,7 @@ function Sidebar(props) // props.width
                     </ListItem>
                     <ListItem disablePadding>
                         <Link href="/defaultWeek" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                            <ListItemButton sx={{justifyContent: open ? 'center' : 'center'}}>
                                 <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <DateRangeRoundedIcon/>
                                 </ListItemIcon>
@@ -148,7 +150,7 @@ function Sidebar(props) // props.width
                     </ListItem>
                     <ListItem disablePadding>
                         <Link href="/schedules" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                            <ListItemButton sx={{justifyContent: open ? 'center' : 'center'}}>
                                 <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <ScheduleRoundedIcon/>
                                 </ListItemIcon>
@@ -159,7 +161,7 @@ function Sidebar(props) // props.width
                     <Divider/>
                     <ListItem disablePadding>
                         <Link href="/" underline="none" style={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: open ? 'initial' : 'center'}}>
+                            <ListItemButton sx={{justifyContent: open ? (true ? 'center' : 'center') : 'center'}}>
                                 <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
                                     <LogoutRoundedIcon/>
                                 </ListItemIcon>
