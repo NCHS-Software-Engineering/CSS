@@ -280,7 +280,7 @@ function CalendarPage()
             <Box sx={{height: "10vh", textAlign: "center", lineHeight:"10vh", marginBottom: 3}}>
                 <h1>Special Event Calendar</h1>
             </Box>
-            <Paper elevation={7} sx={{padding:3, width: "80%"}}>
+            <Paper elevation={7} sx={{padding:2.5, width: "70%"}}>
                 <Box sx={{display: "flex", marginBottom: 1}}>
                     <Box sx={{display: "flex", width: "35%"}}>
                         <Button variant="outlined" size="medium" onClick={todayButton} sx={{marginRight: 1}}>Today</Button>
@@ -296,7 +296,7 @@ function CalendarPage()
                         <h3>Date Selected: {getSelectedDateString()}</h3>
                     </Box>
                 </Box>
-                <AspectRatio ratio={2/1} variant="plain" sx={{marginBottom: 1}}>
+                <AspectRatio ratio={2/1} variant="plain" sx={{marginBottom: 2}}>
                     <Box>
                         <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%"}}>
                             <thead>
@@ -317,7 +317,7 @@ function CalendarPage()
                         </table>
                     </Box>
                 </AspectRatio>
-                <br />
+                
                 <Box>
                     {displayEditor()}
                 </Box>

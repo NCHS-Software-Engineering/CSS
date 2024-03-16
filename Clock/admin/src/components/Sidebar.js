@@ -107,7 +107,7 @@ function Sidebar()
                     <ListItem disablePadding>
                         <Link component={RouterLink} to="/preview" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center'}}>
+                                <ListItemIcon sx={{justifyContent: 'center'}}>
                                     <ImageRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Preview"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -117,7 +117,7 @@ function Sidebar()
                     <ListItem disablePadding>
                         <Link component={RouterLink} to="/layout" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{ justifyContent: 'center'}}>
-                                <ListItemIcon sx={{display: 'flex', justifyContent: 'center', }}>
+                                <ListItemIcon sx={{justifyContent: 'center', }}>
                                     <DashboardRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Layout"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -127,7 +127,7 @@ function Sidebar()
                     <ListItem disablePadding>
                         <Link component={RouterLink} to="/calendar" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
-                                <ListItemIcon sx={{display: 'flex', justifyContent: 'center'}}>
+                                <ListItemIcon sx={{justifyContent: 'center'}}>
                                     <CalendarTodayRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Calendar"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -137,7 +137,7 @@ function Sidebar()
                     <ListItem disablePadding>
                         <Link component={RouterLink} to="/defaultWeek" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
+                                <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <DateRangeRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Default Week"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -147,7 +147,7 @@ function Sidebar()
                     <ListItem disablePadding>
                         <Link component={RouterLink} to="/schedules" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
+                                <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <ScheduleRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Schedules"} sx={{ opacity: open ? 1 : 0 }}/>
@@ -158,7 +158,7 @@ function Sidebar()
                     <ListItem disablePadding>
                         <Link component={RouterLink} to="/" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
-                                <ListItemIcon sx={{mr: 'auto', justifyContent: 'center',}}>
+                                <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <LogoutRoundedIcon/>
                                 </ListItemIcon>
                                 <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }}/>

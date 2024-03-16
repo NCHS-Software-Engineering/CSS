@@ -7,6 +7,13 @@ import ClockConfig from "../components/ClockConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
+import { Box, Card, Paper } from "@mui/material";
+import AspectRatio from "@mui/joy/AspectRatio";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import AbcIcon from '@mui/icons-material/Abc';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 
 // TODO: add "config components" for more widgets
@@ -77,14 +84,11 @@ function LayoutPage()
                 for (const w of widgetList) // for each of the widgets on the table
                 {
                     if (r === w.row && c === w.col) // display the widget
-                    {
-                        const rectWidth = 50 * w.width + (w.width - 1) * 3; // td width + borders in between        (This one too)
-                        const rectHeight = 50 * w.height + (w.height - 1) * 3; // TODO: This must change when CSS changes ^^^
-                        
+                    {                        
                         const selectMargin = 10; // number of pixels for selecting the element // TODO: this should maybe be relative to the viewport
 
 
-                        colList.push(<td id={r + "." + c} style={{... specialStyle, width:rectWidth, height:rectHeight, cursor: cursor}} 
+                        colList.push(<td id={r + "." + c} style={{...specialStyle, border: "1px solid", textAlign: "center", lineHeight: "100%", cursor: cursor}} 
                             onMouseLeave={ () => 
                             {
                                 setCursor("auto");
@@ -186,7 +190,7 @@ function LayoutPage()
                                 
                                 setSelectedDraggable(draggableNum);
                             }}
-                        rowSpan={w.height} colSpan={w.width}>{w.type}</td>);
+                        rowSpan={w.height} colSpan={w.width} > {typeToImage(w.type)} </td>);
                         
                         empty = false;
                         break;
@@ -209,7 +213,7 @@ function LayoutPage()
                 // the location is empty
                 if (empty)
                 {
-                    colList.push(<td style={specialStyle} onClick={ () => 
+                    colList.push(<td style={{...specialStyle, border: "1px solid"}} onClick={ () => 
                         {
                             setSelectedRow(r);
                             setSelectedCol(c);
@@ -226,10 +230,10 @@ function LayoutPage()
                                 setSelectedCol(c);
                             }
                         }
-                    }></td>);
+                    }> <br/> </td>);
                 }
             }
-            rowList.push(<tr>{colList}</tr>); // add this column to the list of rows
+            rowList.push(<tr style={{height:"11.111%"}}>{colList}</tr>); // add this column to the list of rows
         }
 
         return rowList; // return the table information
@@ -386,7 +390,9 @@ function LayoutPage()
                         return <PeriodNameConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "weather":
                         return <WeatherConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
-                    case "default": console.log("Widget Type ERROR (This should not print)");
+                    default: 
+                        console.log("Widget Type ERROR (This should not print)");
+                        return <h1>ERROR: unrecognized widget type</h1>
                 }
             }
         }
@@ -427,41 +433,66 @@ function LayoutPage()
         }
     }
 
+    function typeToImage(type)
+    {
+        switch (type)
+        {
+            case "countdown": 
+                return <AccessAlarmIcon/>;
+            case "clock":
+                return <AccessTimeIcon/>;
+            case "periodName":
+                return <AbcIcon/>;
+            case "textbox":
+                return <TextFieldsIcon/>;
+            case "weather":
+                return <WbSunnyIcon/>;
+            default: 
+                return <h1>ERROR: no icon</h1>
+        }
+    }
+
 
 
     if (loading) return <></>; // don't render anything if info hasn't come from the server yet
 
     return(
-        <div className="Content">
-            <header className="App-header">
+        <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+            <Box sx={{height: "10vh", textAlign: "center", lineHeight:"10vh", marginBottom: 3}}>
                 <h1>Layout Editor</h1>
-            </header>
+            </Box>
 
-            <div className="List">
-                <table>
-                    <tbody>
-                        {generateTable()}
-                    </tbody>
-                </table>
-            </div>
+            <Paper elevation={7} sx={{width: "80%", padding: 1, display: "flex", flexDirection: "row"}}>
+                <Box sx={{width: "70%", marginRight: 1}}>
+                    <AspectRatio ratio={16/9} variant="plain" sx={{width: "100%"}}>
+                        <Box>
+                            <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
+                                <tbody>
+                                    {generateTable()}
+                                </tbody>
+                            </table>
+                        </Box>
+                    </AspectRatio>
+                
+                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 1}}>
+                        <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("weather")} subtitle={"Weather"} type={"weather"} callback={setSelectedWidget}/>
+                    </Box>
+                </Box>
 
-            <div className="Widget-Menu">
-                <WidgetBox img={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
-                <WidgetBox img={"Clock"} type={"clock"} callback={setSelectedWidget}/>
-                <WidgetBox img={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
-                <WidgetBox img={"TextBox"} type={"textbox"} callback={setSelectedWidget}/>
-                <WidgetBox img={"Weather"} type={"weather"} callback={setSelectedWidget}/>
-            </div>
-
-            <div>
-                {generateConfigurationForm()}
-            </div>
+                <Card sx={{ width: "30%", minHeight: "100%"}}>
+                    {generateConfigurationForm()}
+                </Card>
+            </Paper>
 
             <div>
                 {generateDeleteButton()}
             </div>
 
-        </div>
+        </Box>
     );
 }
 
