@@ -7,7 +7,7 @@ import ClockConfig from "../components/ClockConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
-import { Box, Card, Paper } from "@mui/material";
+import { Box, Button, Card, Paper } from "@mui/material";
 import AspectRatio from "@mui/joy/AspectRatio";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
@@ -78,7 +78,7 @@ function LayoutPage()
                 const selected = (r === selectedRow && c === selectedCol); // boolean value for wether this entry is selected
                 var empty = true; // boolean value for wether this positions contians a widget (false if it contains a widget)
                 
-                const specialStyle = selected ? {backgroundColor:"red"} : {};
+                const specialStyle = selected ? {backgroundColor:"silver"} : {};
 
                 // search to see if the location contains a widget
                 for (const w of widgetList) // for each of the widgets on the table
@@ -421,14 +421,14 @@ function LayoutPage()
 
             if (selectedRow === w.row && selectedCol === w.col)
             {
-                return <button
+                return <Button variant="contained" size="large"
                     onClick={ () => {
                         const widgetListCopy = [... widgetList];
                         widgetListCopy.splice(i, 1);
                         setWidgetList(widgetListCopy);
                         updateServerLayout(siteLayout, widgetListCopy);
                     }}
-                >remove widget</button>
+                >remove widget</Button>
             }
         }
     }
@@ -462,7 +462,7 @@ function LayoutPage()
                 <h1>Layout Editor</h1>
             </Box>
 
-            <Paper elevation={7} sx={{width: "80%", padding: 1, display: "flex", flexDirection: "row"}}>
+            <Paper elevation={7} sx={{width: "80%", padding: 1.5, display: "flex", flexDirection: "row"}}>
                 <Box sx={{width: "70%", marginRight: 1}}>
                     <AspectRatio ratio={16/9} variant="plain" sx={{width: "100%"}}>
                         <Box>
@@ -483,14 +483,14 @@ function LayoutPage()
                     </Box>
                 </Box>
 
-                <Card sx={{ width: "30%", minHeight: "100%"}}>
+                <Card sx={{ width: "30%", minHeight: "100%", padding: 1}}>
                     {generateConfigurationForm()}
                 </Card>
             </Paper>
 
-            <div>
+            <Box sx={{marginTop: 1}}>
                 {generateDeleteButton()}
-            </div>
+            </Box>
 
         </Box>
     );
