@@ -47,18 +47,20 @@ function App() {
 
         // console.log(widgetList);
 
-        for (const w of widgetList)
+        for (let i = 0; i < widgetList.length; i++)
         {
+            const w = widgetList[i];
+
             switch(w.type)
             {
                 case "countdown": 
-                    displayList.push(<Countdown deltaTime={countdown} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    displayList.push(<Countdown id={i} deltaTime={countdown} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "clock":
-                    displayList.push(<RTC col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    displayList.push(<RTC id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "periodName":
-                    displayList.push(<PeriodName periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    displayList.push(<PeriodName id={i} periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "weather":
                     displayList.push(<WeatherWidget weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);

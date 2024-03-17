@@ -6,6 +6,7 @@ const FileSystem = require("fs"); // import filesystem
 const Scheduler = require("node-schedule"); // import 
 const express = require('express');
 const cors = require('cors');
+const { error } = require("console");
 
 const app = express();
 app.use(cors());
@@ -96,9 +97,13 @@ getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
 
 function getCurrentWeather(callback)
 {
-    fetch(`https://api.weather.gov/gridpoints/LOT/58,67/forecast/hourly`)
-    .then((res) => res.json())
-    .then((data) => {weather = data.properties.periods[0];});
+    try
+    {
+        fetch(`https://api.weather.gov/gridpoints/LOT/58,67/forecast/hourly`)
+        .then((res) => res.json())
+        .then((data) => {weather = data.properties.periods[0];});
+    }
+    catch (error) {console.log(error);};
 }
 
 
