@@ -8,6 +8,7 @@ import DateConfig from "../components/DateConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
+import TextboxConfig from "../components/TextboxConfig";
 
 
 // TODO: add "config components" for more widgets
@@ -389,6 +390,8 @@ function LayoutPage()
                         return <PeriodNameConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "weather":
                         return <WeatherConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                    case "textbox":
+                        return <TextboxConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "default": console.log("Widget Type ERROR (This should not print)");
                 }
             }

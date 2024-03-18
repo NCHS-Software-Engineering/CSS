@@ -6,7 +6,7 @@ import { SketchPicker } from "react-color";
 // TODO: The "Color Pickers" should be deselected when a new component is chosen
 
 // The component for configuring a "clock widget" 
-function DateConfig(params=null) // params.config, params.callback
+function TextboxConfig(params=null) // params.config, params.callback
 {
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
@@ -69,4 +69,4 @@ function DateConfig(params=null) // params.config, params.callback
     );
 }
 
-export default DateConfig;
+export default TextboxConfig;

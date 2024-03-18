@@ -6,6 +6,7 @@ import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";
 import WeatherWidget from './widgets/components/weather/indexv2.jsx';
 import Timekeeper from './components/Timekeeper.js';
+import Textbox from './widgets/Textbox.js';
 
 
 function App() {
@@ -64,6 +65,9 @@ function App() {
                     break;
                 case "weather":
                     displayList.push(<WeatherWidget weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    break;
+                case "textbox": 
+                    displayList.push(<Textbox col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "default": console.log("Widget Type ERROR (This should not print)");
             }

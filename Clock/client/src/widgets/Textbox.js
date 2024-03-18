@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from "react";
 
-function DateWidget(props = null) // props.col, props.row, props.width, props.height, props.config
+function Textbox(props = null) // props.col, props.row, props.width, props.height, props.config
 {
     const [col, setCol] = useState(1);
     const [row, setRow] = useState(1);
@@ -14,26 +14,11 @@ function DateWidget(props = null) // props.col, props.row, props.width, props.he
         setHeight(props.height);
     }, [props]);
 
+    const [value, setValue] = useState('');
 
-    const [display, setDisplay] = useState("");
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const tempDate = new Date();
-
-            let dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
-    
-            let tempdisplay = tempDate.toLocaleDateString('en-US', dateOptions);
-    
-            if (!props.config.displaySeconds) {
-                tempdisplay = tempDate.toLocaleDateString('en-US', dateOptions);
-            }
-    
-            setDisplay(tempdisplay);
-        }, 100);
-    
-        return () => clearInterval(interval);
-    }, []);
+    const handleChange = (event) => {
+        setValue(event.target.value);
+    };
     
     return(
         <div className="Widget"
@@ -47,9 +32,9 @@ function DateWidget(props = null) // props.col, props.row, props.width, props.he
                 "gridRowEnd": row+height
             }}
         >
-            <p>{display}</p>
+            <input type="text" value={value} onChange={handleChange} />
         </div>
     )    
 }
 
-export default DateWidget;
+export default Textbox;
