@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { MuiColorInput } from 'mui-color-input'
-import { Box, Checkbox } from "@mui/material";
+import { Box } from "@mui/material";
 
 
 function PeriodNameConfig(params=null) // params.config, params.callback
 {
+    const [ID, setID] = useState(-1);
+
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
     
@@ -12,10 +14,13 @@ function PeriodNameConfig(params=null) // params.config, params.callback
 
     useEffect(() =>
     {
-        if (!params.config) runCallback();
+        if (params.id != ID)
+        {
+            setID(params.id);
 
-        setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
-        setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
+            setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
+            setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
+        }
     }, [params]);
 
     useEffect(() =>

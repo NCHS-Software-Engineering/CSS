@@ -383,13 +383,13 @@ function LayoutPage()
                 switch (w.type)
                 {
                     case "countdown": 
-                        return <CountdownConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                        return <CountdownConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "clock":
-                        return <ClockConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                        return <ClockConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
-                        return <PeriodNameConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                        return <PeriodNameConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "weather":
-                        return <WeatherConfig config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                        return <WeatherConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     default: 
                         console.log("Widget Type ERROR (This should not print)");
                         return <h1>ERROR: unrecognized widget type</h1>
