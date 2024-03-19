@@ -7,7 +7,7 @@ import ClockConfig from "../components/ClockConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
-import { Box, Button, Card, Paper } from "@mui/material";
+import { Box, Button, Card, Divider, Paper } from "@mui/material";
 import AspectRatio from "@mui/joy/AspectRatio";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
@@ -421,7 +421,9 @@ function LayoutPage()
 
             if (selectedRow === w.row && selectedCol === w.col)
             {
-                return <Button variant="contained" size="large"
+                return <Box sx={{width: "100%", display: "flex", flexDirection: "column", alignItems: "center"}}>
+                    <Divider sx={{width: "90%", marginBottom: 1}}/> 
+                    <Button variant="contained" size="large"
                     onClick={ () => {
                         const widgetListCopy = [... widgetList];
                         widgetListCopy.splice(i, 1);
@@ -429,6 +431,7 @@ function LayoutPage()
                         updateServerLayout(siteLayout, widgetListCopy);
                     }}
                 >remove widget</Button>
+                </Box>
             }
         }
     }
@@ -483,14 +486,15 @@ function LayoutPage()
                     </Box>
                 </Box>
 
-                <Card sx={{ width: "30%", minHeight: "100%", padding: 1}}>
-                    {generateConfigurationForm()}
+                <Card sx={{ width: "30%", minHeight: "100%", display: "flex", flexDirection: "column", padding: 1}}>
+                    <Box sx={{height:"90%"}}>
+                        {generateConfigurationForm()}
+                    </Box>
+                    {generateDeleteButton()}
                 </Card>
             </Paper>
 
-            <Box sx={{marginTop: 1}}>
-                {generateDeleteButton()}
-            </Box>
+            
 
         </Box>
     );

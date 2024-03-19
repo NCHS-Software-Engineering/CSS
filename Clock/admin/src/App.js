@@ -16,7 +16,6 @@ import "./styles/App.css";
 
 import { Box } from '@mui/material';
 
-
 function App() {
   // the routing to the svarious pages
   return (
