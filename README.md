@@ -18,6 +18,7 @@ To make this work you need to download the latest versions of [Visual Studio Cod
 @emotion/styled
 @mui/x-date-pickers
 dayjs
+mui-color-input
 nodemon
 react-color
 react-draggable-list
