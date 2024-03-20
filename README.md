@@ -13,11 +13,16 @@ To make this work you need to download the latest versions of [Visual Studio Cod
 ## Dependencies
 @mui/material
 @mui/joy
+@mui/system
 @emotion/react
 @emotion/styled
+@mui/x-date-pickers
+dayjs
+nodemon
 react-color
 react-draggable-list
 react-router-dom
+react-scripts
 
 ### Installation
 
