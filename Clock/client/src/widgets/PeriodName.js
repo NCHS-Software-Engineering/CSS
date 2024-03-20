@@ -34,7 +34,7 @@ function PeriodName(props = null) // props.id, props.periodName
             "gridRowEnd": row+height
         }}
     >
-      <div style={{width: "100%", height: "100%"}}>
+      <div style={{width: "100%", height: "100%", fontWeight: '800'}}>
         <ScaleText id={props.id} text={display} width={width} height={height}/>
       </div>
     </div>
