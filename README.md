@@ -19,6 +19,7 @@ nodemon
 react-color
 react-draggable-list
 react-router-dom
+react-scripts
 
 ### Installation
 
