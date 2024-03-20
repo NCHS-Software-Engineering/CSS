@@ -1,6 +1,9 @@
 import { Box, Button, Card, TextField } from "@mui/material";
 import DragHandleIcon from '@mui/icons-material/DragHandle';
-
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DesktopTimePicker } from '@mui/x-date-pickers';
 import React, { useState, useEffect } from "react";
 
 
@@ -27,19 +30,15 @@ function PeriodEditor(props = null) // props.item.id, props.item.name, props.ite
         const res = {"id":props.item.id, "name":value, "start":start, "end":end};
         props.commonProps(res);
     }
-    function updateStart(e)
+    function updateStart(value)
     {
-        const value = e.target.value;
-
         setStart(value);
         
         const res = {"id":props.item.id, "name":name, "start":value, "end":end};
         props.commonProps(res);
     }
-    function updateEnd(e)
+    function updateEnd(value)
     {
-        const value = e.target.value;
-
         setEnd(value);
         
         
@@ -47,27 +46,29 @@ function PeriodEditor(props = null) // props.item.id, props.item.name, props.ite
         props.commonProps(res);
     }
 
-
+    // DesktopTimePicker uses dayjs time and date format, which needs to be converted to 'HH:mm' when stored and vice versa when displayed.
     return(
-        <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-            <Box sx={{display:"flex"}}>
-                <Box {... props.dragHandleProps }>
-                    <DragHandleIcon/>
-                </Box>
-                <Box sx={{marginRight: 1}}>
-                    <TextField value={name} placeholder="Period Name" onInput={updateName}></TextField>
-                </Box>
-                <Box>
-                    <input style={{height: "100%"}} type="time" value={start} onChange={updateStart}></input>
-                </Box>
-                <Box sx={{marginRight: 1}}>
-                    <input style={{height: "100%"}} type="time" value={end} onChange={updateEnd}></input>
-                </Box>
-                <Box>
-                    <Button sx={{height: "100%"}} variant="outlined" onClick={() => {props.commonProps({"delete":true, "id":props.item.id});}}> X </Button>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                <Box sx={{display:"flex"}}>
+                    <Box {... props.dragHandleProps }>
+                        <DragHandleIcon/>
+                    </Box>
+                    <Box sx={{marginRight: 1}}>
+                        <TextField value={name} placeholder="Period Name" onInput={updateName}></TextField>
+                    </Box>
+                    <Box sx={{width: "40%"}}>
+                        <DesktopTimePicker value={dayjs(`0000-00-00T${start}`)} onChange={(newValue) => updateStart(newValue.format('HH:mm'))}/>
+                    </Box>
+                    <Box sx={{width: "40%", marginRight: 1}}>
+                        <DesktopTimePicker value={dayjs(`0000-00-00T${end}`)} onChange={(newValue) => updateEnd(newValue.format('HH:mm'))}/>
+                    </Box>
+                    <Box>
+                        <Button sx={{height: "100%"}} variant="outlined" onClick={() => {props.commonProps({"delete":true, "id":props.item.id});}}> X </Button>
+                    </Box>
                 </Box>
             </Box>
-        </Box>
+        </LocalizationProvider>
     );
 }
 

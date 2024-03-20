@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/joy": "^5.0.0-beta.32",
+    "@mui/material": "^5.15.14",
+    "@mui/x-date-pickers": "^6.19.7",
+    "dayjs": "^1.11.10",
+    "react-color": "^2.19.3",
+    "react-draggable-list": "^4.2.0",
+    "react-router-dom": "^6.22.3"
+  }
+}
