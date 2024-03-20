@@ -15,6 +15,7 @@ To make this work you need to download the latest versions of [Visual Studio Cod
 @mui/joy
 @emotion/react
 @emotion/styled
+nodemon
 react-color
 react-draggable-list
 react-router-dom
