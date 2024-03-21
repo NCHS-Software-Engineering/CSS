@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
-
 import { SketchPicker } from "react-color";
 
-
-// TODO: The "Color Pickers" should be deselected when a new component is chosen
-
-// The component for configuring a "clock widget" 
 function TextboxConfig(params=null) // params.config, params.callback
 {
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
@@ -14,8 +9,18 @@ function TextboxConfig(params=null) // params.config, params.callback
     const [displayBackgroundColorPicker, setDisplayBackgroundColorPicker] = useState("none");
     const [displayTextColorPicker, setDisplayTextColorPicker] = useState("none");
 
+    const [inputValue, setInputValue] = useState('');
+    const [savedValue, setSavedValue] = useState('');
 
-    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor});}
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
+
+    const handleSaveClick = () => {
+        setSavedValue(inputValue);
+    };
+
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "savedValue": savedValue});}
 
     useEffect(() =>
     {
@@ -28,8 +33,7 @@ function TextboxConfig(params=null) // params.config, params.callback
     useEffect(() =>
     {
         runCallback();
-    }, [backgroundColor, textColor]);
-
+    }, [backgroundColor, textColor, savedValue]);
 
     return (
         <div>
@@ -64,6 +68,10 @@ function TextboxConfig(params=null) // params.config, params.callback
                         onChangeComplete={(newColor) => {setTextColor(newColor.hex);}} 
                     />
                 </div>
+            </div>
+            <div> {/* Text input and save button */}
+                <input type="text" value={inputValue} onChange={handleInputChange} />
+                <button onClick={handleSaveClick}>Save</button>
             </div>
         </div>
     );

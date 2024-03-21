@@ -14,11 +14,7 @@ function Textbox(props = null) // props.col, props.row, props.width, props.heigh
         setHeight(props.height);
     }, [props]);
 
-    const [value, setValue] = useState('');
-
-    const handleChange = (event) => {
-        setValue(event.target.value);
-    };
+    const value = props.config.savedValue || '';
     
     return(
         <div className="Widget"
@@ -32,7 +28,7 @@ function Textbox(props = null) // props.col, props.row, props.width, props.heigh
                 "gridRowEnd": row+height
             }}
         >
-            <input type="text" value={value} onChange={handleChange} />
+            <p>{value}</p>
         </div>
     )    
 }
