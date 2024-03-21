@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from "react";
 import ScaleText from "../components/ScaleText";
-
+import { Paper } from "@mui/material";
 
 // TODO: have a specific text display when 'props.periodName' === null (NOTE: currently nothing will display)
 function PeriodName(props = null) // props.id, props.periodName
@@ -23,7 +23,7 @@ function PeriodName(props = null) // props.id, props.periodName
 
 
   return (
-    <div
+    <Paper elevation={20}
         style=
         {{
             backgroundColor: props.config.backgroundColor,
@@ -38,7 +38,7 @@ function PeriodName(props = null) // props.id, props.periodName
       <div style={{width: "100%", height: "100%", fontWeight: '800'}}>
         <ScaleText id={props.id} text={display} width={width} height={height}/>
       </div>
-    </div>
+    </Paper>
   );
 }
 

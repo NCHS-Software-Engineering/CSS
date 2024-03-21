@@ -1,5 +1,6 @@
 import './App.css';
 import React, {useEffect, useState} from "react";
+import Paper from '@mui/material/Paper';
 import RTC from './widgets/RTC.js';
 import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";

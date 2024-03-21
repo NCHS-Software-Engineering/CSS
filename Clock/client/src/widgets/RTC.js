@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from "react";
 import ScaleText from "../components/ScaleText";
+import { Paper } from "@mui/material";
 
 function RTC(props = null) // props.id, props.col, props.row, props.width, props.height, props.config
 {
@@ -35,7 +36,7 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
     }, [config]);
 
     return(
-        <div
+        <Paper elevation={20}
             style=
             {{
                 backgroundColor: config.backgroundColor,
@@ -50,7 +51,7 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
             <div style={{width: "100%", height: "100%"}}>
                 <ScaleText id={props.id} text={display} width={width} height={height}/>
             </div>
-        </div>
+        </Paper>
     )    
 }
 
