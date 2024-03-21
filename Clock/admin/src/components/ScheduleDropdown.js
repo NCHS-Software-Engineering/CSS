@@ -1,10 +1,78 @@
+import { MenuItem, Select } from "@mui/material";
 import React, { useState, useEffect } from "react";
 
 
-function ScheduleDropdown(params = null) // params.defaultValue, params.callback
+function ScheduleDropdown(props = null) // props.defaultValue, props.callback, props.nullSelectionName, props.schedules
 {
     const [schedules, setSchedules] = useState({}); // All of the created schedules
-    const [selection, setSelection] = useState(params.defaultValue); // The name of the selected schedule
+    const [selection, setSelection] = useState(""); // The name of the selected schedule
+    const [nullSelectionName, setNullSelectionName] = useState("");
+
+
+    // Initially get the schedules from the server
+    useEffect(() => {
+        setSchedules(props.schedules);
+        setSelection(props.defaultValue);
+        setNullSelectionName(props.nullSelectionName);
+    }, [props]);
+
+
+    // Returns a list of all of the schedule names as options
+    function displayDropdown()
+    {
+        const sortedKeys = Object.keys(schedules).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        return sortedKeys.map((item) => {return <MenuItem value={item}>{item}</MenuItem>;});
+    }
+
+    // Runs whenever a new schedule is selected from the dropdown
+    function updateSelection(e)
+    {
+        setSelection(e.target.value);
+
+        // send the selected schedule back to the parent component using a callback
+        props.callback(e.target.value)
+    }
+
+
+    return (
+        <Select variant="filled" onChange={updateSelection} value={selection} sx={{width: 250}}> 
+            <MenuItem value={null}>{nullSelectionName}</MenuItem> 
+            {displayDropdown()} 
+        </Select>
+    );
+}
+
+export default ScheduleDropdown;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+
+
+
+
+import React, { useState, useEffect } from "react";
+
+
+function ScheduleDropdown(props = null) // props.defaultValue, props.callback, props.nullSelectionName
+{
+    const [schedules, setSchedules] = useState({}); // All of the created schedules
+    const [selection, setSelection] = useState(props.defaultValue); // The name of the selected schedule
 
     const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
 
@@ -28,7 +96,7 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
         const sortedKeys = Object.keys(schedules).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
         return sortedKeys.map((item) => {
-            if (item === params.defaultValue) // The defaultValue passed by the parent component should be the default selection
+            if (item === props.defaultValue) // The defaultValue passed by the parent component should be the default selection
             {
                 return <option key={item} value={item} selected>{item}</option>
             }
@@ -42,10 +110,10 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
         if (e.target.value !== selection)
         {
             setSelection(e.target.value);
-            if (params && params.callback)
+            if (props && props.callback)
             {
                 // send the selected schedule back to the parent component using a callback
-                params.callback((e.target.value === "EMPTY" || e.target.value === "null" || e.target.value === null) ? null : e.target.value)
+                props.callback((e.target.value === props.nullSelectionName || e.target.value === "null" || e.target.value === null) ? null : e.target.value)
             }
         }
     }
@@ -53,10 +121,12 @@ function ScheduleDropdown(params = null) // params.defaultValue, params.callback
 
     return (
         <select className="select" id="dropdown" onChange={updateSelection} onClick={getSchedules}> 
-            <option value={null} style={{ fontWeight: 'bold' }}>EMPTY</option> {/* Should always be an EMPTY schedule with a value of null */}
+            <option value={null} style={{ fontWeight: 'bold' }}>{props.nullSelectionName}</option> 
             {displayDropdown()} 
         </select>
     );
 }
 
 export default ScheduleDropdown;
+
+*/

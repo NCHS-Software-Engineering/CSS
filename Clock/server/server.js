@@ -6,6 +6,7 @@ const FileSystem = require("fs"); // import filesystem
 const Scheduler = require("node-schedule"); // import 
 const express = require('express');
 const cors = require('cors');
+const { error } = require("console");
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,7 @@ app.use(express.json());
 
 const connections = new Set(); // A set containing all of the client sockets
 var today; // today's schedule
+var weather;
 
 
 // ----- File Managment -----
@@ -38,6 +40,11 @@ if (FileSystem.existsSync("files/calendar.json") === false) // create an empty d
 {
     const data = {};
     FileSystem.writeFileSync("files/calendar.json", JSON.stringify(data));
+}
+if (FileSystem.existsSync("files/layout.json") === false) // create an empty dictionary of all dates
+{
+    const data = {site:{backgroundColor:"#000000"}, widgetList:[]};
+    FileSystem.writeFileSync("files/layout.json", JSON.stringify(data));
 }
 
 function getCurrentSchedule(callback)
@@ -86,6 +93,22 @@ function getCurrentSchedule(callback)
 
 getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
 
+// ----- Weather Data Management -----
+
+function getCurrentWeather(callback)
+{
+    try
+    {
+        fetch(`https://api.weather.gov/gridpoints/LOT/58,67/forecast/hourly`)
+        .then((res) => res.json())
+        .then((data) => {weather = data.properties.periods[0];});
+    }
+    catch (error) {console.log(error);};
+}
+
+
+getCurrentWeather();
+
 // ----- WebSocket Managment -----
 
 
@@ -100,7 +123,7 @@ async function broadcast() // send information to all connections
 }
 async function updateClient(ws) // send information to an individual client
 {
-    ws.send(JSON.stringify(today));
+    ws.send(JSON.stringify({schedule:today, layout:JSON.parse(FileSystem.readFileSync("files/layout.json")), weather:weather}));
 }
 
 // runs when a new client connects
@@ -131,6 +154,13 @@ const job = Scheduler.scheduleJob("0 0 * * *", () =>
     });
 });
 
+// every 30 minutes ...
+const weatherJob = Scheduler.scheduleJob("/30 * * * *", () =>
+{
+    getCurrentWeather(broadcast);
+    console.log("Weather Updated");
+});
+
 
 // ----- HTTP  -----
 
@@ -146,6 +176,9 @@ app.get("/defaultWeek", (req, res) =>{
 });
 app.get("/calendar", (req, res) =>{
     res.json(JSON.parse(FileSystem.readFileSync("files/calendar.json")));
+});
+app.get("/layout", (req, res) =>{
+    res.json(JSON.parse(FileSystem.readFileSync("files/layout.json")));
 });
 
 // TODO: will probably need some sort of authentication system
@@ -200,6 +233,13 @@ app.put("/calendar", (req, res) =>{
     });
 
     res.send("SERVER: calendar confirmation");
+});
+app.put("/layout", (req, res) =>{
+    FileSystem.writeFileSync("files/layout.json", JSON.stringify(req.body));
+
+    broadcast();
+
+    res.send("SERVER: layout confirmation");
 });
 
 app.listen(httpPortNum);

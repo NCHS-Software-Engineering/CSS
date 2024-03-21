@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
-import "../styles/App.css";
+import { Box, Button, ButtonGroup, MenuItem, Paper, Select, Typography } from "@mui/material";
+import AspectRatio from "@mui/joy/AspectRatio";
 
 
 // TODO: User feedback is important! (through CSS maybe?)
 function CalendarPage()
 {
     const [calendar, setCalendar] = useState({}); // the calendar storing all special schedules (initially from the server)
+    const [schedules, setSchedules] = useState({});
 
     const [tableMonth, setTableMonth] = useState(0); // The current month being viewed ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] --> [January, February, March, April, May, ...])
 
@@ -55,6 +57,15 @@ function CalendarPage()
         );
     }, []);
 
+    // gets schedules JSON object from server
+    useEffect(() => {
+        fetch(`${baseURL}schedules`)
+        .then((res) => res.json())
+        .then((data) => {setSchedules(data);}
+        );
+    }, []);
+
+
     // Converts a months number value as per the 'Date' class to the name of the month as a string
     function numToMonth(month)
     {
@@ -88,6 +99,11 @@ function CalendarPage()
         return "UNKNOWN";
     }
 
+    function getSelectedDateString()
+    {
+        return numToMonth(Math.floor(selectedDateKey / 100)) + " " + (selectedDateKey % 100); // converts a datekey to a (Month Day) string 
+    }
+
     // The calendar UI viewed and interacted with by the user
     function displayMonth(month)
     {
@@ -111,7 +127,7 @@ function CalendarPage()
 
                 var backgroundStyle = {}; // shading in for user feedback (i.e. default schedule, 1 time special schedule, or reapeating special schedule)
                 var selectedStyle = {fontWeight:"normal"}; // Give user feedback as to which date is currently selected for editing
-                var schName = ""; // The name of the "Special Schedule" for that day (if any)
+                var schName = <br/>; // The name of the "Special Schedule" for that day (if any)
 
                 if (calendar[dateKey]) // determine backgroundStyle
                 {
@@ -133,13 +149,20 @@ function CalendarPage()
                 {
                     if (calendar[dateKey])
                     {
-                        if (calendar[dateKey].schedule === null) schName = "EMPTY";
+                        if (calendar[dateKey].schedule === null) schName = "NO SCHEDULE";
                         else schName = calendar[dateKey].schedule;
                     }
                 }
                 
                 // create a calendar UI entry that updates the 'dateKey' state when pressed
-                rowEntries.push(<td style={backgroundStyle} onClick={()=>{setSelectedDateKey(dateKey)}}><p style={selectedStyle}>{incrementDate.getDate()}</p><p>{schName}</p> </td>);
+                rowEntries.push(
+                    <td style={{...backgroundStyle, border: "1px solid"}} onClick={()=>{setSelectedDateKey(dateKey)}}>
+                        <Box sx={{width: "100%", height: "100%"}}>
+                            <p style={selectedStyle}>{incrementDate.getDate()}</p>
+                            <p >{schName}</p>
+                        </Box>
+                    </td>
+                );
             }
             tableRows.push(<tr>{rowEntries}</tr>);
         }
@@ -163,7 +186,6 @@ function CalendarPage()
     // The editor for modifying the 'calendar' state based on the 'selectedDateKey'
     function displayEditor()
     {
-        const dateString = numToMonth(Math.floor(selectedDateKey / 100)) + " " + (selectedDateKey % 100); // converts a datekey to a (Month Day) string 
         var scheduleType = "DEFAULT"; // whether it is a default schedule or a special schedule this day
         var schedule = null; // the special schedule for this day (if any)
 
@@ -181,21 +203,19 @@ function CalendarPage()
 
         // What actualy gets displayed
         return (
-            <div>
-                <p>Date Selected: </p>
-                <p>{dateString}</p>
-
-                <br/>
-
-                <p>Schedule Type: </p>
-                <select className="select" value={scheduleType} onChange={(e) => {updateScheduleType(e); submitCalendar();}}>
-                    <option>DEFAULT</option>
-                    <option>Special: One-Time</option>
-                    <option>Special: Repeating</option>
-                </select>
-
-                {optionalScheduleSelect()}
-            </div>
+            <Box sx={{display: "flex"}}>
+                <Box sx={{width: "50%"}}>
+                    <p>Schedule Type: </p>
+                    <Select variant="filled" value={scheduleType} onChange={(e) => {updateScheduleType(e); submitCalendar();}} sx={{width: 250}}>
+                        <MenuItem value={"DEFAULT"}>DEFAULT</MenuItem>
+                        <MenuItem value={"Special: One-Time"}>Special: One-Time</MenuItem>
+                        <MenuItem value={"Special: Repeating"}>Special: Repeating</MenuItem>
+                    </Select>
+                </Box>
+                <Box sx={{width: "50%"}}>
+                    {optionalScheduleSelect()}
+                </Box>
+            </Box>
         );
 
         // Called when the user wants to change the scheduleType for the selected date
@@ -218,7 +238,7 @@ function CalendarPage()
                 return (
                     <div>
                         <p>Schedule: </p>
-                        <ScheduleDropdown defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
+                        <ScheduleDropdown schedules={schedules} nullSelectionName={"NO SCHEDULE"} defaultValue={defaultValue} callback={(res)=>{schedule = res; submitCalendar();}} />
                     </div>
                 );
             }
@@ -256,42 +276,53 @@ function CalendarPage()
 
     // TODO: <Link to = "/"> home link </Link>
     return(
-        <div className="Content">
-            <header className="App-header">
-                <h1>Event Calendar</h1>
-            </header>
+        <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+            <Box sx={{height: "10vh", textAlign: "center", lineHeight:"10vh", marginBottom: 3}}>
+                <h1>Special Event Calendar</h1>
+            </Box>
+            <Paper elevation={7} sx={{padding:2.5, width: "70%"}}>
+                <Box sx={{display: "flex", marginBottom: 1}}>
+                    <Box sx={{display: "flex", width: "35%"}}>
+                        <Button variant="outlined" size="medium" onClick={todayButton} sx={{marginRight: 1}}>Today</Button>
+                        <ButtonGroup variant="outlined" size="medium" sx={{marginRight: 1}}>
+                            <Button onClick={previousButton}>Previous Month</Button>
+                            <Button onClick={nextButton}>Next Month</Button>
+                        </ButtonGroup>
+                    </Box>
+                    <Box sx={{display: "flex", width: "30%", justifyContent: "center"}}>
+                        <h1>{numToMonth(tableMonth)}</h1>
+                    </Box>
+                    <Box sx={{display: "flex", width: "35%", minHeight: "100%", alignItems: "center", justifyContent: "center"}}>
+                        <h3>Date Selected: {getSelectedDateString()}</h3>
+                    </Box>
+                </Box>
+                <AspectRatio ratio={2/1} variant="plain" sx={{marginBottom: 2}}>
+                    <Box>
+                        <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%"}}>
+                            <thead>
+                                <tr>
+                                    <th>Sunday</th>
+                                    <th>Monday</th>
+                                    <th>Tuesday</th>
+                                    <th>Wednesday</th>
+                                    <th>Thursday</th>
+                                    <th>Friday</th>
+                                    <th>Saturday</th>
+                                </tr>
+                            </thead>
 
-            <div className="List">
-                <div className="Calendar-Bar">
-                    <button className="button" onClick={todayButton}>Today</button>
-                    <button className="button" onClick={previousButton}>Previous Month</button>
-                    <button className="button" onClick={nextButton}>Next Month</button>
-                    <h1>{numToMonth(tableMonth)}</h1>
-                </div>
-            </div>
-            <div className="List">
-                <table className="Table">
-                    <thead>
-                        <tr>
-                            <th>Sunday</th>
-                            <th>Monday</th>
-                            <th>Tuesday</th>
-                            <th>Wednesday</th>
-                            <th>Thursday</th>
-                            <th>Friday</th>
-                            <th>Saturday</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {displayMonth(tableMonth)}
-                    </tbody>
-                </table>
-            </div>
-            <div className="List">
-                {displayEditor()}
-            </div>
-        </div>
+                            <tbody>
+                                {displayMonth(tableMonth)}
+                            </tbody>
+                        </table>
+                    </Box>
+                </AspectRatio>
+                
+                <Box>
+                    {displayEditor()}
+                </Box>
+            </Paper>
+        </Box>
     );
 }
 
