@@ -222,7 +222,7 @@ function LayoutPage()
                         {
                             if (selectedWidget)
                             {
-                                const widgetListCopy = [... widgetList];
+                                const widgetListCopy = [...widgetList];
                                 widgetListCopy.push({"type":selectedWidget, "row":r,"col":c,"width":1,"height":1});
                                 setWidgetList(widgetListCopy);
 
@@ -359,10 +359,10 @@ function LayoutPage()
         }
 
         // update the widget-list
-        const widgetListCopy = [... widgetList]; // shallow copy
+        const widgetListCopy = [...widgetList]; // shallow copy
         const oldWidget = widgetList[currentWidgetIndex]; // the old widget information
         widgetListCopy.splice(currentWidgetIndex, 1); // remove the old widget
-        widgetListCopy.push({... oldWidget,"row":newYPos, "col":newXPos, "width":newWidth, "height":newHeight}); // add the widget back with the modifed size / scale
+        widgetListCopy.push({...oldWidget,"row":newYPos, "col":newXPos, "width":newWidth, "height":newHeight}); // add the widget back with the modifed size / scale
 
         setSelectedRow(newYPos); // yPos of selection may have changed
         setSelectedCol(newXPos); // ^ same goes for xPos
@@ -376,7 +376,7 @@ function LayoutPage()
         // go through all widgets to find the selected widget
         for (let i = 0; i < widgetList.length; i++)
         {
-            const w = {... widgetList[i]};
+            const w = {...widgetList[i]};
 
             if (selectedRow === w.row && selectedCol === w.col)
             {
@@ -403,7 +403,7 @@ function LayoutPage()
         function changeWidgetConfig(widget, config, index)
         {
             widget.config = config;
-            const widgetListCopy = [... widgetList];
+            const widgetListCopy = [...widgetList];
             widgetListCopy.splice(index, 1);
             widgetListCopy.push(widget);
 
@@ -417,7 +417,7 @@ function LayoutPage()
         // go through all widgets to find the selected widget
         for (let i = 0; i < widgetList.length; i++)
         {
-            const w = {... widgetList[i]};
+            const w = {...widgetList[i]};
 
             if (selectedRow === w.row && selectedCol === w.col)
             {
@@ -425,7 +425,7 @@ function LayoutPage()
                     <Divider sx={{width: "90%", marginBottom: 1}}/> 
                     <Button variant="contained" size="large"
                     onClick={ () => {
-                        const widgetListCopy = [... widgetList];
+                        const widgetListCopy = [...widgetList];
                         widgetListCopy.splice(i, 1);
                         setWidgetList(widgetListCopy);
                         updateServerLayout(siteLayout, widgetListCopy);

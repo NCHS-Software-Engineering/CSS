@@ -31,7 +31,8 @@ function PeriodName(props = null) // props.id, props.periodName
             "gridColumnStart": col,
             "gridColumnEnd": col+width,
             "gridRowStart": row,
-            "gridRowEnd": row+height
+            "gridRowEnd": row+height,
+            "borderRadius": 20
         }}
     >
       <div style={{width: "100%", height: "100%", fontWeight: '800'}}>

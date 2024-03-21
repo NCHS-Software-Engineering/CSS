@@ -17,7 +17,8 @@ function CountdownConfig(params=null) // params.id, params.config, params.callba
     {
         if (params.id != ID)
         {
-            setID(params.id)
+            setID(params.id);
+            runCallback();
         
             setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
             setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text

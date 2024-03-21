@@ -52,7 +52,8 @@ function Countdown(props = null) // props.id, props.deltaTime
           "gridColumnStart": col,
           "gridColumnEnd": col+width,
           "gridRowStart": row,
-          "gridRowEnd": row+height
+          "gridRowEnd": row+height,
+          "borderRadius": 20
       }}
     >
       <div style={{width: "100%", height: "100%"}}>

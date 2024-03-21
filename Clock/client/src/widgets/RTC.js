@@ -43,7 +43,8 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
                 "gridColumnStart": col,
                 "gridColumnEnd": col+width,
                 "gridRowStart": row,
-                "gridRowEnd": row+height
+                "gridRowEnd": row+height,
+                "borderRadius": 20
             }}
         >
             <div style={{width: "100%", height: "100%"}}>
