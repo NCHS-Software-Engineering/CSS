@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
-import { Box, Button, ButtonGroup, MenuItem, Paper, Select, Typography } from "@mui/material";
-import AspectRatio from "@mui/joy/AspectRatio";
+import { Box, Button, ButtonGroup, MenuItem, Paper, Select } from "@mui/material";
 
 
 // TODO: User feedback is important! (through CSS maybe?)
@@ -296,27 +295,25 @@ function CalendarPage()
                         <h3>Date Selected: {getSelectedDateString()}</h3>
                     </Box>
                 </Box>
-                <AspectRatio ratio={2/1} variant="plain" sx={{marginBottom: 2}}>
-                    <Box>
-                        <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%"}}>
-                            <thead>
-                                <tr>
-                                    <th>Sunday</th>
-                                    <th>Monday</th>
-                                    <th>Tuesday</th>
-                                    <th>Wednesday</th>
-                                    <th>Thursday</th>
-                                    <th>Friday</th>
-                                    <th>Saturday</th>
-                                </tr>
-                            </thead>
+                <Box sx={{aspectRatio: 2/1, marginBottom: 2}}>
+                    <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%"}}>
+                        <thead>
+                            <tr>
+                                <th>Sunday</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                            </tr>
+                        </thead>
 
-                            <tbody>
-                                {displayMonth(tableMonth)}
-                            </tbody>
-                        </table>
-                    </Box>
-                </AspectRatio>
+                        <tbody>
+                            {displayMonth(tableMonth)}
+                        </tbody>
+                    </table>
+                </Box>
                 
                 <Box>
                     {displayEditor()}

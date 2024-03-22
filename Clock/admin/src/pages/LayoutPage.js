@@ -8,7 +8,6 @@ import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
 import WeatherConfig from "../components/WeatherConfig";
 import { Box, Button, Card, Divider, Paper } from "@mui/material";
-import AspectRatio from "@mui/joy/AspectRatio";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import AbcIcon from '@mui/icons-material/Abc';
@@ -467,15 +466,13 @@ function LayoutPage()
 
             <Paper elevation={7} sx={{width: "80%", padding: 1.5, display: "flex", flexDirection: "row"}}>
                 <Box sx={{width: "70%", marginRight: 1}}>
-                    <AspectRatio ratio={16/9} variant="plain" sx={{width: "100%"}}>
-                        <Box>
-                            <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
-                                <tbody>
-                                    {generateTable()}
-                                </tbody>
-                            </table>
-                        </Box>
-                    </AspectRatio>
+                    <Box sx={{width: "100%", aspectRatio: 16/9}}>
+                        <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
+                            <tbody>
+                                {generateTable()}
+                            </tbody>
+                        </table>
+                    </Box>
                 
                     <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 1}}>
                         <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
