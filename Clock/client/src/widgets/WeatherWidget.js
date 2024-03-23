@@ -1,8 +1,4 @@
 import React, {useState, useEffect} from "react";
-import './WeatherStyle.css';
-
-import {ReactComponent as MoonSVG} from './assets/svgs/dark_mode_FILL1_wght400_GRAD0_opsz24.svg'
-import {ReactComponent as CloudSVG} from './assets/svgs/cloud_FILL1_wght400_GRAD0_opsz24.svg'
 import ScaleText from "../components/ScaleText";
 import { Paper } from "@mui/material";
 
