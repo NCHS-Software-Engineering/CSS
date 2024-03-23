@@ -1,10 +1,9 @@
 import './App.css';
 import React, {useEffect, useState} from "react";
-import Paper from '@mui/material/Paper';
 import RTC from './widgets/RTC.js';
 import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";
-import WeatherWidget from './widgets/components/weather/indexv2.jsx';
+import WeatherWidget from './widgets/WeatherWidget.js';
 import Timekeeper from './components/Timekeeper.js';
 
 
@@ -64,7 +63,7 @@ function App() {
                     displayList.push(<PeriodName id={i} periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "weather":
-                    displayList.push(<WeatherWidget weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    displayList.push(<WeatherWidget id={i} weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "default": console.log("Widget Type ERROR (This should not print)");
             }

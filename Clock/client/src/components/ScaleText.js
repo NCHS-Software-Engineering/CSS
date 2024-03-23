@@ -1,9 +1,9 @@
 import React, { useState, useEffect} from "react";
 
 // NOTE: assumes a 16 by 9 grid
-function ScaleText(props = null) // props.id, props.text, props.width, props.height
+function ScaleText(props = null) // props.id, props.portionFilled, props.text, props.width, props.height
 {
-    const portionFilled = 0.9; // fill x% of width or height
+    const [portionFilled, setPortionFilled] = useState(0.9); // fill x% of width or height
 
     const [ID, setID] = useState("");
 
@@ -20,6 +20,7 @@ function ScaleText(props = null) // props.id, props.text, props.width, props.hei
 
     useEffect (() => {
         setID(props.id);
+        if (props.portionFilled) setPortionFilled(props.portionFilled);
         setText(props.text); 
         setTextLength(props.text.length);
         setWidth(props.width);
@@ -31,7 +32,7 @@ function ScaleText(props = null) // props.id, props.text, props.width, props.hei
         {
             resize();
         }
-    }, [textLength, width, height, windowWidth, windowHeight, ID])
+    }, [textLength, width, height, windowWidth, windowHeight, portionFilled, ID])
 
     useEffect(() => {
         windowResize();

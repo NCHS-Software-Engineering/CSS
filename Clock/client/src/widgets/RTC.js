@@ -35,6 +35,7 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
         return () => clearInterval(interval);
     }, [config]);
 
+    
     return(
         <Paper elevation={20}
             style=
