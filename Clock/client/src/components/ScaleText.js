@@ -43,8 +43,6 @@ function ScaleText(props = null) // props.id, props.portionFilled, props.text, p
 
     function windowResize()
     {
-        console.log("resize " + ID);
-
         setWindowWidth(window.innerWidth);
         setWindowHeight(window.innerHeight);
     }

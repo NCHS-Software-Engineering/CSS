@@ -93,21 +93,55 @@ function getCurrentSchedule(callback)
 
 getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
 
+
 // ----- Weather Data Management -----
+
 
 function getCurrentWeather(callback)
 {
     try
     {
-        fetch(`https://api.weather.gov/gridpoints/LOT/58,67/forecast/hourly`)
+        const newWeatherData = {};
+
+        fetch(`https://api.weather.gov/points/41.7676,-88.1557`) // find NCHS weather gridpoint
         .then((res) => res.json())
-        .then((data) => {weather = data.properties.periods[0];});
+        .then((linkData) => {
+            fetch(linkData.properties.forecastHourly)
+            .then((res) => res.json())
+            .then((hourlyData) => {
+                newWeatherData.isDaytime = hourlyData.properties.periods[0].isDaytime;
+                newWeatherData.temperature = hourlyData.properties.periods[0].temperature;
+                newWeatherData.shortForecast = hourlyData.properties.periods[0].shortForecast;
+                newWeatherData.relativeHumidityValue = hourlyData.properties.periods[0].relativeHumidity.value;
+                fetch(linkData.properties.forecastGridData)
+                .then((res) => res.json())
+                .then((gridData) => {
+                    const tempDate = new Date();
+                    const currentHour = tempDate.getHours();
+                    const offset = -5; // Chicago time is UTC -5
+                    const currentDate = tempDate.getDate();
+                    for (const cloudcheck of gridData.properties.skyCover.values)
+                    {
+                        const checkDate = parseInt(cloudcheck.validTime.slice(8,10));
+                        const checkHour = parseInt(cloudcheck.validTime.slice(11,13));
+                        const checkStep = parseInt(cloudcheck.validTime.slice(cloudcheck.validTime.indexOf("PT")+2,cloudcheck.validTime.indexOf("H")));
+                        if (currentHour >= checkHour + ((checkDate - currentDate) * 24) + offset && currentHour < checkHour + ((checkDate - currentDate) * 24) + offset + checkStep)
+                        {
+                            newWeatherData.skyCover = cloudcheck.value;
+                            weather = newWeatherData; // update the weather information
+                            callback; // run the callback
+                            break;
+                        }
+                    }
+                });
+            });
+        });
     }
     catch (error) {console.log(error);};
 }
 
-
 getCurrentWeather();
+
 
 // ----- WebSocket Managment -----
 
@@ -155,10 +189,9 @@ const job = Scheduler.scheduleJob("0 0 * * *", () =>
 });
 
 // every 30 minutes ...
-const weatherJob = Scheduler.scheduleJob("/30 * * * *", () =>
+const weatherJob = Scheduler.scheduleJob("30 * * * *", () =>
 {
-    getCurrentWeather(broadcast);
-    console.log("Weather Updated");
+    getCurrentWeather(() => broadcast());
 });
 
 

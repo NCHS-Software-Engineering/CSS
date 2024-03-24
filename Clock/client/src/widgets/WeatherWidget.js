@@ -74,13 +74,11 @@ function WeatherWidget(props = null) // props.id, props.col, props.row, props.wi
 
     if(!weatherData) return <div>Loading...</div>
 
-
     return (
         <Paper elevation={20}
             style=
             {{
                 overflow: "hidden",
-
 
                 backgroundColor: config.backgroundColor,
                 color: config.textColor,
@@ -93,8 +91,11 @@ function WeatherWidget(props = null) // props.id, props.col, props.row, props.wi
         >
             <div style={{display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden"}}>
                 <div style={{height: "35%", display: "flex", justifyContent: "center"}}>
-                    <div style={{aspectRatio: 1/1, maxWidth: "100%", maxHeight: "100%"}}>
-                        {weatherData.isDaytime ? SUN : MOON}        
+                    <div style={{position: "relative", aspectRatio: 1/1, maxWidth: "100%", maxHeight: "100%"}}>
+                        <div style={{position: "absolute", width:"60%", height:"60%", left: "10%", top: "35%"}}>
+                            {(weatherData.skyCover > 50) ? CLOUD : <></>}
+                        </div>
+                        {weatherData.isDaytime ? SUN : MOON}    
                     </div>
                 </div>
                 <div style={{height: "65%", paddingBottom: "1%"}}>
@@ -108,7 +109,7 @@ function WeatherWidget(props = null) // props.id, props.col, props.row, props.wi
                         <ScaleText id={props.id + "Location"} text={"Naperville"} width={width} portionFilled={0.7} height={height * 0.2}/>
                     </div>
                     <div style={{height: "15%"}}>
-                        <ScaleText id={props.id + "Humidity"} text={"Humidity: " + weatherData.relativeHumidity.value + "%"} portionFilled={0.7} width={width} height={height * 0.15}/>
+                        <ScaleText id={props.id + "Humidity"} text={"Humidity: " + weatherData.relativeHumidityValue + "%"} portionFilled={0.7} width={width} height={height * 0.15}/>
                     </div>
                 </div>
             </div>
