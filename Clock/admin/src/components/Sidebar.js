@@ -9,6 +9,8 @@ import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import DateRangeRoundedIcon from '@mui/icons-material/DateRangeRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import MuiDrawer from '@mui/material/Drawer';
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton } from '@mui/material';
@@ -40,9 +42,6 @@ const closedMixin = (theme) => ({
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
-    // justifyContent: 'flex-end',
-    // padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
 }));
 
@@ -64,7 +63,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   );
 
 
-function Sidebar()
+function Sidebar(props = null) // props.currentTheme, props.switchTheme
 {
     const [open, setOpen] = useState(true);
 
@@ -166,6 +165,17 @@ function Sidebar()
                         </Link>
                     </ListItem>
                 </List>
+                
+                <Box sx={{display:'flex', alignItems: "flex-end", height: "100%", paddingBottom: 1}}>
+                    <ListItem disablePadding sx={{justifyContent:"center", width:"100%"}}>
+                        <ListItemButton onClick={() => props.switchTheme()} sx={{justifyContent: 'center'}}>
+                            <ListItemIcon sx={{justifyContent: "center"}}>
+                                {(props.currentTheme === "light") ? <Brightness4Icon/> : <Brightness7Icon/>}
+                            </ListItemIcon>
+                            <ListItemText primary={"Change Theme"} sx={{ opacity: open ? 1 : 0 }}/>
+                        </ListItemButton>
+                    </ListItem>
+                </Box>
             </Drawer>
         </Box>
     );

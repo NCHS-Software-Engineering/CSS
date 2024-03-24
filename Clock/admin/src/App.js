@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useState } from 'react';
 
 import Sidebar from './components/Sidebar';
 import PreviewPage from './pages/PreviewPage';
@@ -19,6 +20,11 @@ import { Box } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+  },
+});
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -26,14 +32,21 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const [mode, setMode] = useState("light");
+
+  function changeMode()
+  {
+    setMode((mode === "light") ? "dark" : "light");
+  }
+
   // the routing to the svarious pages
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={(mode === "light") ? lightTheme : darkTheme}>
       <CssBaseline />
       <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
         <BrowserRouter>
           <Box sx={{display: 'flex', minWidth: "100%", minHeight: "100%"}}>
-            <Sidebar />
+            <Sidebar currentTheme={mode} switchTheme={() => changeMode()}/>
             <Box sx={{width:"100%"}}>
               <Routes> {/* The paths to all of the pages are contained here */}
                 
