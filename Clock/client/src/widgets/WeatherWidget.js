@@ -78,22 +78,21 @@ function WeatherWidget(props = null) // props.id, props.col, props.row, props.wi
         <Paper elevation={20}
             style=
             {{
-                overflow: "hidden",
-
                 backgroundColor: config.backgroundColor,
                 color: config.textColor,
                 "gridColumnStart": col,
                 "gridColumnEnd": col+width,
                 "gridRowStart": row,
                 "gridRowEnd": row+height,
-                "borderRadius": 20
+                "borderRadius": 20,
+                overflow: "hidden"
             }}
         >
             <div style={{display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden"}}>
                 <div style={{height: "35%", display: "flex", justifyContent: "center"}}>
                     <div style={{position: "relative", aspectRatio: 1/1, maxWidth: "100%", maxHeight: "100%"}}>
                         <div style={{position: "absolute", width:"60%", height:"60%", left: "10%", top: "35%"}}>
-                            {(weatherData.skyCover > 50) ? CLOUD : <></>}
+                            {(weatherData.skyCover >= 37.5) ? CLOUD : <></>}
                         </div>
                         {weatherData.isDaytime ? SUN : MOON}    
                     </div>

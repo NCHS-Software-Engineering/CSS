@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { MuiColorInput } from 'mui-color-input'
-import { Box, Checkbox } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 
 
-function CountdownConfig(params=null) // params.id, params.config, params.callback
+function TextboxConfig(params=null) // params.config, params.callback
 {
     const [ID, setID] = useState(-1);
 
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
-    const [displaySeconds, setDisplaySeconds] = useState((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
+    const [text, setText] = useState((params.config && params.config.text) ? params.config.text : "");
     
-    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds});}
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "text":text});}
 
     useEffect(() =>
     {
         if (params.id != ID)
         {
             setID(params.id);
-            if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor && displaySeconds === params.config.displaySeconds) runCallback();
-        
+            if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor && text === params.config.text) runCallback();
+
             setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
             setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
-            setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
+            setText((params.config && params.config.text) ? params.config.text : "");
         }
     }, [params]);
 
     useEffect(() =>
     {
         runCallback();
-    }, [backgroundColor, textColor, displaySeconds]);
+    }, [backgroundColor, textColor, text]);
 
 
     return (
@@ -50,12 +50,18 @@ function CountdownConfig(params=null) // params.id, params.config, params.callba
                     onChange={(newColor) => {setTextColor(newColor);}} 
                 />
             </Box>
-            <Box> {/* Seconds display selection */}
-                <p>Display Seconds: </p>
-                <Checkbox checked={displaySeconds} onChange={()=>{setDisplaySeconds(!displaySeconds);}}></Checkbox>
+            <Box sx={{marginBottom: 1}}> {/* Text input */}
+                <p>Text: </p>
+                <TextField sx={{width: "100%"}}
+                    multiline 
+                    minRows={2} 
+                    maxRows={6} 
+                    value={text}
+                    onChange={(e) => {setText(e.target.value);}}
+                />
             </Box>
         </Box>
     );
 }
 
-export default CountdownConfig;
+export default TextboxConfig;

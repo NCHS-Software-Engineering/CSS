@@ -6,6 +6,7 @@ import CountdownConfig from "../components/CountdownConfig";
 import ClockConfig from "../components/ClockConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
+import TextboxConfig from "../components/TextboxConfig";
 import WeatherConfig from "../components/WeatherConfig";
 import { Box, Button, Card, Divider, Paper } from "@mui/material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -387,6 +388,8 @@ function LayoutPage()
                         return <ClockConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
                         return <PeriodNameConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                    case "textbox":
+                        return <TextboxConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "weather":
                         return <WeatherConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     default: 

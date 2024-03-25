@@ -5,6 +5,9 @@ import PeriodName from './widgets/PeriodName.js';
 import Countdown from "./widgets/Countdown.js";
 import WeatherWidget from './widgets/WeatherWidget.js';
 import Timekeeper from './components/Timekeeper.js';
+import Textbox from './widgets/Textbox.js';
+
+import "@fontsource/inconsolata";
 
 
 function App() {
@@ -45,7 +48,7 @@ function App() {
     {
         const displayList = [];
 
-        // console.log(widgetList);
+        // console.log("rendering widgets");
 
         for (let i = 0; i < widgetList.length; i++)
         {
@@ -65,6 +68,9 @@ function App() {
                 case "weather":
                     displayList.push(<WeatherWidget id={i} weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
+                case "textbox":
+                    displayList.push(<Textbox id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    break;
                 case "default": console.log("Widget Type ERROR (This should not print)");
             }
         }
@@ -74,7 +80,7 @@ function App() {
 
     return (     
         <div className="App" style={{backgroundColor:siteLayout.backgroundColor}}>
-            <Timekeeper schedule={schedule} countdownCallback={setCountdown} periodNameCallback={setPeriodName}/>
+            <Timekeeper schedule={schedule} countdownCallback={(data) => setCountdown(data)} periodNameCallback={(data) => setPeriodName(data)}/>
             {renderWidgetList()}
         </div>
     );

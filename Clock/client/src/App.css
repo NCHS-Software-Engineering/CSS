@@ -1,11 +1,5 @@
-:root {
-  --night: #121216;
-  --dusk: #2f2f36;
-  --blood: #880808;
-  --grey: #666465;
-}
-
 *{
+  font-family: 'Inconsolata'; /* This must be a monospace font!!! */
   box-sizing: border-box;
   margin: 0;
   padding: 0;

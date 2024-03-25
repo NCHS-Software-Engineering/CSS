@@ -109,6 +109,7 @@ function getCurrentWeather(callback)
             fetch(linkData.properties.forecastHourly)
             .then((res) => res.json())
             .then((hourlyData) => {
+                if (!hourlyData.properties) {console.log("Weather error1"); return;}
                 newWeatherData.isDaytime = hourlyData.properties.periods[0].isDaytime;
                 newWeatherData.temperature = hourlyData.properties.periods[0].temperature;
                 newWeatherData.shortForecast = hourlyData.properties.periods[0].shortForecast;
@@ -116,6 +117,7 @@ function getCurrentWeather(callback)
                 fetch(linkData.properties.forecastGridData)
                 .then((res) => res.json())
                 .then((gridData) => {
+                    if (!gridData.properties) {console.log("Weather error2"); return;}
                     const tempDate = new Date();
                     const currentHour = tempDate.getHours();
                     const offset = -5; // Chicago time is UTC -5
@@ -130,7 +132,7 @@ function getCurrentWeather(callback)
                             newWeatherData.skyCover = cloudcheck.value;
                             weather = newWeatherData; // update the weather information
                             callback; // run the callback
-                            break;
+                            return;
                         }
                     }
                 });
