@@ -14,14 +14,17 @@ import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
 import AbcIcon from '@mui/icons-material/Abc';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import { positions } from "@mui/system";
 
 
-// TODO: add "config components" for more widgets
+// TODO: add overlay toggle
 function LayoutPage() 
 {
     // The size of the grid
     const numColumns = 16;
     const numRows = 9;
+
+    const [overlay, setOverlay] = useState(true); // is there an iframe overlay
 
     // The currently selected entry's position
     const [selectedRow, setSelectedRow] = useState(-1);
@@ -190,7 +193,7 @@ function LayoutPage()
                                 
                                 setSelectedDraggable(draggableNum);
                             }}
-                        rowSpan={w.height} colSpan={w.width} > {typeToImage(w.type)} </td>);
+                        rowSpan={w.height} colSpan={w.width} > {overlay === false ? typeToImage(w.type) : <></>} </td>);
                         
                         empty = false;
                         break;
@@ -469,7 +472,11 @@ function LayoutPage()
 
             <Paper elevation={7} sx={{width: "80%", padding: 1.5, display: "flex", flexDirection: "row"}}>
                 <Box sx={{width: "70%", marginRight: 1}}>
-                    <Box sx={{width: "100%", aspectRatio: 16/9}}>
+                    <Box sx={{position: "relative", width: "100%", aspectRatio: 16/9}}>
+                        {overlay ?
+                        <Box sx={{zIndex:"1", pointerEvents:"none", opacity: 0.2, position: "absolute", width: "100%", height: "100%"}}>
+                            <iframe src="http://localhost:3000/" style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                        </Box> : <></> }
                         <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
                             <tbody>
                                 {generateTable()}

@@ -21,6 +21,8 @@ function App() {
 
     const [weather, setWeather] = useState(null);
 
+    const [displayList, setDisplayList] = useState([]);
+
 
     const portNum = 8000; // Change this number in order to change which port the server is listening on
     const serverUrl = 'ws://localhost:' + portNum; // may need to change this if we host the server on a different url
@@ -43,10 +45,9 @@ function App() {
         });
     }, [serverUrl]);
 
-
-    function renderWidgetList()
+    useEffect(() => 
     {
-        const displayList = [];
+        const tempDisplayList = [];
 
         // console.log("rendering widgets");
 
@@ -57,31 +58,31 @@ function App() {
             switch(w.type)
             {
                 case "countdown": 
-                    displayList.push(<Countdown id={i} deltaTime={countdown} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    tempDisplayList.push(<Countdown id={i} deltaTime={countdown} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "clock":
-                    displayList.push(<RTC id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    tempDisplayList.push(<RTC id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "periodName":
-                    displayList.push(<PeriodName id={i} periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    tempDisplayList.push(<PeriodName id={i} periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "weather":
-                    displayList.push(<WeatherWidget id={i} weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    tempDisplayList.push(<WeatherWidget id={i} weatherData={weather} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "textbox":
-                    displayList.push(<Textbox id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    tempDisplayList.push(<Textbox id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "default": console.log("Widget Type ERROR (This should not print)");
             }
         }
 
-        return displayList;
-    }
+        setDisplayList(tempDisplayList);
+    }, [widgetList, periodName, countdown, weather]);
 
     return (     
         <div className="App" style={{backgroundColor:siteLayout.backgroundColor}}>
             <Timekeeper schedule={schedule} countdownCallback={(data) => setCountdown(data)} periodNameCallback={(data) => setPeriodName(data)}/>
-            {renderWidgetList()}
+            {displayList}
         </div>
     );
 }
