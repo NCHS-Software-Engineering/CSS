@@ -17,6 +17,7 @@ import "./styles/App.css";
 
 import { Box } from '@mui/material';
 
+import { brand } from './styles/LPTheme.js';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -41,7 +42,7 @@ function App() {
 
   // the routing to the svarious pages
   return (
-    <ThemeProvider theme={(mode === "light") ? lightTheme : darkTheme}>
+    <ThemeProvider theme={}>
       <CssBaseline />
       <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
         <BrowserRouter>
