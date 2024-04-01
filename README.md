@@ -24,6 +24,8 @@ react-color
 react-draggable-list
 react-router-dom
 react-scripts
+@fontsource/inconsolata
+
 
 ### Installation
 
