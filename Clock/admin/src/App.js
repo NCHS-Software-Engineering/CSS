@@ -49,6 +49,7 @@ function App() {
             <Sidebar currentTheme={mode} switchTheme={() => changeMode()}/>
             <Box sx={{width:"100%"}}>
               <Routes> {/* The paths to all of the pages are contained here */}
+                
                 <Route path="/" element = {<LoginPage />} /> {/* Take user to home page by default */}
 
                 <Route path="/preview" element = {<PreviewPage />} />
@@ -56,7 +57,6 @@ function App() {
                 <Route path="/calendar" element = {<CalendarPage />} />
                 <Route path="/defaultWeek" element = {<DefaultWeekPage />} />
                 <Route path="/schedules" element = {<SchedulesPage />} />
-
                 <Route path = "*" element = {<h1>PAGE NOT FOUND!!!</h1>} /> {/* In case the page is not found */}
 
               </Routes>

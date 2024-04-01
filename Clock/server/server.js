@@ -278,3 +278,41 @@ app.put("/layout", (req, res) =>{
 });
 
 app.listen(httpPortNum);
+
+
+// ----- OAuth -----
+
+// idk how this works
+/*
+app.post('/api/auth/google', (req, res) => {
+  const { code } = req.body;
+  const client_id = 'YOUR_CLIENT_ID';
+  const client_secret = 'YOUR_CLIENT_SECRET';
+  const redirect_uri = 'YOUR_REDIRECT_URI';
+  const grant_type = 'authorization_code';
+
+  fetch('<https://oauth2.googleapis.com/token>', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      code,
+      client_id,
+      client_secret,
+      redirect_uri,
+      grant_type,
+    }),
+  })
+  .then(response => response.json())
+  .then(tokens => {
+    // Send the tokens back to the frontend, or store them securely and create a session
+    res.json(tokens);
+  })
+  .catch(error => {
+    // Handle errors in the token exchange
+    console.error('Token exchange error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  });
+});
+*/
