@@ -6,6 +6,7 @@
     "@mui/material": "^5.15.14",
     "@mui/system": "^5.15.14",
     "@mui/x-date-pickers": "^6.19.8",
+    "@react-oauth/google": "^0.12.1",
     "dayjs": "^1.11.10",
     "mui-color-input": "^2.0.3",
     "nodemon": "^3.1.0",
