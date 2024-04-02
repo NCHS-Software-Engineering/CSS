@@ -32,8 +32,8 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
         */  
 
     
-            // Get the time in 12-hour format with AM/PM
-            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+            // Get the time in 12-hour format with AM/PM, without leading zeros for hours
+            const options = { hour: 'numeric', minute: '2-digit', hour12: true };
             var tempdisplay = tempDate.toLocaleTimeString(undefined, options);
     
             setDisplay(tempdisplay)
