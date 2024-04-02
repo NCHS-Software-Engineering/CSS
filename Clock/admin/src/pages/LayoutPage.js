@@ -12,6 +12,7 @@ import WeatherConfig from "../components/WeatherConfig";
 import { Box, Button, Card, Divider, Paper } from "@mui/material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import AbcIcon from '@mui/icons-material/Abc';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
@@ -451,7 +452,7 @@ function LayoutPage()
             case "countdown": 
                 return <AccessAlarmIcon/>;
             case "date":
-                return <AccessTimeIcon/>;
+                return <CalendarTodayRoundedIcon/>;
             case "clock":
                 return <AccessTimeIcon/>;
             case "periodName":
@@ -491,7 +492,7 @@ function LayoutPage()
                 
                     <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 1}}>
                         <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("date")} subtitle={"date"} type={"date"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("date")} subtitle={"Date"} type={"date"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>
