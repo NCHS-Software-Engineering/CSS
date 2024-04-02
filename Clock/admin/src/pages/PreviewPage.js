@@ -14,7 +14,7 @@ function PreviewPage()
         
             <Box sx={{width: "70%"}}>
                 <Paper elevation={7} sx={{padding: 1}}>
-                    <iframe style={{aspectRatio: 16/9}} src="http://localhost:3000/" height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                    <iframe style={{aspectRatio: 16/9}} src="http://localhost:3500/" height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
                 </Paper>
             </Box>
         </Box>

@@ -42,12 +42,12 @@ function LoginPage() {
         </header>
         <body className="App-menu">
           <div>
-          <GoogleLogin
-            clientId="1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com"
-            onSuccess={handleSuccess}
-            onError={handleError}
-            cookiePolicy={'single_host_origin'}
-          />
+            <GoogleLogin
+              clientId="1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com"
+              onSuccess={handleSuccess}
+              onError={handleError}
+              cookiePolicy={'single_host_origin'}
+            />
           </div>
         </body>
       </div>
