@@ -22,17 +22,23 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
     const [display, setDisplay] = useState("");
 
     useEffect(() => {
-        const interval =  setInterval(() => 
-        {
+        const interval = setInterval(() => {
             const tempDate = new Date();
 
+            /*
             var tempdisplay = tempDate.getHours().toString().padStart(2, "0") + ":" + tempDate.getMinutes().toString().padStart(2, "0");
             if (config.displaySeconds) tempdisplay += ":" + tempDate.getSeconds().toString().padStart(2, "0")
             // Add the date to the display
+        */  
 
+    
+            // Get the time in 12-hour format with AM/PM
+            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+            var tempdisplay = tempDate.toLocaleTimeString(undefined, options);
+    
             setDisplay(tempdisplay)
         }, 100);
-
+    
         return () => clearInterval(interval);
     }, [config]);
 
