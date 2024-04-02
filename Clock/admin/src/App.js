@@ -60,7 +60,6 @@ function App() {
                 <Route path="/calendar" element = {<CalendarPage />} />
                 <Route path="/defaultWeek" element = {<DefaultWeekPage />} />
                 <Route path="/schedules" element = {<SchedulesPage />} />
-
                 <Route path = "*" element = {<h1>PAGE NOT FOUND!!!</h1>} /> {/* In case the page is not found */}
 
               </Routes>
