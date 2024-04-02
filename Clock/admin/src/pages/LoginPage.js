@@ -6,7 +6,19 @@ import logo from '../images/logo.png';
 import { useEffect } from 'react';
 import { gapi } from 'gapi-script';
 
+const clientId='1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com';
+
 function LoginPage() {
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: ""
+      })
+    };
+    gapi.load('client:auth2', start);
+  }, []);
+
   const handleSuccess = (res) => {
     /*
     const authCode = res.code;
@@ -43,7 +55,7 @@ function LoginPage() {
         <body className="App-menu">
           <div>
             <GoogleLogin
-              clientId="1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com"
+              clientId={clientId}
               onSuccess={handleSuccess}
               onError={handleError}
               cookiePolicy={'single_host_origin'}

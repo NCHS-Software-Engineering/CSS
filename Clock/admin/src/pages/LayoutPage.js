@@ -480,7 +480,7 @@ function LayoutPage()
                     <Box sx={{position: "relative", width: "100%", aspectRatio: 16/9}}>
                         {overlay ?
                         <Box sx={{zIndex:"1", pointerEvents:"none", opacity: 0.85, position: "absolute", width: "100%", height: "100%"}}>
-                            <iframe src="http://localhost:3000/" style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                            <iframe src="http://localhost:3500/" style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
                         </Box> : <></> }
                         <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
                             <tbody>
