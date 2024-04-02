@@ -388,7 +388,7 @@ function LayoutPage()
                 {
                     case "countdown": 
                         return <CountdownConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
-                    case "date":
+                    case "Date":
                         return <DateConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "clock":
                         return <ClockConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
@@ -450,7 +450,7 @@ function LayoutPage()
         {
             case "countdown": 
                 return <AccessAlarmIcon/>;
-            case "date":
+            case "Date":
                 return <AccessTimeIcon/>;
             case "clock":
                 return <AccessTimeIcon/>;
@@ -491,7 +491,7 @@ function LayoutPage()
                 
                     <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 1}}>
                         <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("date")} subtitle={"date"} type={"date"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("Date")} subtitle={"Date"} type={"Date"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>
