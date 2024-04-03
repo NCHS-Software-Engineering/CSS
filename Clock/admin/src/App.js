@@ -17,22 +17,27 @@ import "./styles/App.css";
 
 import { Box } from '@mui/material';
 
-import getLPTheme from './styles/LPTheme.js';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-/*
+
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
+    primary: {
+      main: '#195D88',
+    },
   },
 });
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+    primary: {
+      main: '#84a6c2',
+    },
   },
 });
-*/
+
 
 function App() {
   const [mode, setMode] = useState("light");
@@ -44,7 +49,7 @@ function App() {
 
   // the routing to the svarious pages
   return (
-    <ThemeProvider theme={createTheme(getLPTheme(mode))}>
+    <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
       <CssBaseline />
       <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
         <BrowserRouter>

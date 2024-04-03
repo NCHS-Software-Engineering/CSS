@@ -46,6 +46,7 @@ function LoginPage() {
     console.error('Login failed:', res);
   };
   
+  /*
   return (
       <div className="App">
         <header className="App-header">
@@ -64,6 +65,9 @@ function LoginPage() {
         </body>
       </div>
     );
+    */
+
+    return "do later";
   }
   
   export default LoginPage;
