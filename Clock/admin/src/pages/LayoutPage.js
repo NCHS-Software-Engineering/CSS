@@ -389,7 +389,7 @@ function LayoutPage()
                 {
                     case "countdown": 
                         return <CountdownConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
-                    case "Date":
+                    case "date":
                         return <DateConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "clock":
                         return <ClockConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
@@ -476,8 +476,8 @@ function LayoutPage()
                 <h1>Layout Editor</h1>
             </Box>
 
-            <Paper elevation={7} sx={{width: "80%", padding: 1.5, display: "flex", flexDirection: "row"}}>
-                <Box sx={{width: "70%", marginRight: 1}}>
+            <Paper elevation={7} sx={{width: "90%", padding: 3, display: "flex", flexDirection: "row"}}>
+                <Box sx={{width: "70%", marginRight: 3}}>
                     <Box sx={{position: "relative", width: "100%", aspectRatio: 16/9}}>
                         {overlay ?
                         <Box sx={{zIndex:"1", pointerEvents:"none", opacity: 0.85, position: "absolute", width: "100%", height: "100%"}}>
@@ -490,9 +490,9 @@ function LayoutPage()
                         </table>
                     </Box>
                 
-                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 1}}>
+                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", paddingTop: 3}}>
                         <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("date")} subtitle={"date"} type={"date"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("date")} subtitle={"Date"} type={"date"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>
