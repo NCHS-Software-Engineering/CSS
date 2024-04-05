@@ -42,17 +42,6 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
         return () => clearInterval(interval);
     }, [config]);
 
-    function getDateDisplay() {
-        const tempDate = new Date();
-        
-        // Get today's date in the format "month name day, year"
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        const today = tempDate.toLocaleDateString(undefined, options);
-
-        return (
-            <ScaleText id={props.id} text={today} width={width} height={height / 2}/>
-        )
-    }
     
     return(
         <Paper elevation={20}
@@ -69,11 +58,8 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
             }}
         >
             <div style={{width: "100%", height: "100%"}}>
-                <div style={{width: "100%", height: "50%"}}>
+                <div style={{width: "100%", height: "100%"}}>
                     <ScaleText id={props.id} text={display} width={width} height={height}/>
-                </div>
-                <div style={{width: "100%", height: "50%"}}>
-                    {(config.displayDate) ? getDateDisplay() : <></>}
                 </div>
             </div>
         </Paper>

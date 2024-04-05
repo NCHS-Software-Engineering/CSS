@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
 import { Box, Button, ButtonGroup, MenuItem, Paper, Select } from "@mui/material";
+import { borderColor } from "@mui/system";
 
 
 // TODO: User feedback is important! (through CSS maybe?)
@@ -126,7 +127,9 @@ function CalendarPage()
 
                 var backgroundStyle = {}; // shading in for user feedback (i.e. default schedule, 1 time special schedule, or reapeating special schedule)
                 var selectedStyle = {fontWeight:"normal"}; // Give user feedback as to which date is currently selected for editing
-                var schName = <br/>; // The name of the "Special Schedule" for that day (if any)
+                var schName = ""; // The name of the "Special Schedule" for that day (if any)
+
+                if (incrementDate.getMonth() !== month) backgroundStyle = {color:"#cccccc", borderColor: "#000000"};
 
                 if (calendar[dateKey]) // determine backgroundStyle
                 {
@@ -157,8 +160,8 @@ function CalendarPage()
                 rowEntries.push(
                     <td style={{...backgroundStyle, border: "1px solid"}} onClick={()=>{setSelectedDateKey(dateKey)}}>
                         <Box sx={{width: "100%", height: "100%"}}>
-                            <p style={selectedStyle}>{incrementDate.getDate()}</p>
-                            <p >{schName}</p>
+                            <p style={selectedStyle}>{" " + incrementDate.getDate()}</p>
+                            <p >{" " + schName}</p>
                         </Box>
                     </td>
                 );

@@ -10,9 +10,8 @@ function ClockConfig(params=null) // params.id, params.config, params.callback
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
     const [displaySeconds, setDisplaySeconds] = useState((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
-    const [displayDate, setDisplayDate] = useState((params.config && params.config.displayDate) ? params.config.displayDate : false); // should the countdown display date
     
-    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds, "displayDate":displayDate});}
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds});}
 
     useEffect(() =>
     {
@@ -24,14 +23,13 @@ function ClockConfig(params=null) // params.id, params.config, params.callback
             setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
             setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
             setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
-            setDisplayDate((params.config && params.config.displayDate) ? params.config.displayDate : false); // should the countdown display date
         }
     }, [params]);
 
     useEffect(() =>
     {
         runCallback();
-    }, [backgroundColor, textColor, displaySeconds, displayDate]);
+    }, [backgroundColor, textColor, displaySeconds]);
 
 
     return (
@@ -55,10 +53,6 @@ function ClockConfig(params=null) // params.id, params.config, params.callback
             <Box> {/* Seconds display selection */}
                 <p>Display Seconds: </p>
                 <Checkbox checked={displaySeconds} onChange={()=>{setDisplaySeconds(!displaySeconds);}}></Checkbox>
-            </Box>
-            <Box> {/* Date display selection */}
-                <p>Display Date: </p>
-                <Checkbox checked={displayDate} onChange={()=>{setDisplayDate(!displayDate);}}></Checkbox>
             </Box>
         </Box>
     );
