@@ -1,23 +1,26 @@
 import "../styles/App.css";
 import { Link } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import Button from '@mui/material/Button';
 import logo from '../images/logo.png';
-import { useEffect } from 'react';
-import { gapi } from 'gapi-script';
+import { useState, useEffect } from 'react';
 
 const clientId='1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com';
 
 function LoginPage() {
   useEffect(() => {
-    function start() {
-      gapi.client.init({
-        clientId: clientId,
-        scope: ""
-      })
-    };
-    gapi.load('client:auth2', start);
-  }, []);
+    if (user) {
+      axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+          headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: 'application/json'
+          }})
+        .then((res) => {
+              setProfile(res.data);})
+        .catch((err) => console.log(err));
+    }},
+    [ user ]
+  );
 
   const handleSuccess = (res) => {
     /*
@@ -46,7 +49,7 @@ function LoginPage() {
     console.error('Login failed:', res);
   };
   
-  
+  /*
   return (
       <div className="App">
         <header className="App-header">
@@ -65,9 +68,9 @@ function LoginPage() {
         </body>
       </div>
     );
-    
+    */
 
-    //return "do later";
+    return "do later";
   }
   
   export default LoginPage;
