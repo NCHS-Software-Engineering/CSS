@@ -4,12 +4,15 @@ import { useGoogleLogin } from '@react-oauth/google';
 import Button from '@mui/material/Button';
 import logo from '../images/logo.png';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const clientId='1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com';
 
 function LoginPage() {
+  const [ user, setUser ] = useState([]);
+  const [ profile, setProfile ] = useState([]);
 
-  /*
+  /**/
   useEffect(() => {
     if (user) {
       axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
@@ -24,30 +27,11 @@ function LoginPage() {
     [ user ]
   );
 
-  const handleSuccess = (res) => {
-    const authCode = res.code;
-
-    fetch('http://localhost:8500/api/auth/google', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code: authCode }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Login successful:', data);
-    })
-    .catch(error => {
-      console.error('Login error:', error);
+  const login = useGoogleLogin({
+        onSuccess: (codeResponse) => {setUser(codeResponse);
+                console.log('Login Success:', codeResponse)},
+        onError: (error) => console.log('Login Failed:', error)
     });
-
-    console.log('Login successful:', res.profileObj);
-  };
-
-  const handleError = (res) => {
-    console.error('Login failed:', res);
-  };
   
   return (
       <div className="App">
@@ -57,17 +41,12 @@ function LoginPage() {
         </header>
         <body className="App-menu">
           <div>
-            <GoogleLogin
-              clientId={clientId}
-              onSuccess={handleSuccess}
-              onError={handleError}
-              cookiePolicy={'single_host_origin'}
-            />
+            <Button variant="contained" color="primary" onClick={login}>Login with Google</Button>
           </div>
         </body>
       </div>
     );
-    */
+    /**/
 
     return "do later";
   }
