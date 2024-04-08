@@ -220,7 +220,11 @@ app.get("/layout", (req, res) =>{
 // TODO: verify that the files are in a valid format??? (or maybe just trust the 'admin')
 // let 'admin' send over the modified json files
 app.put("/schedules", (req, res) =>{
-    FileSystem.writeFileSync("files/schedules.json", JSON.stringify(req.body)); // update server file
+    const oldName = req.body.oldName;
+    const newName = req.body.newName;
+    const newSchedules = req.body.schedules;
+
+    FileSystem.writeFileSync("files/schedules.json", JSON.stringify(newSchedules)); // update server file
     
     // update the other files if needed
     const defaultWeek = JSON.parse(FileSystem.readFileSync("files/defaultWeek.json"));
@@ -228,11 +232,19 @@ app.put("/schedules", (req, res) =>{
 
     for (let i = 0; i < 7; i++)
     {
-        if (req.body[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+        if (defaultWeek[i] !== null)
+        {
+            if (defaultWeek[i] === oldName) defaultWeek[i] = newName;
+            if (newSchedules[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+        }
     }
     for (const key in calendar)
     {
-        if (calendar[key].schedule !== null && req.body[calendar[key].schedule] === undefined) delete calendar[key];
+        if (calendar[key].schedule !== null)
+        {
+            if (calendar[key].schedule === oldName) calendar[key].schedule = newName;
+            if (newSchedules[calendar[key].schedule] === undefined) delete calendar[key];
+        }
     }
     
     FileSystem.writeFileSync("files/defaultWeek.json", JSON.stringify(defaultWeek));

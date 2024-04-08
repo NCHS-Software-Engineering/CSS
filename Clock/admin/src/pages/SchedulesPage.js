@@ -5,11 +5,13 @@ import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
 
 import "../styles/App.css";
-import { Box, Button, Paper, TextField } from "@mui/material";
+import { Box, Button, Card, Grid, Modal, Paper, TextField } from "@mui/material";
 
 
 function SchedulesPage()
 {
+    const [overlay, setOverlay] = useState(false);
+
     const [schedules, setSchedules] = useState({}); // All the schedules (initially recieved from the server)
     const [selection, setSelection] = useState(null); // The name of the schedule currently being modified (or a new empty schedule)
 
@@ -53,7 +55,7 @@ function SchedulesPage()
         var newTempSchedule = [];
         if (newSelection !== null)
         {
-            newTempSchedule = [... schedules[newSelection]];
+            newTempSchedule = [...schedules[newSelection]];
         }
 
         const indexList = [];
@@ -146,31 +148,6 @@ function SchedulesPage()
         setTempSchedule(newTempSchedule);
     }
 
-    // This function will return a button to delete the schedule if the user is modifying an old schedule (i.e. a prexisting schedule is selected)
-    // BUT, will return a text input field for the schedule name if the user is creating a new schedule (i.e. empty is selected)
-    function specialInput() // delete schedule or name schedule
-    {
-        // -- field for nameing schedule --
-        if (selection === null) 
-        {
-            return <TextField variant="filled" label="New Schedule Name" value={tempScheduleName} onInput={changeScheduleName}></TextField>;
-        }
-
-        // -- button for deleteing schedule --
-        return(
-            <Button variant="contained" size="large" onClick={() => {
-                if (window.confirm("Are you sure that you want to delete schedule \"" + selection + "\" ?"))
-                {
-                    const copiedSchedules = {...schedules}; // shallow copy
-                    delete copiedSchedules[selection]; // delete the selected schedule from the objec storeing all the schedules
-
-                    setSchedules(copiedSchedules); // update original
-                    updateServerSchedules(copiedSchedules); // update the server with the new schedules JSON object
-                    changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
-                }
-            }}>DELETE SCHEDULE</Button>
-        );
-    }
 
     // check schedule validity and update the server with the new schedule JSON object
     function submitSchedule()
@@ -182,7 +159,7 @@ function SchedulesPage()
             return;
         }
 
-        if (selection === null && schedules[tempScheduleName]) // Schedule name already exists (no duplicate schedules)
+        if (selection !== tempScheduleName && schedules[tempScheduleName]) // Schedule name already exists (no duplicate schedules)
         {
             window.alert("Invalid Schedule Name!\nThe Schedule \"" + tempScheduleName + "\" Already Exists!");
             return;
@@ -221,9 +198,14 @@ function SchedulesPage()
         // -- update server & reset states --
         const copiedSchedules = {...schedules};
         copiedSchedules[tempScheduleName] = spliceScheduleIDs(tempSchedule);
+        if (selection !== null && selection !== tempScheduleName)
+        {
+            delete copiedSchedules[selection];
+        }
         setSchedules(copiedSchedules);
-        updateServerSchedules(copiedSchedules);
+        updateServerSchedules({"schedules":copiedSchedules, "oldName":selection, "newName":tempScheduleName});
         changeSelection(null);
+        setOverlay(false);
 
         if (selection === null) // if this is a completely new schedule
         {
@@ -233,11 +215,15 @@ function SchedulesPage()
         {          
             window.alert("Updated Schedule");
         }
+        else // if this is a renamed schedule
+        {
+            window.alert("Renamed/Updated Schedule");
+        }
     }
 
     function spliceScheduleIDs(sch)
     {
-        const copy = [... sch];
+        const copy = [...sch];
 
         for (let i = 0; i < copy.length; i++)
         {
@@ -247,6 +233,55 @@ function SchedulesPage()
         return copy;
     }
 
+    // allows for the selection of schedules
+    function generateScheduleCards()
+    {
+        const resList = [];
+
+        // generate the cards for all existing schedules
+        for (const entry in schedules)
+        {
+            resList.push(
+                <Grid item xs={2}>
+                    <Paper elevation={10} sx={{aspectRatio: 3/2, display: "flex", flexDirection: "column"}}>
+                        <Box sx={{textAlign: "center"}}>
+                            <h2>{entry}</h2>
+                        </Box>
+                        <Button variant="outlined" size="large" onClick={() => {changeSelection(entry); setOverlay(true);}}>Edit</Button>
+                        <Button variant="outlined" size="large" 
+                            onClick={() => {
+                            if (window.confirm("Are you sure that you want to delete schedule \"" + entry + "\" ?"))
+                            {
+                                const copiedSchedules = {...schedules}; // shallow copy
+                                delete copiedSchedules[entry]; // delete the selected schedule from the objec storeing all the schedules
+
+                                setSchedules(copiedSchedules); // update original
+                                updateServerSchedules({"schedules":copiedSchedules, "oldName":entry, "newName":entry}); // update the server with the new schedules JSON object
+                                changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
+                            }
+                        }}>Delete</Button>
+                    </Paper>
+                </Grid>
+            )
+        }
+
+        // generate a card for adding a new schedule
+        resList.push(
+            <Grid item xs={2}>
+                <Box sx={{aspectRatio: 3/2, display: "flex", flexDirection: "column", border: 5, borderStyle: "dashed", borderRadius: 4}}>
+                    <Button variant="text" sx={{width: "100%", height: "100%"}}
+                        onClick={() => {
+                        changeSelection(null); 
+                        setOverlay(true);
+                    }}>NEW</Button>
+                </Box>
+            </Grid>
+        )
+
+        // return the cards
+        return resList;
+    }
+
 
     return(
         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -254,24 +289,37 @@ function SchedulesPage()
                 <h1>Schedules</h1>
             </Box>
             
-            <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 3, padding: 1, width: "14cm", maxWidth: "90%"}}>
-                <Box sx={{display: "flex", marginBottom: 1}}>
-                    <Box sx={{marginRight: 1}}>
-                        <ScheduleDropdown schedules={schedules} nullSelectionName={"NEW SCHEDULE"} defaultValue={selection} callback={changeSelection}/>
-                    </Box>
-                    {specialInput()}
-                </Box>
+            <Box sx={{width: "90%"}}>
+                <Grid container spacing={2}>
+                    {generateScheduleCards()}
+                </Grid>
+            </Box>
 
-                <Box sx={{width: "100%"}}>
-                    {displayEditor()}
-                </Box>
+            <Modal
+                sx={{
+                    width: "100%"
+                }}
+                open={overlay}
+                onClose={() => setOverlay(false)}
+            >
+                <Box sx={{display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%"}}>
+                    <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 3, padding: 1, width: "100%"}}>
+                        <Box sx={{display: "flex", marginBottom: 1}}>
+                            <TextField variant="filled" label="Schedule Name" value={tempScheduleName} onInput={changeScheduleName}></TextField>
+                        </Box>
 
-                <Box>
-                    <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
-                </Box>
-            </Paper>
+                        <Box sx={{width: "100%"}}>
+                            {displayEditor()}
+                        </Box>
 
-            <Button variant="contained" size="large" onClick={submitSchedule}>Save</Button>
+                        <Box>
+                            <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
+                        </Box>
+                    </Paper>
+
+                    <Button variant="contained" size="large" onClick={() => {submitSchedule()}}>Save</Button>
+                </Box>
+            </Modal>
         </Box>
     );
 }

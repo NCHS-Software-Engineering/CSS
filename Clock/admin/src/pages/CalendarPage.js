@@ -129,7 +129,7 @@ function CalendarPage()
                 var selectedStyle = {fontWeight:"normal"}; // Give user feedback as to which date is currently selected for editing
                 var schName = ""; // The name of the "Special Schedule" for that day (if any)
 
-                if (incrementDate.getMonth() !== month) backgroundStyle = {color:"#cccccc", borderColor: "#000000"};
+                if (incrementDate.getMonth() !== month) backgroundStyle = {color:"#cccccc", borderColor: "#aaaaaa"};
 
                 if (calendar[dateKey]) // determine backgroundStyle
                 {

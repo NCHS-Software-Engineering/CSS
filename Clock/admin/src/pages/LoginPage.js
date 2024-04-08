@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 const clientId='1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com';
 
 function LoginPage() {
+
+  /*
   useEffect(() => {
     if (user) {
       axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
@@ -23,7 +25,6 @@ function LoginPage() {
   );
 
   const handleSuccess = (res) => {
-    /*
     const authCode = res.code;
 
     fetch('http://localhost:8500/api/auth/google', {
@@ -40,7 +41,6 @@ function LoginPage() {
     .catch(error => {
       console.error('Login error:', error);
     });
-    */
 
     console.log('Login successful:', res.profileObj);
   };
@@ -49,7 +49,6 @@ function LoginPage() {
     console.error('Login failed:', res);
   };
   
-  /*
   return (
       <div className="App">
         <header className="App-header">
