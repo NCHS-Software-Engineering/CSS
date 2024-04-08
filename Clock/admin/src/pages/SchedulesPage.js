@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import DraggableList from "react-draggable-list";
 
-import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
 
 import "../styles/App.css";
-import { Box, Button, Card, Grid, Modal, Paper, TextField } from "@mui/material";
+import { Box, Button, Divider, Grid, Modal, Paper, TextField } from "@mui/material";
 
 
 function SchedulesPage()
@@ -243,23 +242,27 @@ function SchedulesPage()
         {
             resList.push(
                 <Grid item xs={2}>
-                    <Paper elevation={10} sx={{aspectRatio: 3/2, display: "flex", flexDirection: "column"}}>
-                        <Box sx={{textAlign: "center"}}>
+                    <Paper elevation={10} sx={{aspectRatio: 1, display: "flex", flexDirection: "column"}}>
+                        <Box sx={{textAlign: "center", alignContent: "center", height: "20%"}}>
                             <h2>{entry}</h2>
                         </Box>
-                        <Button variant="outlined" size="large" onClick={() => {changeSelection(entry); setOverlay(true);}}>Edit</Button>
-                        <Button variant="outlined" size="large" 
-                            onClick={() => {
-                            if (window.confirm("Are you sure that you want to delete schedule \"" + entry + "\" ?"))
-                            {
-                                const copiedSchedules = {...schedules}; // shallow copy
-                                delete copiedSchedules[entry]; // delete the selected schedule from the objec storeing all the schedules
+                        <Box sx={{display: "flex", flexDirection: "column", height: "80%"}}>
+                            <Divider />
+                            <Button sx={{width: "100%", height:"50%"}} variant="text" onClick={() => {changeSelection(entry); setOverlay(true);}}>Edit</Button>
+                            <Divider />
+                            <Button sx={{width: "100%", height:"50%"}} variant="text"
+                                onClick={() => {
+                                if (window.confirm("Are you sure that you want to delete schedule \"" + entry + "\" ?"))
+                                {
+                                    const copiedSchedules = {...schedules}; // shallow copy
+                                    delete copiedSchedules[entry]; // delete the selected schedule from the objec storeing all the schedules
 
-                                setSchedules(copiedSchedules); // update original
-                                updateServerSchedules({"schedules":copiedSchedules, "oldName":entry, "newName":entry}); // update the server with the new schedules JSON object
-                                changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
-                            }
-                        }}>Delete</Button>
+                                    setSchedules(copiedSchedules); // update original
+                                    updateServerSchedules({"schedules":copiedSchedules, "oldName":entry, "newName":entry}); // update the server with the new schedules JSON object
+                                    changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
+                                }
+                            }}>Delete</Button>
+                        </Box>
                     </Paper>
                 </Grid>
             )
@@ -268,7 +271,7 @@ function SchedulesPage()
         // generate a card for adding a new schedule
         resList.push(
             <Grid item xs={2}>
-                <Box sx={{aspectRatio: 3/2, display: "flex", flexDirection: "column", border: 5, borderStyle: "dashed", borderRadius: 4}}>
+                <Box sx={{aspectRatio: 1, display: "flex", flexDirection: "column", border: 5, borderStyle: "dashed", borderRadius: 4}}>
                     <Button variant="text" sx={{width: "100%", height: "100%"}}
                         onClick={() => {
                         changeSelection(null); 
