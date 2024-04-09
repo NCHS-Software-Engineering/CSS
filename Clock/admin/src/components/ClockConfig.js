@@ -9,27 +9,25 @@ function ClockConfig(params=null) // params.id, params.config, params.callback
 
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
-    const [displaySeconds, setDisplaySeconds] = useState((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
     
-    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "displaySeconds":displaySeconds});}
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor});}
 
     useEffect(() =>
     {
         if (params.id != ID)
         {
             setID(params.id);
-            if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor && displaySeconds === params.config.displaySeconds) runCallback();
+            if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor) runCallback();
 
             setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
             setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
-            setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
         }
     }, [params]);
 
     useEffect(() =>
     {
         runCallback();
-    }, [backgroundColor, textColor, displaySeconds]);
+    }, [backgroundColor, textColor]);
 
 
     return (
@@ -49,10 +47,6 @@ function ClockConfig(params=null) // params.id, params.config, params.callback
                     value={textColor}
                     onChange={(newColor) => {setTextColor(newColor);}} 
                 />
-            </Box>
-            <Box> {/* Seconds display selection */}
-                <p>Display Seconds: </p>
-                <Checkbox checked={displaySeconds} onChange={()=>{setDisplaySeconds(!displaySeconds);}}></Checkbox>
             </Box>
         </Box>
     );
