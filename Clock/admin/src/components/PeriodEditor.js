@@ -51,7 +51,7 @@ function PeriodEditor(props = null) // props.item.id, props.item.name, props.ite
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
                 <Box sx={{display:"flex"}}>
-                    <Box {... props.dragHandleProps }>
+                    <Box {...props.dragHandleProps} sx={{cursor: "move"}}>
                         <DragHandleIcon/>
                     </Box>
                     <Box sx={{marginRight: 1}}>

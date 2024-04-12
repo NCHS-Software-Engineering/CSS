@@ -5,6 +5,7 @@ import PeriodEditor from "../components/PeriodEditor";
 
 import "../styles/App.css";
 import { Box, Button, Divider, Grid, Modal, Paper, TextField } from "@mui/material";
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 
 function SchedulesPage()
@@ -276,7 +277,7 @@ function SchedulesPage()
                         onClick={() => {
                         changeSelection(null); 
                         setOverlay(true);
-                    }}>NEW</Button>
+                    }}><AddRoundedIcon sx={{width: "50%", height: "50%"}}/></Button>
                 </Box>
             </Grid>
         )
@@ -315,12 +316,12 @@ function SchedulesPage()
                             {displayEditor()}
                         </Box>
 
-                        <Box>
-                            <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
-                        </Box>
-                    </Paper>
+                        <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
 
-                    <Button variant="contained" size="large" onClick={() => {submitSchedule()}}>Save</Button>
+                        <Divider sx={{marginTop: 1, marginBottom: 1, width:"100%"}}/>
+
+                        <Button variant="contained" size="large" onClick={() => {submitSchedule()}}>Save</Button>
+                    </Paper>
                 </Box>
             </Modal>
         </Box>

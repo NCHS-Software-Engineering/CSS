@@ -490,7 +490,7 @@ function LayoutPage()
                         </table>
                     </Box>
                 
-                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", paddingTop: 3}}>
+                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 0.5, paddingTop: 3}}>
                         <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("date")} subtitle={"Date"} type={"date"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
