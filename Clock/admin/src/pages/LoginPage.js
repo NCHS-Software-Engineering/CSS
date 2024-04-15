@@ -6,8 +6,6 @@ import logo from '../images/logo.png';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const clientId='1708349956-dj7lh20571btinvcqm33260chgv94pae.apps.googleusercontent.com';
-
 function LoginPage() {
   const [ user, setUser ] = useState([]);
   const [ profile, setProfile ] = useState([]);
