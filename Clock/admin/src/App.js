@@ -21,6 +21,9 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import HomePage from './pages/HomePage';
 
+import AuthorizedRoute from './AuthorizedRoute'
+import store from './store'
+
 
 const lightTheme = createTheme({
   palette: {
