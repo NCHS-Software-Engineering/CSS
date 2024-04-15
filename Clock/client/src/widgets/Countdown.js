@@ -43,12 +43,21 @@ function Countdown(props = null) // props.id, props.deltaTime
     }
   }, [props])
   
+  function flash()
+  {
+    const color1 = config.backgroundColor;
+    const color2 = "#0373fc";
+
+    return color1;
+
+  }
   
+
   return (
     <Paper elevation={20}
       style=
       {{
-          backgroundColor: config.backgroundColor,
+          backgroundColor: flash(),
           color: config.textColor,
           "gridColumnStart": col,
           "gridColumnEnd": col+width,
