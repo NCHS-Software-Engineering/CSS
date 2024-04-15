@@ -6,7 +6,9 @@ import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <GoogleOAuthProvider clientId="hi">
     <React.StrictMode>
       <App />
     </React.StrictMode>
+  </GoogleOAuthProvider>
 );

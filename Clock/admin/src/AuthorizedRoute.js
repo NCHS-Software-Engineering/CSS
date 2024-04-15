@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import { Route, Navigate } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getLoggedUser } from './utils/xhr'
 
@@ -17,7 +17,7 @@ class AuthorizedRoute extends React.Component {
         if (pending) return <div>Loading...</div>
         return logged
           ? <Component {...props} />
-          : <Redirect to="/auth/login" />
+          : <Navigate to="/" />
       }} />
     )
   }
