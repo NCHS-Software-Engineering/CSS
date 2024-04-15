@@ -6,6 +6,7 @@ import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
+import HomeIcon from '@mui/icons-material/Home';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import DateRangeRoundedIcon from '@mui/icons-material/DateRangeRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
@@ -106,8 +107,8 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                 </DrawerHeader>
                 <Divider/>
                 <List sx={{fontSize: '100'}}>
-                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/preview") ? 5 : 0}}>
-                        <Link component={RouterLink} to="/preview" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/preview") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/preview"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center'}}>
                                     <ImageRoundedIcon/>
@@ -116,8 +117,8 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/layout") ? 5 : 0}}>
-                        <Link component={RouterLink} to="/layout" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/layout") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/layout"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{ justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center', }}>
                                     <DashboardRoundedIcon/>
@@ -126,8 +127,8 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/calendar") ? 5 : 0}}>
-                        <Link component={RouterLink} to="/calendar" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/calendar") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/calendar"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center'}}>
                                     <CalendarTodayRoundedIcon/>
@@ -136,8 +137,8 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/defaultWeek") ? 5 : 0}}>
-                        <Link component={RouterLink} to="/defaultWeek" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/defaultWeek") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/defaultWeek"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <DateRangeRoundedIcon/>
@@ -146,8 +147,8 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/schedules") ? 5 : 0}}>
-                        <Link component={RouterLink} to="/schedules" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/schedules") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/schedules"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <ScheduleRoundedIcon/>
@@ -156,7 +157,19 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                             </ListItemButton>
                         </Link>
                     </ListItem>
+
                     <Divider/>
+
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/home") ? 5 : 0}}>
+                        <Link component={RouterLink} to="/home" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
+                                <ListItemIcon sx={{justifyContent: 'center',}}>
+                                    <HomeIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary={"Room Select"} sx={{ opacity: open ? 1 : 0 }}/>
+                            </ListItemButton>
+                        </Link>
+                    </ListItem>
                     <ListItem disablePadding sx={{borderRight: (location.pathname === "/") ? 5 : 0}}>
                         <Link component={RouterLink} to="/" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>

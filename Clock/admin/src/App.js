@@ -19,6 +19,7 @@ import { Box } from '@mui/material';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import HomePage from './pages/HomePage';
 
 
 const lightTheme = createTheme({
@@ -54,19 +55,21 @@ function App() {
       <Box sx={{minWidth: "100%", height: "100vh", paddingRight: 1}}>
         <BrowserRouter>
           <Box sx={{display: 'flex', minWidth: "100%", minHeight: "100%"}}>
-            <Sidebar currentTheme={mode} switchTheme={() => changeMode()}/>
+            <Routes> {/* The paths for the sidebar */}  
+              <Route path="/selection/*" element = {<Sidebar currentTheme={mode} switchTheme={() => changeMode()}/>} /> {/* display sidebar if a selection was made */}
+            </Routes>
             <Box sx={{width:"100%"}}>
-              <Routes> {/* The paths to all of the pages are contained here */}
-                
-                <Route path="/" element = {<LoginPage />} /> {/* Take user to home page by default */}
+              <Routes> {/* The paths to all of the pages are contained here */}  
+                <Route path="/" element = {<LoginPage />} /> {/* Take user to login page by default */}
+                <Route path="/home" element = {<HomePage />} /> {/* Room selection page */}
+              
+                <Route path="/selection/preview" element = {<PreviewPage />} />
+                <Route path="/selection/layout" element = {<LayoutPage />} />
+                <Route path="/selection/calendar" element = {<CalendarPage />} />
+                <Route path="/selection/defaultWeek" element = {<DefaultWeekPage />} />
+                <Route path="/selection/schedules" element = {<SchedulesPage />} />
 
-                <Route path="/preview" element = {<PreviewPage />} />
-                <Route path="/layout" element = {<LayoutPage />} />
-                <Route path="/calendar" element = {<CalendarPage />} />
-                <Route path="/defaultWeek" element = {<DefaultWeekPage />} />
-                <Route path="/schedules" element = {<SchedulesPage />} />
                 <Route path = "*" element = {<h1>PAGE NOT FOUND!!!</h1>} /> {/* In case the page is not found */}
-
               </Routes>
             </Box>
           </Box>

@@ -1,10 +1,14 @@
 import { Box, Paper } from "@mui/material";
+import { useSearchParams } from 'react-router-dom';
+
 
 import React from "react";
 
 // TODO: May need to change the iframe url if we get actual urls for the websites
 function PreviewPage()
 {
+    const [searchParams] = useSearchParams();
+
     // Takes you to all of the other pages
     return(
         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -13,8 +17,8 @@ function PreviewPage()
             </Box>
         
             <Box sx={{width: "70%"}}>
-                <Paper elevation={7} sx={{padding: 1}}>
-                    <iframe style={{aspectRatio: 16/9}} src="http://localhost:3500/" height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                <Paper elevation={7} sx={{padding: 1, pointerEvents:"none"}}>
+                    <iframe style={{aspectRatio: 16/9}} src={"http://localhost:3500?room="+searchParams.get("room")} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
                 </Paper>
             </Box>
         </Box>

@@ -6,10 +6,13 @@ import PeriodEditor from "../components/PeriodEditor";
 import "../styles/App.css";
 import { Box, Button, Divider, Grid, Modal, Paper, TextField } from "@mui/material";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { useSearchParams } from 'react-router-dom';
 
 
 function SchedulesPage()
 {
+    const [searchParams] = useSearchParams();
+
     const [overlay, setOverlay] = useState(false);
 
     const [schedules, setSchedules] = useState({}); // All the schedules (initially recieved from the server)
@@ -33,14 +36,14 @@ function SchedulesPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({room:searchParams.get("room"), data:info})
         });
     }
 
 
     // gets schedules JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}schedules`)
+        fetch(`${baseURL}schedules?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setSchedules(data);}
         );
@@ -238,9 +241,33 @@ function SchedulesPage()
     {
         const resList = [];
 
-        // generate the cards for all existing schedules
+        const orderedNames = []; // the schedule names in order by ASCII character
         for (const entry in schedules)
         {
+            orderedNames.push(entry+"");
+        }
+        // bubble sort
+        var changed = true;
+        while (changed)
+        {
+            changed = false;
+            for (let i = 0; i < orderedNames.length - 1; i++)
+            {
+                if (orderedNames[i] > orderedNames[i+1])
+                {
+                    changed = true;
+                    const temp = orderedNames[i+1];
+                    orderedNames[i+1] = orderedNames[i];
+                    orderedNames[i] = temp;
+                }
+            }
+        }
+
+        // generate the cards for all existing schedules
+        for (const i in orderedNames)
+        {
+            const entry = orderedNames[i];
+
             resList.push(
                 <Grid item xs={2}>
                     <Paper elevation={10} sx={{aspectRatio: 1, display: "flex", flexDirection: "column"}}>
@@ -286,6 +313,13 @@ function SchedulesPage()
         return resList;
     }
 
+    // TODO: actualy check if there were any changes before prompting
+    function closeOverlay()
+    {
+        if (window.confirm("Unsaved changes will be lost.\nAre you sure you want to exit?"))
+            setOverlay(false);
+    }
+
 
     return(
         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -301,13 +335,16 @@ function SchedulesPage()
 
             <Modal
                 sx={{
-                    width: "100%"
+                    display: "flex",
+                    marginTop: 5,
+                    justifyContent: "center",
+                    overflowY: "scroll"
                 }}
                 open={overlay}
-                onClose={() => setOverlay(false)}
+                onClose={() => closeOverlay()}
             >
                 <Box sx={{display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%"}}>
-                    <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 3, padding: 1, width: "100%"}}>
+                    <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%"}}>
                         <Box sx={{display: "flex", marginBottom: 1}}>
                             <TextField variant="filled" label="Schedule Name" value={tempScheduleName} onInput={changeScheduleName}></TextField>
                         </Box>

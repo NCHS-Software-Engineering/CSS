@@ -16,12 +16,14 @@ import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import AbcIcon from '@mui/icons-material/Abc';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { positions } from "@mui/system";
+import { useSearchParams } from 'react-router-dom';
 
 
 // TODO: add overlay toggle
 function LayoutPage() 
 {
+    const [searchParams] = useSearchParams();
+
     // The size of the grid
     const numColumns = 16;
     const numRows = 9;
@@ -59,13 +61,13 @@ function LayoutPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({site: siteData, widgetList: widgetData})
+            body: JSON.stringify({room:searchParams.get("room"), data:{site: siteData, widgetList: widgetData}})
         });
     }
 
     // gets defaultWeek JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}layout`)
+        fetch(`${baseURL}layout?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setWidgetList(data.widgetList); setSiteLayout(data.site); setLoading(false);}
         );
@@ -468,7 +470,7 @@ function LayoutPage()
 
 
 
-    if (loading) return <></>; // don't render anything if info hasn't come from the server yet
+    if (loading) return <>loading...</>; // don't render anything if info hasn't come from the server yet
 
     return(
         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -481,7 +483,7 @@ function LayoutPage()
                     <Box sx={{position: "relative", width: "100%", aspectRatio: 16/9}}>
                         {overlay ?
                         <Box sx={{zIndex:"1", pointerEvents:"none", opacity: 0.85, position: "absolute", width: "100%", height: "100%"}}>
-                            <iframe src="http://localhost:3500/" style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                            <iframe src={"http://localhost:3500?room="+searchParams.get("room")} style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
                         </Box> : <></> }
                         <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
                             <tbody>

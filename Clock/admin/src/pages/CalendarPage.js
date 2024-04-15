@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
 import { Box, Button, ButtonGroup, MenuItem, Paper, Select } from "@mui/material";
-import { borderColor, color } from "@mui/system";
+import { useSearchParams } from 'react-router-dom';
 
 
 // TODO: User feedback is important! (through CSS maybe?)
 function CalendarPage()
 {
+    const [searchParams] = useSearchParams();
+
     const [calendar, setCalendar] = useState({}); // the calendar storing all special schedules (initially from the server)
     const [schedules, setSchedules] = useState({});
 
@@ -30,7 +32,7 @@ function CalendarPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({room:searchParams.get("room"), data:info})
         });
     }
 
@@ -51,7 +53,7 @@ function CalendarPage()
 
     // gets calendar JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}calendar`)
+        fetch(`${baseURL}calendar?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setCalendar(data);}
         );
@@ -59,7 +61,7 @@ function CalendarPage()
 
     // gets schedules JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}schedules`)
+        fetch(`${baseURL}schedules?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setSchedules(data);}
         );

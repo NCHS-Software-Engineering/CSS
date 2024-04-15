@@ -3,10 +3,13 @@ import React, { useState, useEffect } from "react";
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
 import { Box, Button, Paper } from "@mui/material";
+import { useSearchParams } from 'react-router-dom';
 
 
 function DefaultWeekPage() 
 {
+    const [searchParams] = useSearchParams();
+    
     const [defaultWeek, setDefaultWeek] = useState({}); // the current default-week (initially recieved from the server)
     const [schedules, setSchedules] = useState({});
   
@@ -22,14 +25,14 @@ function DefaultWeekPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({room:searchParams.get("room"), data:info})
         });
     }
 
 
     // gets defaultWeek JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}defaultWeek`)
+        fetch(`${baseURL}defaultWeek?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setDefaultWeek(data);}
         );
@@ -37,7 +40,7 @@ function DefaultWeekPage()
 
     // gets schedules JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}schedules`)
+        fetch(`${baseURL}schedules?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setSchedules(data);}
         );

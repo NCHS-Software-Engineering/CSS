@@ -3,7 +3,7 @@
 
 const WebSocket = require("ws"); // import websockets
 const FileSystem = require("fs"); // import filesystem
-const Scheduler = require("node-schedule"); // import 
+const Scheduler = require("node-schedule");
 const express = require('express');
 const cors = require('cors');
 const { error } = require("console");
@@ -12,47 +12,56 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const connections = new Set(); // A set containing all of the client sockets
-var today; // today's schedule
+const roomConnections = {}; // A set containing all of the client sockets for each room
+const scheduleMap = {}; // maps the room name to today's schedule for that room
 var weather;
 
 
 // ----- File Managment -----
 
 
+function checkRoom(room) // check to make sure that a 'room' directory contains the needed files
+{
+    // make sure that all of the important files storeing the Schedules, Calendar, etc. exist
+    if (FileSystem.existsSync("files/" + room + "/schedules.json") === false) // create an empty dictionary of all schedules
+    {
+        const data = {};
+        FileSystem.writeFileSync("files/" + room + "/schedules.json", JSON.stringify(data));
+    }
+    if (FileSystem.existsSync("files/" + room + "/defaultWeek.json") === false) // create a dictionary matching the day to the schedule
+    {
+        const data = {0 : null, 1 : null, 2 : null, 3 : null, 4 : null, 5 : null, 6 : null}; // Sunday - Saturday : 0 - 6
+        FileSystem.writeFileSync("files/" + room + "/defaultWeek.json", JSON.stringify(data));
+    }
+    if (FileSystem.existsSync("files/" + room + "/calendar.json") === false) // create an empty dictionary of all dates
+    {
+        const data = {};
+        FileSystem.writeFileSync("files/" + room + "/calendar.json", JSON.stringify(data));
+    }
+    if (FileSystem.existsSync("files/" + room + "/layout.json") === false) // create an empty dictionary of all dates
+    {
+        const data = {site:{backgroundColor:"#000000"}, widgetList:[]};
+        FileSystem.writeFileSync("files/" + room + "/layout.json", JSON.stringify(data));
+    }
+}
+
 // make sure that the "files" directory exists
 if (FileSystem.existsSync("files") === false) // make sure the files directory exists 
 {
     FileSystem.mkdirSync("files");
 }
-// make sure that all of the important files storeing the Schedules, Calendar, etc. exist
-if (FileSystem.existsSync("files/schedules.json") === false) // create an empty dictionary of all schedules
+for (const i in FileSystem.readdirSync("files")) // go through every file representing its own 'room'
 {
-    const data = {};
-    FileSystem.writeFileSync("files/schedules.json", JSON.stringify(data));
-}
-if (FileSystem.existsSync("files/defaultWeek.json") === false) // create a dictionary matching the day to the schedule
-{
-    const data = {0 : null, 1 : null, 2 : null, 3 : null, 4 : null, 5 : null, 6 : null}; // Sunday - Saturday : 0 - 6
-    FileSystem.writeFileSync("files/defaultWeek.json", JSON.stringify(data));
-}
-if (FileSystem.existsSync("files/calendar.json") === false) // create an empty dictionary of all dates
-{
-    const data = {};
-    FileSystem.writeFileSync("files/calendar.json", JSON.stringify(data));
-}
-if (FileSystem.existsSync("files/layout.json") === false) // create an empty dictionary of all dates
-{
-    const data = {site:{backgroundColor:"#000000"}, widgetList:[]};
-    FileSystem.writeFileSync("files/layout.json", JSON.stringify(data));
+    const room = FileSystem.readdirSync("files")[i];
+    checkRoom(room);
 }
 
-function getCurrentSchedule(callback)
+function getCurrentSchedule(room, callback)
 {    
     // figure out todays schedule
 
-    const calendar = JSON.parse(FileSystem.readFileSync("files/calendar.json"));
-    const schedules = JSON.parse(FileSystem.readFileSync("files/schedules.json"));
+    const calendar = JSON.parse(FileSystem.readFileSync("files/" + room + "/calendar.json"));
+    const schedules = JSON.parse(FileSystem.readFileSync("files/" + room + "/schedules.json"));
 
     var dateKey;
     var scheduleKey;
@@ -67,7 +76,7 @@ function getCurrentSchedule(callback)
     }
     else // check the default schedules
     {
-        const defaultWeek = JSON.parse(FileSystem.readFileSync("files/defaultWeek.json"));
+        const defaultWeek = JSON.parse(FileSystem.readFileSync("files/" + room + "/defaultWeek.json"));
         
         scheduleKey = defaultWeek[tempDate.getDay()];
     }
@@ -77,21 +86,24 @@ function getCurrentSchedule(callback)
 
     callback(res);
 
-    // if yesterday's schedule was a special one time schedule, delete it // TODO: Testing Needed !!!
-
+    // if yesterday's schedule was a special one time schedule, delete it
     // get yesterday's date info
     tempDate.setDate(tempDate.getDate() - 1);
     dateKey = tempDate.getMonth() * 100;
     dateKey += tempDate.getDate();
 
-    if (calendar[dateKey] && calendar[dateKey]['repeating'] === false)
+    if (calendar[dateKey] && calendar[dateKey]['repeating'] === false) // check if deletion is needed
     {
         delete calendar[dateKey];
-        FileSystem.writeFileSync("files/calendar.json", JSON.stringify(calendar)); // replace the calendar file with the updated calendar
+        FileSystem.writeFileSync("files/" + room + "/calendar.json", JSON.stringify(calendar)); // replace the calendar file with the updated calendar
     }
 }
 
-getCurrentSchedule((res) => {today = res;}); // initialize today's schedule
+for (const i in FileSystem.readdirSync("files")) // initialize today's schedules for each room
+{
+    const room = FileSystem.readdirSync("files")[i];
+    getCurrentSchedule(room, (res) => {scheduleMap[room] = res;}); 
+}
 
 
 // ----- Weather Data Management -----
@@ -151,28 +163,68 @@ getCurrentWeather();
 const portNum = 8000; // Change this number in order to change which port the server is listening on
 const wss = new WebSocket.Server({port : portNum}); // represents the server socket
 
-async function broadcast() // send information to all connections
+async function broadcast(room) // send information to all connections
 {
-    connections.forEach(ws => {
-        updateClient(ws);
-    });
+    if (roomConnections[room])
+    {
+        roomConnections[room].forEach(ws => {
+            updateClient(ws, room);
+        });
+    }
 }
-async function updateClient(ws) // send information to an individual client
+async function updateClient(ws, room) // send information to an individual client
 {
-    ws.send(JSON.stringify({schedule:today, layout:JSON.parse(FileSystem.readFileSync("files/layout.json")), weather:weather}));
+    ws.send(JSON.stringify({schedule:scheduleMap[room], layout:JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")), weather:weather}));
 }
 
 // runs when a new client connects
 wss.on('connection', (ws) => 
 {
-    updateClient(ws); // send the new client the schedule
+    var firstMessageRecieved = false;
+    var room = null;
 
-    connections.add(ws); // store the client socket
+    // runs on client message
+    ws.on('message', (msg) =>
+    {
+        if (firstMessageRecieved) return;
+        firstMessageRecieved = true;
+
+        // we expect the first message to specify the room number
+        try
+        {
+            room = msg.toString(); // the room of this client
+            if (scheduleMap[room] === undefined) // invalid room name
+            {
+                ws.send(JSON.stringify({schedule:[], layout:{"site":{"backgroundColor":"#ffaaaa"},"widgetList":[{"type":"textbox","row":1,"col":1,"width":14,"height":7,"config":{"backgroundColor":"#ffffff","textColor":"#000000","text":"\nInvalid Room Name.\nPlease press \"ESC\" on the keyboard\nto enter a room name.\n\n(The room name should coorespond with a\nroom name on the \"Room Select Page\"\nof the administrative site)\n"}}]}, weather:weather}));
+                ws.terminate();
+            }
+            else
+            {
+                if (roomConnections[room] === undefined) // this is a room with no connections currently
+                {
+                    roomConnections[room] = new Set();
+                }
+                roomConnections[room].add(ws); // add this client to the set of connections for this room
+                updateClient(ws, room); // send the new client the info they need
+            }
+        }
+        catch (e) {ws.terminate(); console.log(e);}
+    })
 
     // runs when a client disconnects
     ws.on('close', () => 
     {
-        connections.delete(ws); // remove the client socket
+        if (room !== null)
+        {
+            if (roomConnections[room] !== undefined)
+            {
+                roomConnections[room].delete(ws); // remove the client socket
+                if (roomConnections[room].size === 0) // delete the set of connections if there are none
+                {
+                    delete roomConnections[room];
+                }
+            }
+        }
     }); 
 });
 
@@ -183,17 +235,28 @@ wss.on('connection', (ws) =>
 // every day at midnight ...
 const job = Scheduler.scheduleJob("0 0 * * *", () =>
 {
-    getCurrentSchedule((res) => 
+    for (const i in FileSystem.readdirSync("files")) // for each room ...
     {
-        today = res; // reset today's schedule (it's a new day)
-        broadcast(); // broadcast the changes to any connected clients
-    });
+        const room = FileSystem.readdirSync("files")[i];
+        getCurrentSchedule(room, (res) => 
+        {
+            scheduleMap[room] = res; // reset today's schedule (it's a new day)
+            broadcast(room); // broadcast the changes to any connected clients
+        });
+    }
 });
 
-// every 30 minutes ...
+// every 30th minute ...
 const weatherJob = Scheduler.scheduleJob("30 * * * *", () =>
 {
-    getCurrentWeather(() => broadcast());
+    getCurrentWeather(() => 
+    {
+        for (const i in FileSystem.readdirSync("files")) // update the weather for each room
+        {
+            const room = FileSystem.readdirSync("files")[i];
+            broadcast(room);
+        }
+    });
 });
 
 
@@ -204,89 +267,169 @@ const httpPortNum = 8500;
 
 // let the 'admin' get the various json files
 app.get("/schedules", (req, res) =>{
-    res.json(JSON.parse(FileSystem.readFileSync("files/schedules.json")));
+    try
+    {
+        const room = req.query.room;
+        res.json(JSON.parse(FileSystem.readFileSync("files/"+room+"/schedules.json")));
+    }
+    catch(e) {console.log(e);}
 });
 app.get("/defaultWeek", (req, res) =>{
-    res.json(JSON.parse(FileSystem.readFileSync("files/defaultWeek.json")));
+    try
+    {
+        const room = req.query.room;
+        res.json(JSON.parse(FileSystem.readFileSync("files/"+room+"/defaultWeek.json")));
+    }
+    catch(e) {console.log(e);}
 });
 app.get("/calendar", (req, res) =>{
-    res.json(JSON.parse(FileSystem.readFileSync("files/calendar.json")));
+    try
+    {
+        const room = req.query.room;
+        res.json(JSON.parse(FileSystem.readFileSync("files/"+room+"/calendar.json")));
+    }
+    catch(e) {console.log(e);}
 });
 app.get("/layout", (req, res) =>{
-    res.json(JSON.parse(FileSystem.readFileSync("files/layout.json")));
+    try
+    {
+        const room = req.query.room;
+        res.json(JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")));
+    }
+    catch(e) {console.log(e);}
 });
+// let the 'admin' get the names of the current rooms
+app.get("/rooms", (req, res) =>{
+    res.json(FileSystem.readdirSync("files"));
+});
+
 
 // TODO: will probably need some sort of authentication system
 // TODO: verify that the files are in a valid format??? (or maybe just trust the 'admin')
-// let 'admin' send over the modified json files
+// let the 'admin' send over the modified json files
 app.put("/schedules", (req, res) =>{
-    const oldName = req.body.oldName;
-    const newName = req.body.newName;
-    const newSchedules = req.body.schedules;
-
-    FileSystem.writeFileSync("files/schedules.json", JSON.stringify(newSchedules)); // update server file
-    
-    // update the other files if needed
-    const defaultWeek = JSON.parse(FileSystem.readFileSync("files/defaultWeek.json"));
-    const calendar = JSON.parse(FileSystem.readFileSync("files/calendar.json"));
-
-    for (let i = 0; i < 7; i++)
+    try
     {
-        if (defaultWeek[i] !== null)
+        const room = req.body.room;
+        const data = req.body.data;
+
+        const oldName = data.oldName;
+        const newName = data.newName;
+        const newSchedules = data.schedules;
+
+        FileSystem.writeFileSync("files/"+room+"/schedules.json", JSON.stringify(newSchedules)); // update server file
+        
+        // update the other files if needed
+        const defaultWeek = JSON.parse(FileSystem.readFileSync("files/"+room+"/defaultWeek.json"));
+        const calendar = JSON.parse(FileSystem.readFileSync("files/"+room+"/calendar.json"));
+
+        for (let i = 0; i < 7; i++)
         {
-            if (defaultWeek[i] === oldName) defaultWeek[i] = newName;
-            if (newSchedules[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+            if (defaultWeek[i] !== null)
+            {
+                if (defaultWeek[i] === oldName) defaultWeek[i] = newName;
+                if (newSchedules[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+            }
         }
-    }
-    for (const key in calendar)
-    {
-        if (calendar[key].schedule !== null)
+        for (const key in calendar)
         {
-            if (calendar[key].schedule === oldName) calendar[key].schedule = newName;
-            if (newSchedules[calendar[key].schedule] === undefined) delete calendar[key];
+            if (calendar[key].schedule !== null)
+            {
+                if (calendar[key].schedule === oldName) calendar[key].schedule = newName;
+                if (newSchedules[calendar[key].schedule] === undefined) delete calendar[key];
+            }
         }
+        
+        FileSystem.writeFileSync("files/"+room+"/defaultWeek.json", JSON.stringify(defaultWeek));
+        FileSystem.writeFileSync("files/"+room+"/calendar.json", JSON.stringify(calendar));
+
+        // send update to all clients
+        getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
+
+        res.send("SERVER: schedule confirmation"); // send confirmation to 'admin';
     }
-    
-    FileSystem.writeFileSync("files/defaultWeek.json", JSON.stringify(defaultWeek));
-    FileSystem.writeFileSync("files/calendar.json", JSON.stringify(calendar));
-
-    // send update to all clients
-    getCurrentSchedule((res) => 
-    {
-        today = res;
-        broadcast();
-    });
-
-    res.send("SERVER: schedule confirmation"); // send confirmation to 'admin';
+    catch (e) {console.log(e);}
 });
 app.put("/defaultWeek", (req, res) =>{
-    FileSystem.writeFileSync("files/defaultWeek.json", JSON.stringify(req.body));
-
-    getCurrentSchedule((res) => 
+    try
     {
-        today = res;
-        broadcast();
-    });
+        const room = req.body.room;
+        const data = req.body.data;
 
-    res.send("SERVER: defaultWeek confirmation");
+        FileSystem.writeFileSync("files/"+room+"/defaultWeek.json", JSON.stringify(data));
+
+        getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
+
+        res.send("SERVER: defaultWeek confirmation");
+    }
+    catch (e) {console.log(e);}
 });
 app.put("/calendar", (req, res) =>{
-    FileSystem.writeFileSync("files/calendar.json", JSON.stringify(req.body));
-
-    getCurrentSchedule((res) => 
+    try
     {
-        today = res;
-        broadcast();
-    });
+        const room = req.body.room;
+        const data = req.body.data;
 
-    res.send("SERVER: calendar confirmation");
+        FileSystem.writeFileSync("files/"+room+"/calendar.json", JSON.stringify(data));
+
+        getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
+
+        res.send("SERVER: calendar confirmation");
+    }
+    catch (e) {console.log(e);}
 });
 app.put("/layout", (req, res) =>{
-    FileSystem.writeFileSync("files/layout.json", JSON.stringify(req.body));
+    try
+    {
+        const room = req.body.room;
+        const data = req.body.data;
+        
+        FileSystem.writeFileSync("files/"+room+"/layout.json", JSON.stringify(data));
 
-    broadcast();
+        broadcast(room);
 
-    res.send("SERVER: layout confirmation");
+        res.send("SERVER: layout confirmation");
+    }
+    catch (e) {console.log(e);}
+});
+// modify the current 'room' folders
+app.put("/rooms", (req, res) =>{
+    try
+    {
+        const oldRoom = req.body.old;
+        const newRoom = req.body.new;
+
+        if (oldRoom === null) // create a new room
+        {
+            FileSystem.mkdirSync("files/" + newRoom);
+            checkRoom(newRoom);
+            scheduleMap[newRoom] = [];
+        }
+        else if (newRoom === null) // delete an old room
+        {
+            FileSystem.rmSync("files/" + oldRoom, {recursive: true, force: true});
+            delete scheduleMap[oldRoom];
+            for (ws in roomConnections[oldRoom])
+            {
+                ws.terminate();
+            }
+            delete roomConnections[oldRoom];
+        }
+        else // rename a room
+        {
+            FileSystem.renameSync("files/" + oldRoom, "files/" + newRoom);
+            delete scheduleMap[oldRoom];
+            for (ws in roomConnections[oldRoom])
+            {
+                ws.terminate();
+            }
+            delete roomConnections[oldRoom];
+            scheduleMap[newRoom] = [];
+        }
+
+        res.send("SERVER: rooms confirmation");
+    }
+    catch (e) {console.log(e);}
 });
 
 app.listen(httpPortNum);
