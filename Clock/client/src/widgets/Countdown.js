@@ -4,6 +4,8 @@ import { Paper } from "@mui/material";
 
 function Countdown(props = null) // props.id, props.deltaTime
 {
+  const [backColor, setBackColor] = useState("#000000");
+
   const [display, setDisplay] = useState("");
 
   const [col, setCol] = useState(1);
@@ -40,24 +42,17 @@ function Countdown(props = null) // props.id, props.deltaTime
         tempDisplay += (seconds % 60).toString().padStart(2, "0"); // add the seconds display
       }
       setDisplay(tempDisplay);
+      
+      setBackColor(backColor === config.backgroundColor ? config.blinkColor : config.backgroundColor);
     }
   }, [props])
-  
-  function flash()
-  {
-    const color1 = config.backgroundColor;
-    const color2 = "#0373fc";
-
-    return color1;
-
-  }
   
 
   return (
     <Paper elevation={20}
       style=
       {{
-          backgroundColor: flash(),
+          backgroundColor: backColor,
           color: config.textColor,
           "gridColumnStart": col,
           "gridColumnEnd": col+width,
