@@ -22,7 +22,7 @@ function Countdown(props = null) // props.id, props.deltaTime
       setConfig(props.config)
   }, [props]);
 
-
+  
   useEffect (() => {
     if (!props)return
     
@@ -43,7 +43,16 @@ function Countdown(props = null) // props.id, props.deltaTime
       }
       setDisplay(tempDisplay);
       
-      setBackColor(backColor === config.backgroundColor ? config.blinkColor : config.backgroundColor);
+      if (minutes <= config.warningTime && (minutes*60) >= (config.warningTime * 60)-config.blinkDuration)
+      {
+        setBackColor(backColor === config.backgroundColor ? config.blinkColor : config.backgroundColor);
+      }
+      else if (backColor !== config.backgroundColor)
+      {
+        setBackColor(config.backgroundColor);
+      }
+
+      console.log(config.warningTime, config.blinkDuration)
     }
   }, [props])
   
