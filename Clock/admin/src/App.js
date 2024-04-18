@@ -26,6 +26,7 @@ import store from './store'
 
 
 const lightTheme = createTheme({
+  spacing: 8,
   palette: {
     mode: 'light',
     primary: {
@@ -33,7 +34,9 @@ const lightTheme = createTheme({
     },
   },
 });
+
 const darkTheme = createTheme({
+  spacing: 8,
   palette: {
     mode: 'dark',
     primary: {
