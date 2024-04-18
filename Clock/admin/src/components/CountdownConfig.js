@@ -69,12 +69,12 @@ function CountdownConfig(params=null) // params.id, params.config, params.callba
 
             <p>Warning Time (minutes):</p>
             <Box sx={{display: "flex", justifyContent: "center"}}>    
-                <Slider min={0} max={10} step={1} marks valueLabelDisplay="auto" onChange={(e) => setWarningTime(e.target.value)} sx={{width: "90%"}}></Slider>
+                <Slider value={warningTime} min={0} max={10} step={1} marks valueLabelDisplay="auto" onChange={(e) => setWarningTime(e.target.value)} sx={{width: "90%"}}></Slider>
             </Box>
 
             <p>Blink Duration (seconds):</p>
             <Box sx={{display: "flex", justifyContent: "center"}}>    
-                <Slider min={0} max={120} step={5} marks valueLabelDisplay="auto" onChange={(e) => setBlinkDuration(e.target.value)} sx={{width: "90%"}}></Slider>
+                <Slider value={blinkDuration} min={0} max={120} step={5} marks valueLabelDisplay="auto" onChange={(e) => setBlinkDuration(e.target.value)} sx={{width: "90%"}}></Slider>
             </Box>
 
             <Box> {/* Seconds display selection */}
