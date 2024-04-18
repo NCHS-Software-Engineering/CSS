@@ -24,7 +24,7 @@ function CountdownConfig(params=null) // params.id, params.config, params.callba
             if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor && displaySeconds === params.config.displaySeconds) runCallback();
         
             setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
-            setBackgroundColor((params.config && params.config.blinkColor) ? params.config.blinkColor : "#ffffff"); // rgb color of background
+            setBlinkColor((params.config && params.config.blinkColor) ? params.config.blinkColor : "#ffffff"); // rgb color of background
             setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
             setDisplaySeconds((params.config && params.config.displaySeconds) ? params.config.displaySeconds : false); // should the countdown display seconds
             setWarningTime((params.config && params.config.warningTime) ? params.config.warningTime : 0);
