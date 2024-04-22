@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import ScaleText from "../components/ScaleText";
 import { Paper } from "@mui/material";
 
-function RTC(props = null) // props.id, props.col, props.row, props.width, props.height, props.config
+function DateWidget(props = null) // props.id, props.col, props.row, props.width, props.height, props.config
 {
     const [col, setCol] = useState(1);
     const [row, setRow] = useState(1);
@@ -24,17 +24,13 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
     useEffect(() => {
         const interval = setInterval(() => {
             const tempDate = new Date();
-
-            /*
-            var tempdisplay = tempDate.getHours().toString().padStart(2, "0") + ":" + tempDate.getMinutes().toString().padStart(2, "0");
-            if (config.displaySeconds) tempdisplay += ":" + tempDate.getSeconds().toString().padStart(2, "0")
-            // Add the date to the display
-        */  
-
     
-            // Get the time in 12-hour format with AM/PM, without leading zeros for hours
-            const options = { hour: 'numeric', minute: '2-digit', hour12: true };
-            var tempdisplay = tempDate.toLocaleTimeString(undefined, options);
+            // Get today's date in the format "month name day, year"
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const today = tempDate.toLocaleDateString(undefined, options);
+    
+            // Add the date to the display
+            var tempdisplay = today;
     
             setDisplay(tempdisplay)
         }, 100);
@@ -58,12 +54,10 @@ function RTC(props = null) // props.id, props.col, props.row, props.width, props
             }}
         >
             <div style={{width: "100%", height: "100%"}}>
-                <div style={{width: "100%", height: "100%"}}>
-                    <ScaleText id={props.id} text={display} width={width} height={height}/>
-                </div>
+                <ScaleText id={props.id} text={display} width={width} height={height}/>
             </div>
         </Paper>
     )    
 }
 
-export default RTC;
+export default DateWidget;

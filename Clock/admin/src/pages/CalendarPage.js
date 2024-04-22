@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 
 import ScheduleDropdown from "../components/ScheduleDropdown";
 
-import { Box, Button, ButtonGroup, MenuItem, Paper, Select, Typography } from "@mui/material";
-import AspectRatio from "@mui/joy/AspectRatio";
+import { Box, Button, ButtonGroup, MenuItem, Paper, Select } from "@mui/material";
+import { useSearchParams } from 'react-router-dom';
 
 
 // TODO: User feedback is important! (through CSS maybe?)
 function CalendarPage()
 {
+    const [searchParams] = useSearchParams();
+
     const [calendar, setCalendar] = useState({}); // the calendar storing all special schedules (initially from the server)
     const [schedules, setSchedules] = useState({});
 
@@ -30,7 +32,7 @@ function CalendarPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({room:searchParams.get("room"), data:info})
         });
     }
 
@@ -51,7 +53,7 @@ function CalendarPage()
 
     // gets calendar JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}calendar`)
+        fetch(`${baseURL}calendar?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setCalendar(data);}
         );
@@ -59,7 +61,7 @@ function CalendarPage()
 
     // gets schedules JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}schedules`)
+        fetch(`${baseURL}schedules?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setSchedules(data);}
         );
@@ -127,7 +129,9 @@ function CalendarPage()
 
                 var backgroundStyle = {}; // shading in for user feedback (i.e. default schedule, 1 time special schedule, or reapeating special schedule)
                 var selectedStyle = {fontWeight:"normal"}; // Give user feedback as to which date is currently selected for editing
-                var schName = <br/>; // The name of the "Special Schedule" for that day (if any)
+                var schName = ""; // The name of the "Special Schedule" for that day (if any)
+
+                if (incrementDate.getMonth() !== month) backgroundStyle = {backgroundColor:"#aaaaaa"};
 
                 if (calendar[dateKey]) // determine backgroundStyle
                 {
@@ -158,8 +162,8 @@ function CalendarPage()
                 rowEntries.push(
                     <td style={{...backgroundStyle, border: "1px solid"}} onClick={()=>{setSelectedDateKey(dateKey)}}>
                         <Box sx={{width: "100%", height: "100%"}}>
-                            <p style={selectedStyle}>{incrementDate.getDate()}</p>
-                            <p >{schName}</p>
+                            <p style={selectedStyle}>{" " + incrementDate.getDate()}</p>
+                            <p >{" " + schName}</p>
                         </Box>
                     </td>
                 );
@@ -296,27 +300,25 @@ function CalendarPage()
                         <h3>Date Selected: {getSelectedDateString()}</h3>
                     </Box>
                 </Box>
-                <AspectRatio ratio={2/1} variant="plain" sx={{marginBottom: 2}}>
-                    <Box>
-                        <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%"}}>
-                            <thead>
-                                <tr>
-                                    <th>Sunday</th>
-                                    <th>Monday</th>
-                                    <th>Tuesday</th>
-                                    <th>Wednesday</th>
-                                    <th>Thursday</th>
-                                    <th>Friday</th>
-                                    <th>Saturday</th>
-                                </tr>
-                            </thead>
+                <Box sx={{aspectRatio: 2/1, marginBottom: 2}}>
+                    <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%"}}>
+                        <thead>
+                            <tr>
+                                <th>Sunday</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                            </tr>
+                        </thead>
 
-                            <tbody>
-                                {displayMonth(tableMonth)}
-                            </tbody>
-                        </table>
-                    </Box>
-                </AspectRatio>
+                        <tbody>
+                            {displayMonth(tableMonth)}
+                        </tbody>
+                    </table>
+                </Box>
                 
                 <Box>
                     {displayEditor()}

@@ -11,6 +11,7 @@ function PeriodName(props = null) // props.id, props.periodName
   const [row, setRow] = useState(1);
   const [width, setWidth] = useState(1);
   const [height, setHeight] = useState(1);
+  const [config, setConfig] = useState({});
 
   useEffect(() => {
       setDisplay(props.periodName ? props.periodName : "");
@@ -19,6 +20,7 @@ function PeriodName(props = null) // props.id, props.periodName
       setRow(props.row + 1);
       setWidth(props.width);
       setHeight(props.height);
+      setConfig(props.config);
   }, [props]);
 
 
@@ -26,13 +28,14 @@ function PeriodName(props = null) // props.id, props.periodName
     <Paper elevation={20}
         style=
         {{
-            backgroundColor: props.config.backgroundColor,
-            color: props.config.textColor,
+            backgroundColor: config.backgroundColor,
+            color: config.textColor,
             "gridColumnStart": col,
             "gridColumnEnd": col+width,
             "gridRowStart": row,
             "gridRowEnd": row+height,
-            "borderRadius": 20
+            "borderRadius": 20,
+            overflow: "hidden"
         }}
     >
       <div style={{width: "100%", height: "100%", fontWeight: '800'}}>

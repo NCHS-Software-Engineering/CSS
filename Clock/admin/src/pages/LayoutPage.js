@@ -3,25 +3,32 @@ import React, { useState, useEffect } from "react";
 import "../styles/App.css";
 import WidgetBox from "../components/WidgetBox";
 import CountdownConfig from "../components/CountdownConfig";
+import DateConfig from "../components/DateConfig";
 import ClockConfig from "../components/ClockConfig";
 import PeriodNameConfig from "../components/PeriodNameConfig";
 import SiteConfig from "../components/SiteConfig";
+import TextboxConfig from "../components/TextboxConfig";
 import WeatherConfig from "../components/WeatherConfig";
 import { Box, Button, Card, Divider, Paper } from "@mui/material";
-import AspectRatio from "@mui/joy/AspectRatio";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import AbcIcon from '@mui/icons-material/Abc';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import { useSearchParams } from 'react-router-dom';
 
 
-// TODO: add "config components" for more widgets
+// TODO: add overlay toggle
 function LayoutPage() 
 {
+    const [searchParams] = useSearchParams();
+
     // The size of the grid
     const numColumns = 16;
     const numRows = 9;
+
+    const [overlay, setOverlay] = useState(true); // is there an iframe overlay
 
     // The currently selected entry's position
     const [selectedRow, setSelectedRow] = useState(-1);
@@ -54,13 +61,13 @@ function LayoutPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({site: siteData, widgetList: widgetData})
+            body: JSON.stringify({room:searchParams.get("room"), data:{site: siteData, widgetList: widgetData}})
         });
     }
 
     // gets defaultWeek JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}layout`)
+        fetch(`${baseURL}layout?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setWidgetList(data.widgetList); setSiteLayout(data.site); setLoading(false);}
         );
@@ -190,7 +197,7 @@ function LayoutPage()
                                 
                                 setSelectedDraggable(draggableNum);
                             }}
-                        rowSpan={w.height} colSpan={w.width} > {typeToImage(w.type)} </td>);
+                        rowSpan={w.height} colSpan={w.width} > {overlay === false ? typeToImage(w.type) : <></>} </td>);
                         
                         empty = false;
                         break;
@@ -384,10 +391,14 @@ function LayoutPage()
                 {
                     case "countdown": 
                         return <CountdownConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                    case "date":
+                        return <DateConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "clock":
                         return <ClockConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "periodName":
                         return <PeriodNameConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
+                    case "textbox":
+                        return <TextboxConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     case "weather":
                         return <WeatherConfig id={i} config={w.config} callback={(res) => {changeWidgetConfig(w, res, i)}}/>;
                     default: 
@@ -442,6 +453,8 @@ function LayoutPage()
         {
             case "countdown": 
                 return <AccessAlarmIcon/>;
+            case "date":
+                return <CalendarTodayRoundedIcon/>;
             case "clock":
                 return <AccessTimeIcon/>;
             case "periodName":
@@ -457,7 +470,7 @@ function LayoutPage()
 
 
 
-    if (loading) return <></>; // don't render anything if info hasn't come from the server yet
+    if (loading) return <>loading...</>; // don't render anything if info hasn't come from the server yet
 
     return(
         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -465,20 +478,23 @@ function LayoutPage()
                 <h1>Layout Editor</h1>
             </Box>
 
-            <Paper elevation={7} sx={{width: "80%", padding: 1.5, display: "flex", flexDirection: "row"}}>
-                <Box sx={{width: "70%", marginRight: 1}}>
-                    <AspectRatio ratio={16/9} variant="plain" sx={{width: "100%"}}>
-                        <Box>
-                            <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
-                                <tbody>
-                                    {generateTable()}
-                                </tbody>
-                            </table>
-                        </Box>
-                    </AspectRatio>
+            <Paper elevation={7} sx={{width: "90%", padding: 3, display: "flex", flexDirection: "row"}}>
+                <Box sx={{width: "70%", marginRight: 3}}>
+                    <Box sx={{position: "relative", width: "100%", aspectRatio: 16/9}}>
+                        {overlay ?
+                        <Box sx={{zIndex:"1", pointerEvents:"none", opacity: 0.85, position: "absolute", width: "100%", height: "100%"}}>
+                            <iframe src={"http://localhost:3500?room="+searchParams.get("room")} style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                        </Box> : <></> }
+                        <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
+                            <tbody>
+                                {generateTable()}
+                            </tbody>
+                        </table>
+                    </Box>
                 
-                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 1}}>
+                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 0.5, paddingTop: 3}}>
                         <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
+                        <WidgetBox image={typeToImage("date")} subtitle={"Date"} type={"date"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
                         <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>

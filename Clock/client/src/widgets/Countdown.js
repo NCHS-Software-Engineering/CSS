@@ -4,6 +4,8 @@ import { Paper } from "@mui/material";
 
 function Countdown(props = null) // props.id, props.deltaTime
 {
+  const [backColor, setBackColor] = useState("#000000");
+
   const [display, setDisplay] = useState("");
 
   const [col, setCol] = useState(1);
@@ -20,7 +22,7 @@ function Countdown(props = null) // props.id, props.deltaTime
       setConfig(props.config)
   }, [props]);
 
-
+  
   useEffect (() => {
     if (!props)return
     
@@ -40,21 +42,33 @@ function Countdown(props = null) // props.id, props.deltaTime
         tempDisplay += (seconds % 60).toString().padStart(2, "0"); // add the seconds display
       }
       setDisplay(tempDisplay);
+      
+      if (minutes <= config.warningTime && (minutes*60) >= (config.warningTime * 60)-config.blinkDuration)
+      {
+        setBackColor(backColor === config.backgroundColor ? config.blinkColor : config.backgroundColor);
+      }
+      else if (backColor !== config.backgroundColor)
+      {
+        setBackColor(config.backgroundColor);
+      }
+
+      console.log(config.warningTime, config.blinkDuration)
     }
   }, [props])
   
-  
+
   return (
     <Paper elevation={20}
       style=
       {{
-          backgroundColor: config.backgroundColor,
+          backgroundColor: backColor,
           color: config.textColor,
           "gridColumnStart": col,
           "gridColumnEnd": col+width,
           "gridRowStart": row,
           "gridRowEnd": row+height,
-          "borderRadius": 20
+          "borderRadius": 20,
+          overflow: "hidden"
       }}
     >
       <div style={{width: "100%", height: "100%"}}>

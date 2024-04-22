@@ -1,33 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { MuiColorInput } from 'mui-color-input'
-import { Box } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 
 
-function PeriodNameConfig(params=null) // params.config, params.callback
+function TextboxConfig(params=null) // params.config, params.callback
 {
     const [ID, setID] = useState(-1);
 
     const [backgroundColor, setBackgroundColor] = useState((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     const [textColor, setTextColor] = useState((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
+    const [text, setText] = useState((params.config && params.config.text) ? params.config.text : "");
     
-    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor});}
+    function runCallback() {params.callback({"backgroundColor":backgroundColor, "textColor":textColor, "text":text});}
 
     useEffect(() =>
     {
         if (params.id != ID)
         {
             setID(params.id);
-            if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor) runCallback();
+            if (!params.config || backgroundColor === params.config.backgroundColor && textColor === params.config.textColor && text === params.config.text) runCallback();
 
             setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
             setTextColor((params.config && params.config.textColor) ? params.config.textColor : "#000000"); // rgb color of text
+            setText((params.config && params.config.text) ? params.config.text : "");
         }
     }, [params]);
 
     useEffect(() =>
     {
         runCallback();
-    }, [backgroundColor, textColor]);
+    }, [backgroundColor, textColor, text]);
 
 
     return (
@@ -48,8 +50,18 @@ function PeriodNameConfig(params=null) // params.config, params.callback
                     onChange={(newColor) => {setTextColor(newColor);}} 
                 />
             </Box>
+            <Box sx={{marginBottom: 1}}> {/* Text input */}
+                <p>Text: </p>
+                <TextField sx={{width: "100%"}}
+                    multiline 
+                    minRows={2} 
+                    maxRows={6} 
+                    value={text}
+                    onChange={(e) => {setText(e.target.value);}}
+                />
+            </Box>
         </Box>
     );
 }
 
-export default PeriodNameConfig;
+export default TextboxConfig;

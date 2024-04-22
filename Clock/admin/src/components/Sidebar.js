@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { useState } from 'react';
 import { styled } from '@mui/material/styles';
@@ -6,9 +6,12 @@ import ImageRoundedIcon from '@mui/icons-material/ImageRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
+import HomeIcon from '@mui/icons-material/Home';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import DateRangeRoundedIcon from '@mui/icons-material/DateRangeRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import MuiDrawer from '@mui/material/Drawer';
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListItemIcon, IconButton } from '@mui/material';
@@ -40,9 +43,6 @@ const closedMixin = (theme) => ({
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
-    // justifyContent: 'flex-end',
-    // padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
 }));
 
@@ -64,9 +64,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   );
 
 
-function Sidebar()
+function Sidebar(props = null) // props.currentTheme, props.switchTheme
 {
+    const location = useLocation();
+
     const [open, setOpen] = useState(true);
+
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -104,8 +107,8 @@ function Sidebar()
                 </DrawerHeader>
                 <Divider/>
                 <List sx={{fontSize: '100'}}>
-                    <ListItem disablePadding>
-                        <Link component={RouterLink} to="/preview" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/preview") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/preview"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center'}}>
                                     <ImageRoundedIcon/>
@@ -114,8 +117,8 @@ function Sidebar()
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding>
-                        <Link component={RouterLink} to="/layout" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/layout") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/layout"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{ justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center', }}>
                                     <DashboardRoundedIcon/>
@@ -124,8 +127,8 @@ function Sidebar()
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding>
-                        <Link component={RouterLink} to="/calendar" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/calendar") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/calendar"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center'}}>
                                     <CalendarTodayRoundedIcon/>
@@ -134,8 +137,8 @@ function Sidebar()
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding>
-                        <Link component={RouterLink} to="/defaultWeek" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/defaultWeek") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/defaultWeek"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <DateRangeRoundedIcon/>
@@ -144,8 +147,8 @@ function Sidebar()
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem disablePadding>
-                        <Link component={RouterLink} to="/schedules" underline="none" sx={{width: "100%"}}>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/selection/schedules") ? 5 : 0}}>
+                        <Link component={RouterLink} to={"/selection/schedules"+location.search} underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center',}}>
                                     <ScheduleRoundedIcon/>
@@ -154,8 +157,20 @@ function Sidebar()
                             </ListItemButton>
                         </Link>
                     </ListItem>
+
                     <Divider/>
-                    <ListItem disablePadding>
+
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/home") ? 5 : 0}}>
+                        <Link component={RouterLink} to="/home" underline="none" sx={{width: "100%"}}>
+                            <ListItemButton sx={{justifyContent: 'center'}}>
+                                <ListItemIcon sx={{justifyContent: 'center',}}>
+                                    <HomeIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary={"Room Select"} sx={{ opacity: open ? 1 : 0 }}/>
+                            </ListItemButton>
+                        </Link>
+                    </ListItem>
+                    <ListItem disablePadding sx={{borderRight: (location.pathname === "/") ? 5 : 0}}>
                         <Link component={RouterLink} to="/" underline="none" sx={{width: "100%"}}>
                             <ListItemButton sx={{justifyContent: 'center'}}>
                                 <ListItemIcon sx={{justifyContent: 'center',}}>
@@ -166,6 +181,17 @@ function Sidebar()
                         </Link>
                     </ListItem>
                 </List>
+                
+                <Box sx={{display:'flex', alignItems: "flex-end", height: "100%", paddingBottom: 1}}>
+                    <ListItem disablePadding sx={{justifyContent:"center", width:"100%"}}>
+                        <ListItemButton onClick={() => props.switchTheme()} sx={{justifyContent: 'center'}}>
+                            <ListItemIcon sx={{justifyContent: "center"}}>
+                                {(props.currentTheme === "light") ? <Brightness4Icon/> : <Brightness7Icon/>}
+                            </ListItemIcon>
+                            <ListItemText primary={"Change Theme"} sx={{ opacity: open ? 1 : 0 }}/>
+                        </ListItemButton>
+                    </ListItem>
+                </Box>
             </Drawer>
         </Box>
     );

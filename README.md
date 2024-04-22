@@ -16,14 +16,19 @@ To make this work you need to download the latest versions of [Visual Studio Cod
 @mui/system
 @emotion/react
 @emotion/styled
+@fontsource/inconsolata
 @mui/x-date-pickers
+@react-oauth/google
 dayjs
+gapi-scripts
 mui-color-input
 nodemon
 react-color
 react-draggable-list
 react-router-dom
 react-scripts
+
+Dependencies must be installed with --legacy-peer-deps
 
 ### Installation
 

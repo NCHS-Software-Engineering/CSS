@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { MuiColorInput } from 'mui-color-input'
-import { Box } from "@mui/material";
+import { Box, Checkbox } from "@mui/material";
 
 
-function PeriodNameConfig(params=null) // params.config, params.callback
+function DateConfig(params=null) // params.id, params.config, params.callback
 {
     const [ID, setID] = useState(-1);
 
@@ -52,4 +52,4 @@ function PeriodNameConfig(params=null) // params.config, params.callback
     );
 }
 
-export default PeriodNameConfig;
+export default DateConfig;

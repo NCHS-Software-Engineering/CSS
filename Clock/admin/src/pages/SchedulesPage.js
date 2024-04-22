@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import DraggableList from "react-draggable-list";
 
-import ScheduleDropdown from "../components/ScheduleDropdown";
 import PeriodEditor from "../components/PeriodEditor";
 
 import "../styles/App.css";
-import { Box, Button, Paper, TextField } from "@mui/material";
+import { Box, Button, Divider, Grid, Modal, Paper, TextField } from "@mui/material";
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { useSearchParams } from 'react-router-dom';
 
 
 function SchedulesPage()
 {
+    const [searchParams] = useSearchParams();
+
+    const [overlay, setOverlay] = useState(false);
+
     const [schedules, setSchedules] = useState({}); // All the schedules (initially recieved from the server)
     const [selection, setSelection] = useState(null); // The name of the schedule currently being modified (or a new empty schedule)
 
@@ -31,14 +36,14 @@ function SchedulesPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({room:searchParams.get("room"), data:info})
         });
     }
 
 
     // gets schedules JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}schedules`)
+        fetch(`${baseURL}schedules?room=`+searchParams.get("room"))
         .then((res) => res.json())
         .then((data) => {setSchedules(data);}
         );
@@ -53,7 +58,7 @@ function SchedulesPage()
         var newTempSchedule = [];
         if (newSelection !== null)
         {
-            newTempSchedule = [... schedules[newSelection]];
+            newTempSchedule = [...schedules[newSelection]];
         }
 
         const indexList = [];
@@ -146,31 +151,6 @@ function SchedulesPage()
         setTempSchedule(newTempSchedule);
     }
 
-    // This function will return a button to delete the schedule if the user is modifying an old schedule (i.e. a prexisting schedule is selected)
-    // BUT, will return a text input field for the schedule name if the user is creating a new schedule (i.e. empty is selected)
-    function specialInput() // delete schedule or name schedule
-    {
-        // -- field for nameing schedule --
-        if (selection === null) 
-        {
-            return <TextField variant="filled" label="New Schedule Name" value={tempScheduleName} onInput={changeScheduleName}></TextField>;
-        }
-
-        // -- button for deleteing schedule --
-        return(
-            <Button variant="contained" size="large" onClick={() => {
-                if (window.confirm("Are you sure that you want to delete schedule \"" + selection + "\" ?"))
-                {
-                    const copiedSchedules = {...schedules}; // shallow copy
-                    delete copiedSchedules[selection]; // delete the selected schedule from the objec storeing all the schedules
-
-                    setSchedules(copiedSchedules); // update original
-                    updateServerSchedules(copiedSchedules); // update the server with the new schedules JSON object
-                    changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
-                }
-            }}>DELETE SCHEDULE</Button>
-        );
-    }
 
     // check schedule validity and update the server with the new schedule JSON object
     function submitSchedule()
@@ -182,7 +162,7 @@ function SchedulesPage()
             return;
         }
 
-        if (selection === null && schedules[tempScheduleName]) // Schedule name already exists (no duplicate schedules)
+        if (selection !== tempScheduleName && schedules[tempScheduleName]) // Schedule name already exists (no duplicate schedules)
         {
             window.alert("Invalid Schedule Name!\nThe Schedule \"" + tempScheduleName + "\" Already Exists!");
             return;
@@ -221,9 +201,14 @@ function SchedulesPage()
         // -- update server & reset states --
         const copiedSchedules = {...schedules};
         copiedSchedules[tempScheduleName] = spliceScheduleIDs(tempSchedule);
+        if (selection !== null && selection !== tempScheduleName)
+        {
+            delete copiedSchedules[selection];
+        }
         setSchedules(copiedSchedules);
-        updateServerSchedules(copiedSchedules);
+        updateServerSchedules({"schedules":copiedSchedules, "oldName":selection, "newName":tempScheduleName});
         changeSelection(null);
+        setOverlay(false);
 
         if (selection === null) // if this is a completely new schedule
         {
@@ -233,11 +218,15 @@ function SchedulesPage()
         {          
             window.alert("Updated Schedule");
         }
+        else // if this is a renamed schedule
+        {
+            window.alert("Renamed/Updated Schedule");
+        }
     }
 
     function spliceScheduleIDs(sch)
     {
-        const copy = [... sch];
+        const copy = [...sch];
 
         for (let i = 0; i < copy.length; i++)
         {
@@ -247,6 +236,90 @@ function SchedulesPage()
         return copy;
     }
 
+    // allows for the selection of schedules
+    function generateScheduleCards()
+    {
+        const resList = [];
+
+        const orderedNames = []; // the schedule names in order by ASCII character
+        for (const entry in schedules)
+        {
+            orderedNames.push(entry+"");
+        }
+        // bubble sort
+        var changed = true;
+        while (changed)
+        {
+            changed = false;
+            for (let i = 0; i < orderedNames.length - 1; i++)
+            {
+                if (orderedNames[i] > orderedNames[i+1])
+                {
+                    changed = true;
+                    const temp = orderedNames[i+1];
+                    orderedNames[i+1] = orderedNames[i];
+                    orderedNames[i] = temp;
+                }
+            }
+        }
+
+        // generate the cards for all existing schedules
+        for (const i in orderedNames)
+        {
+            const entry = orderedNames[i];
+
+            resList.push(
+                <Grid item xs={2}>
+                    <Paper elevation={10} sx={{aspectRatio: 1, display: "flex", flexDirection: "column"}}>
+                        <Box sx={{textAlign: "center", alignContent: "center", height: "20%"}}>
+                            <h2>{entry}</h2>
+                        </Box>
+                        <Box sx={{display: "flex", flexDirection: "column", height: "80%"}}>
+                            <Divider />
+                            <Button sx={{width: "100%", height:"50%"}} variant="text" onClick={() => {changeSelection(entry); setOverlay(true);}}>Edit</Button>
+                            <Divider />
+                            <Button sx={{width: "100%", height:"50%"}} variant="text"
+                                onClick={() => {
+                                if (window.confirm("Are you sure that you want to delete schedule \"" + entry + "\" ?"))
+                                {
+                                    const copiedSchedules = {...schedules}; // shallow copy
+                                    delete copiedSchedules[entry]; // delete the selected schedule from the objec storeing all the schedules
+
+                                    setSchedules(copiedSchedules); // update original
+                                    updateServerSchedules({"schedules":copiedSchedules, "oldName":entry, "newName":entry}); // update the server with the new schedules JSON object
+                                    changeSelection(null); // set EMPTY as the current selection (i.e. the option to create a new schedule should be auto-selected now that the current schedule was deleted)
+                                }
+                            }}>Delete</Button>
+                        </Box>
+                    </Paper>
+                </Grid>
+            )
+        }
+
+        // generate a card for adding a new schedule
+        resList.push(
+            <Grid item xs={2}>
+                <Box sx={{aspectRatio: 1, display: "flex", flexDirection: "column", border: 5, borderStyle: "dashed", borderRadius: 4}}>
+                    <Button variant="text" sx={{width: "100%", height: "100%"}}
+                        onClick={() => {
+                        changeSelection(null); 
+                        setOverlay(true);
+                    }}><AddRoundedIcon sx={{width: "50%", height: "50%"}}/></Button>
+                </Box>
+            </Grid>
+        )
+
+        // return the cards
+        return resList;
+    }
+
+    // TODO: actualy check if there were any changes before prompting
+    function closeOverlay()
+    {
+        if (window.confirm("Unsaved changes will be lost.\nAre you sure you want to exit?"))
+            setOverlay(false);
+    }
+
 
     return(
         <Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
@@ -254,24 +327,40 @@ function SchedulesPage()
                 <h1>Schedules</h1>
             </Box>
             
-            <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 3, padding: 1, width: "14cm", maxWidth: "90%"}}>
-                <Box sx={{display: "flex", marginBottom: 1}}>
-                    <Box sx={{marginRight: 1}}>
-                        <ScheduleDropdown schedules={schedules} nullSelectionName={"NEW SCHEDULE"} defaultValue={selection} callback={changeSelection}/>
-                    </Box>
-                    {specialInput()}
-                </Box>
+            <Box sx={{width: "90%"}}>
+                <Grid container spacing={2}>
+                    {generateScheduleCards()}
+                </Grid>
+            </Box>
 
-                <Box sx={{width: "100%"}}>
-                    {displayEditor()}
-                </Box>
+            <Modal
+                sx={{
+                    display: "flex",
+                    marginTop: 5,
+                    justifyContent: "center",
+                    overflowY: "scroll"
+                }}
+                open={overlay}
+                onClose={() => closeOverlay()}
+            >
+                <Box sx={{display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%"}}>
+                    <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%"}}>
+                        <Box sx={{display: "flex", marginBottom: 1}}>
+                            <TextField variant="filled" label="Schedule Name" value={tempScheduleName} onInput={changeScheduleName}></TextField>
+                        </Box>
 
-                <Box>
-                    <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
-                </Box>
-            </Paper>
+                        <Box sx={{width: "100%"}}>
+                            {displayEditor()}
+                        </Box>
 
-            <Button variant="contained" size="large" onClick={submitSchedule}>Save</Button>
+                        <Button variant="outlined" onClick={addPeriod}>Add Period</Button>
+
+                        <Divider sx={{marginTop: 1, marginBottom: 1, width:"100%"}}/>
+
+                        <Button variant="contained" size="large" onClick={() => {submitSchedule()}}>Save</Button>
+                    </Paper>
+                </Box>
+            </Modal>
         </Box>
     );
 }

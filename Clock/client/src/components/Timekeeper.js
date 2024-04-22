@@ -3,67 +3,70 @@ import React, { useState, useEffect, useRef} from "react";
 
 function Timekeeper(props = null) //  props.schedule, props.countdownCallback, props.periodNameCallback
 {
-  const schedule = useRef([]); // the schedule that the coundown is based on (it is an array of objects)
-  const day = useRef(0) // the day of the week
-  const period = useRef(0) // the index of the schedule array
-  const periodName = useRef(null); // e.g. "P1", "P2", "SOAR", "P3", etc.
-  const passingPeriod = useRef(false); // whether this is a passing period 
-  const schoolOut = useRef(true); // true when the school day is over or there is no school
+  const [schedule, setSchedule] = useState([]); // the schedule that the coundown is based on (it is an array of objects)
+  const [day, setDay] = useState(0) // the day of the week
+  const [period, setPeriod] = useState(0) // the index of the schedule array
+  const [periodName, setPeriodName] = useState(null); // e.g. "P1", "P2", "SOAR", "P3", etc.
+  const [passingPeriod, setPassingPeriod] = useState(false); // whether this is a passing period 
+  const [schoolOut, setSchoolOut] = useState(true); // true when the school day is over or there is no school
   const [countdown, setCountdown] = useState(null); // countdown until the end of the current period (displayed)
 
 
-  // deal with schedule update
+  // deal with prop update
   useEffect(() =>
   {
-    schedule.current = props.schedule;
-    scheduleInit();
+    setSchedule(props.schedule);
   }, [props]);
+  useEffect(() =>
+  {
+    scheduleInit();
+  }, [schedule]);
 
   // runs every time a new schedule is received
   function scheduleInit() 
   {
     const tempDate = new Date();
-    day.current = tempDate.getDay();
+    setDay(tempDate.getDay());
     
-    if (schedule.current.length === 0) // if the schedule is empty
+    if (schedule.length === 0) // if the schedule is empty
     {
-      schoolOut.current = true;
+      setSchoolOut(true);
       return;
     }
     
-    // determin the current period and wether it is a passing period
-    for (let i = 0; i < schedule.current.length; i++)
+    // determine the current period and wether it is a passing period
+    for (let i = 0; i < schedule.length; i++)
     {
-      const startTime = schedule.current[i].start.replace(":",""); // e.g. "07:25" => "0725"
-      const endTime = schedule.current[i].end.replace(":",""); // e.g. "13:45" => "1345"
+      const startTime = schedule[i].start.replace(":",""); // e.g. "07:25" => "0725"
+      const endTime = schedule[i].end.replace(":",""); // e.g. "13:45" => "1345"
 
       if ((tempDate.getHours() * 100) + tempDate.getMinutes() < parseInt(endTime))
       {
-        period.current = i;
+        setPeriod(i);
 
         if (tempDate.getHours() < parseInt(startTime)) // passing period
         {
-          passingPeriod.current = true;
+          setPassingPeriod(true);
           if (i === 0)
           {
-            periodName.current = "Before School";
+            setPeriodName("Before School");
           }
           else
           {
-            periodName.current = "Passing Period";
+            setPeriodName("Passing Period");
           }
         }
         else // regular period
         {
-          passingPeriod.current = false;
-          periodName.current = schedule.current[i].name;
+          setPassingPeriod(false);
+          setPeriodName(schedule[i].name);
         }
 
-        schoolOut.current = false;
+        setSchoolOut(false);
         return;
       }
     }
-    schoolOut.current = true; // no periods left, so school must be over
+    setSchoolOut(true); // no periods left, so school must be over
   }
 
   // rerender the countdown
@@ -72,12 +75,12 @@ function Timekeeper(props = null) //  props.schedule, props.countdownCallback, p
     const interval =  setInterval(() => 
     {
       const tempDate = new Date();
-      if (tempDate.getDay() !== day.current) scheduleInit(); // reinitialize the schedule if it is a new day
-      
-      if (schoolOut.current === true) // just display the time
+      if (tempDate.getDay() !== day) scheduleInit(); // reinitialize the schedule if it is a new day
+
+      if (schoolOut === true) // just display the time
       {
         setCountdown(null);
-        periodName.current = null;
+        setPeriodName(null);
       }
       else // display the countdown
       {
@@ -89,13 +92,13 @@ function Timekeeper(props = null) //  props.schedule, props.countdownCallback, p
         currentTime += tempDate.getSeconds() * 1000; // convert seconds to miliseconds
 
         var temp; // parse out data for finish time
-        if (passingPeriod.current === true)
+        if (passingPeriod === true)
         {
-          temp = schedule.current[period.current].start.split(":");
+          temp = schedule[period].start.split(":");
         }
         else
         {
-          temp = schedule.current[period.current].end.split(":");
+          temp = schedule[period].end.split(":");
         }
         
         finishTime += parseInt(temp[0]) * 60 * 60 * 1000; // convert hours to miliseconds
@@ -104,22 +107,22 @@ function Timekeeper(props = null) //  props.schedule, props.countdownCallback, p
         const deltaTime = finishTime - currentTime;
         if (deltaTime <= 0) // period ends
         {
-          if (period.current + 1 >= schedule.current.length && passingPeriod.current === false) // no period's left in list
+          if (period + 1 >= schedule.length && passingPeriod === false) // no period's left in list
           {
-            schoolOut.current = true; // school day is over
+            setSchoolOut(true); // school day is over
           }
           else // transition to next period/passing-period
           {
-            if (passingPeriod.current === false)
+            if (passingPeriod === false)
             {
-              period.current = period.current + 1;
-              periodName.current = "Passing Period";
+              setPeriod(period + 1);
+              setPeriodName("Passing Period");
             }
             else
             {
-              periodName.current = schedule.current[period.current].name;
+              setPeriodName(schedule[period].name);
             }
-            passingPeriod.current = !(passingPeriod.current);
+            setPassingPeriod(!passingPeriod);
           }
 
           setCountdown(0); // period over
@@ -132,19 +135,19 @@ function Timekeeper(props = null) //  props.schedule, props.countdownCallback, p
     }, 100); // every ~0.1 sec
 
     return () => clearInterval(interval);
-  }, []);
+  }, [schedule, period, day, schoolOut, periodName, passingPeriod]);
 
 
 
   // ---------- callback functions ----------
 
   useEffect (() => {
-    if (props) props.countdownCallback(countdown);
+    props.countdownCallback(countdown);
   }, [countdown]);
 
   useEffect (() => {
-    if (props) props.periodNameCallback(periodName.current);
-  }, [periodName.current]);
+    props.periodNameCallback(periodName);
+  }, [periodName]);
 
 
   // ---------- return ----------

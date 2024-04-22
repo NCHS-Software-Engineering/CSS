@@ -1,9 +1,10 @@
 import React, { useState, useEffect} from "react";
 
 // NOTE: assumes a 16 by 9 grid
-function ScaleText(props = null) // props.id, props.text, props.width, props.height
+function ScaleText(props = null) // props.id, props.portionFilled, props.justify, props.text, props.width, props.height
 {
-    const portionFilled = 0.9; // fill x% of width or height
+    const [portionFilled, setPortionFilled] = useState(0.9); // fill x% of width or height
+    const [justify, setJustify] = useState("center");
 
     const [ID, setID] = useState("");
 
@@ -20,6 +21,8 @@ function ScaleText(props = null) // props.id, props.text, props.width, props.hei
 
     useEffect (() => {
         setID(props.id);
+        if (props.portionFilled) setPortionFilled(props.portionFilled);
+        if (props.justify) setJustify(props.justify);
         setText(props.text); 
         setTextLength(props.text.length);
         setWidth(props.width);
@@ -31,19 +34,25 @@ function ScaleText(props = null) // props.id, props.text, props.width, props.hei
         {
             resize();
         }
-    }, [textLength, width, height, windowWidth, windowHeight, ID])
+    }, [textLength, width, height, windowWidth, windowHeight, portionFilled, ID]);
+
+    // TODO: This code is VERY SUBOPTIMAL. resize is calculated like every second
+    useEffect(() => {
+        if (textLength !== 0)
+        {
+            resize();
+        }
+    });
 
     useEffect(() => {
         windowResize();
         window.addEventListener("resize", () => {windowResize();})
         return () => {window.removeEventListener("resize", () => {windowResize();});}
-    }, [])
+    }, []);
 
-
+    
     function windowResize()
     {
-        console.log("resize " + ID);
-
         setWindowWidth(window.innerWidth);
         setWindowHeight(window.innerHeight);
     }
@@ -53,7 +62,7 @@ function ScaleText(props = null) // props.id, props.text, props.width, props.hei
         var tempFontSize = fontSize;
 
         const ratio = (windowHeight * (height / 9)) / document.getElementById(ID+"text").scrollHeight;
-                
+        
         tempFontSize *= ratio;
         if (document.getElementById(ID+"text").scrollWidth * ratio > (windowWidth * (width / 16))) // resize if overflow
         {
@@ -61,12 +70,12 @@ function ScaleText(props = null) // props.id, props.text, props.width, props.hei
         }
         tempFontSize *= portionFilled;
 
-        if (tempFontSize !== fontSize) setFontSize(tempFontSize);
+        if (Math.abs(tempFontSize - fontSize) > 1) setFontSize(tempFontSize);
     }
 
 
     return (
-        <div id={ID+"container"} style={{display: "flex", alignItems: "center", justifyContent:"center", width: "100%", height: "100%"}}>
+        <div id={ID+"container"} style={{display: "flex", alignItems: "center", justifyContent:justify, width: "100%", height: "100%"}}>
             <p id={ID+"text"} style={{display: "inline-block", fontSize: fontSize, overflow: "hidden"}}>{text}</p>
         </div>
     );
