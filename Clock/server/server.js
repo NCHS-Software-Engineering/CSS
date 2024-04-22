@@ -266,6 +266,9 @@ const weatherJob = Scheduler.scheduleJob("30 * * * *", () =>
 const httpPortNum = 8500;
 
 // let the 'admin' get the various json files
+app.get("/", (req, res) => {
+    res.send("hi");
+});
 app.get("/schedules", (req, res) =>{
     try
     {
