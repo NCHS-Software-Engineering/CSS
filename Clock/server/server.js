@@ -4,6 +4,7 @@
 const WebSocket = require("ws"); // import websockets
 const FileSystem = require("fs"); // import filesystem
 const Scheduler = require("node-schedule");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const express = require('express');
 const cors = require('cors');
 const { error } = require("console");
@@ -265,10 +266,18 @@ const weatherJob = Scheduler.scheduleJob("30 * * * *", () =>
 
 const httpPortNum = 8500;
 
+// return the client webpage for AWS server
+app.use('/', createProxyMiddleware({ 
+    target: 'http://localhost:3500', // target host
+    changeOrigin: true, // needed for virtual hosted sites
+  }));
+
 // let the 'admin' get the various json files
+/*
 app.get("/", (req, res) => {
     res.send("hi");
 });
+*/
 app.get("/schedules", (req, res) =>{
     try
     {
