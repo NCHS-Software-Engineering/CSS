@@ -15,7 +15,7 @@ function LoginPage() {
       axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
           })
         .then((res) => {
-              console.log("hi");})
+              console.log(res);})
         .catch((err) => console.log(err));
     }},
     [ user ]
