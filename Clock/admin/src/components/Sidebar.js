@@ -172,9 +172,9 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
                     </ListItem>
                     <ListItem disablePadding sx={{borderRight: (location.pathname === "/") ? 5 : 0}}>
                         <Link component={RouterLink} to="/" underline="none" sx={{width: "100%"}}>
-                            <ListItemButton sx={{justifyContent: 'center'}}>
+                            <ListItemButton sx={{justifyContent: 'center'}} onClick={sessionStorage.clear()}> {/* // TDOD: Test this */}
                                 <ListItemIcon sx={{justifyContent: 'center',}}>
-                                    <LogoutRoundedIcon/>
+                                    <LogoutRoundedIcon/>    
                                 </ListItemIcon>
                                 <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }}/>
                             </ListItemButton>

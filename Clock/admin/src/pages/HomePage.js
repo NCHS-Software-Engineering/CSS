@@ -25,7 +25,7 @@ function HomePage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(info)
+            body: JSON.stringify({data:info, token:sessionStorage.getItem("token")})
         });
     }
 

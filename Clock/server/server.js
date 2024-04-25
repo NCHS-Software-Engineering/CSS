@@ -17,6 +17,21 @@ const roomConnections = {}; // A set containing all of the client sockets for ea
 const scheduleMap = {}; // maps the room name to today's schedule for that room
 var weather;
 
+var mysql = require('mysql2');
+
+/*
+var con = mysql.createConnection({
+    host: "db.redhawks.us",
+    user: "redhawks_css",
+    password: "oPPtWFk9r2Ne1PTbHN1z",
+    database: "redhawks_css"
+  });
+
+con.connect(function(err) {
+  if (err) {throw err};
+  console.log("Connected!");
+});
+*/
 
 // ----- File Managment -----
 
@@ -408,8 +423,8 @@ app.put("/layout", (req, res) =>{
 app.put("/rooms", (req, res) =>{
     try
     {
-        const oldRoom = req.body.old;
-        const newRoom = req.body.new;
+        const oldRoom = req.body.data.old;
+        const newRoom = req.body.data.new;
 
         if (oldRoom === null) // create a new room
         {

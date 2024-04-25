@@ -25,7 +25,7 @@ function DefaultWeekPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({room:searchParams.get("room"), data:info})
+            body: JSON.stringify({room:searchParams.get("room"), data:info, token:sessionStorage.getItem("token")})
         });
     }
 

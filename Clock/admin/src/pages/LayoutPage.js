@@ -61,7 +61,7 @@ function LayoutPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({room:searchParams.get("room"), data:{site: siteData, widgetList: widgetData}})
+            body: JSON.stringify({room:searchParams.get("room"), data:{site: siteData, widgetList: widgetData}, token:sessionStorage.getItem("token")})
         });
     }
 
