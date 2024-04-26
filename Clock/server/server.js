@@ -8,6 +8,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const express = require('express');
 const cors = require('cors');
 const { error } = require("console");
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -19,19 +20,28 @@ var weather;
 
 var mysql = require('mysql2');
 
-/*
 var con = mysql.createConnection({
-    host: "db.redhawks.us",
-    user: "redhawks_css",
-    password: "oPPtWFk9r2Ne1PTbHN1z",
-    database: "redhawks_css"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
   });
 
 con.connect(function(err) {
   if (err) {throw err};
   console.log("Connected!");
 });
-*/
+
+// ----- Oauth Managment -----
+
+function checkValid(userID)
+{
+    con.query("SELECT * FROM VALID_ID WHERE ID LIKE " + userID, function (err, result, fields) {
+        if (err) throw err;
+        if (result.length === 0) {return false;}
+        else {return true;}
+    });
+}
 
 // ----- File Managment -----
 
@@ -337,6 +347,8 @@ app.get("/rooms", (req, res) =>{
 app.put("/schedules", (req, res) =>{
     try
     {
+        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+
         const room = req.body.room;
         const data = req.body.data;
 
@@ -380,6 +392,8 @@ app.put("/schedules", (req, res) =>{
 app.put("/defaultWeek", (req, res) =>{
     try
     {
+        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+
         const room = req.body.room;
         const data = req.body.data;
 
@@ -394,6 +408,8 @@ app.put("/defaultWeek", (req, res) =>{
 app.put("/calendar", (req, res) =>{
     try
     {
+        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+
         const room = req.body.room;
         const data = req.body.data;
 
@@ -408,6 +424,8 @@ app.put("/calendar", (req, res) =>{
 app.put("/layout", (req, res) =>{
     try
     {
+        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+
         const room = req.body.room;
         const data = req.body.data;
         
@@ -423,6 +441,8 @@ app.put("/layout", (req, res) =>{
 app.put("/rooms", (req, res) =>{
     try
     {
+        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+
         const oldRoom = req.body.data.old;
         const newRoom = req.body.data.new;
 
