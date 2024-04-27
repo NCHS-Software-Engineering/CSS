@@ -21,7 +21,7 @@ function HomePage()
     {
         fetch(`${baseURL}rooms`,
         {
-            method:"PUT",
+            method:"POST",
             headers:{
                 'Content-Type': 'application/json'
             },
@@ -31,9 +31,10 @@ function HomePage()
 
     // gets the list of rooms from the server
     useEffect(() => {
+        console.log("fetching!");
         fetch(`${baseURL}rooms`)
         .then((res) => res.json())
-        .then((data) => {setRooms(data)}
+        .then((data) => {setRooms(data); console.log("done!");}
         );
     }, []);
 

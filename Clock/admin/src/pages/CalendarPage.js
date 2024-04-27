@@ -28,7 +28,7 @@ function CalendarPage()
     {
         fetch(`${baseURL}calendar`,
         {
-            method:"PUT",
+            method:"POST",
             headers:{
                 'Content-Type': 'application/json'
             },

@@ -21,7 +21,7 @@ function DefaultWeekPage()
     {
         fetch(`${baseURL}defaultWeek`,
         {
-            method:"PUT",
+            method:"POST",
             headers:{
                 'Content-Type': 'application/json'
             },

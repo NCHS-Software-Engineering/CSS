@@ -286,23 +286,29 @@ const weatherJob = Scheduler.scheduleJob("30 * * * *", () =>
 });
 
 
+// ----- AWS -----
+
+
+// return the client webpage for AWS server (courtesy of ChatGPT)   :)
+app.use((req, res, next) => {
+    // Check if the request path is '/'
+    if (req.path === '/') {
+        // Proxy the request
+        return createProxyMiddleware({ 
+            target: 'http://localhost:3500', // target host
+            changeOrigin: true, // needed for virtual hosted sites
+        })(req, res, next); // Pass control to the proxy middleware
+    }
+    // If the request path is not '/', let it continue to the next middleware
+    next();
+});
+
+
 // ----- HTTP  -----
 
 
 const httpPortNum = 8500;
 
-// return the client webpage for AWS server
-app.use('/', createProxyMiddleware({ 
-    target: 'http://localhost:3500', // target host
-    changeOrigin: true, // needed for virtual hosted sites
-  }));
-
-// let the 'admin' get the various json files
-/*
-app.get("/", (req, res) => {
-    res.send("hi");
-});
-*/
 app.get("/schedules", (req, res) =>{
     try
     {
@@ -337,6 +343,9 @@ app.get("/layout", (req, res) =>{
 });
 // let the 'admin' get the names of the current rooms
 app.get("/rooms", (req, res) =>{
+    console.log("room request!");
+    console.log(FileSystem.readdirSync("files"));
+    
     res.json(FileSystem.readdirSync("files"));
 });
 
@@ -344,7 +353,7 @@ app.get("/rooms", (req, res) =>{
 // TODO: will probably need some sort of authentication system
 // TODO: verify that the files are in a valid format??? (or maybe just trust the 'admin')
 // let the 'admin' send over the modified json files
-app.put("/schedules", (req, res) =>{
+app.post("/schedules", (req, res) =>{
     try
     {
         if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
@@ -389,7 +398,7 @@ app.put("/schedules", (req, res) =>{
     }
     catch (e) {console.log(e);}
 });
-app.put("/defaultWeek", (req, res) =>{
+app.post("/defaultWeek", (req, res) =>{
     try
     {
         if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
@@ -405,7 +414,7 @@ app.put("/defaultWeek", (req, res) =>{
     }
     catch (e) {console.log(e);}
 });
-app.put("/calendar", (req, res) =>{
+app.post("/calendar", (req, res) =>{
     try
     {
         if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
@@ -421,7 +430,7 @@ app.put("/calendar", (req, res) =>{
     }
     catch (e) {console.log(e);}
 });
-app.put("/layout", (req, res) =>{
+app.post("/layout", (req, res) =>{
     try
     {
         if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
@@ -438,7 +447,7 @@ app.put("/layout", (req, res) =>{
     catch (e) {console.log(e);}
 });
 // modify the current 'room' folders
-app.put("/rooms", (req, res) =>{
+app.post("/rooms", (req, res) =>{
     try
     {
         if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}

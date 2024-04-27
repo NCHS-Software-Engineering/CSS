@@ -57,7 +57,7 @@ function LayoutPage()
     { 
         fetch(`${baseURL}layout`,
         {
-            method:"PUT",
+            method:"POST",
             headers:{
                 'Content-Type': 'application/json'
             },

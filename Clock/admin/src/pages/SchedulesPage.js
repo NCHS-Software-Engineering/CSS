@@ -32,7 +32,7 @@ function SchedulesPage()
     {
         fetch(`${baseURL}schedules`,
         {
-            method:"PUT",
+            method:"POST",
             headers:{
                 'Content-Type': 'application/json'
             },

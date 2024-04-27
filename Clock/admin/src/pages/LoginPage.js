@@ -13,9 +13,7 @@ function LoginPage() {
   const login = useGoogleLogin({
         onSuccess: (codeResponse) => {axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`, {})
           .then((res) => {
-              // console.log(res);
               sessionStorage.setItem('token', res.data.id);
-              console.log(sessionStorage.getItem('token'));
               setLoggedin(true);
             })
           .catch((err) => console.log(err));},
@@ -31,9 +29,6 @@ function LoginPage() {
         </Box>
       </div>
     );
-    /**/
-
-    return "do later";
   }
   
   export default LoginPage;
