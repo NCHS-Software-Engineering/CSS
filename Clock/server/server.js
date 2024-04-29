@@ -38,7 +38,7 @@ function checkValid(userID)
 {
     con.query("SELECT * FROM VALID_ID WHERE ID LIKE " + userID, function (err, result, fields) {
         if (err) throw err;
-        if (result.length === 0) {return false;}
+        if (result.equals("[]")) {return false;}
         else {return true;}
     });
 }
