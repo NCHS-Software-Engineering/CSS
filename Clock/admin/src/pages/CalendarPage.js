@@ -32,7 +32,7 @@ function CalendarPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({room:searchParams.get("room"), data:info, token:sessionStorage.getItem("token")})
+            body: JSON.stringify({room:searchParams.get("room"), data:info, token:document.cookie.substring(document.cookie.indexOf("token=")+6, document.cookie.indexOf("token=")+27)})
         });
     }
 
