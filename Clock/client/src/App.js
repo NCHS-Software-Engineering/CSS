@@ -107,6 +107,7 @@ function App() {
     function getRoomCookie() // assuming only 1 cookie present
     {
         var res = document.cookie.substring(document.cookie.indexOf("room=")+5);
+        if (res.indexOf(";") !== -1) res = res.substring(0, res.indexOf(";"));
         return (res === "" || res === undefined) ? "[NONE]" : res;
     }
     function setRoomCookie(name)

@@ -14,7 +14,7 @@ function LoginPage() {
         onSuccess: (codeResponse) => {axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`, {})
           .then((res) => {
               //sessionStorage.setItem('token', res.data.id);
-              document.cookie = "token=" + res.data.id + ";";
+              document.cookie = "token=" + res.data.id + "; SameSite=Strict";
               setLoggedin(true);
             })
           .catch((err) => console.log(err));},
