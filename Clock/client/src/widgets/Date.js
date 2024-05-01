@@ -33,7 +33,7 @@ function DateWidget(props = null) // props.id, props.col, props.row, props.width
             var tempdisplay = today;
     
             setDisplay(tempdisplay)
-        }, 100);
+        }, 60000);
     
         return () => clearInterval(interval);
     }, [config]);
