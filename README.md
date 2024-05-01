@@ -37,7 +37,7 @@ Dependencies must be installed with --legacy-peer-deps
 3. Split your terminal into three separate terminals for running the admin, client, and server respectively.
 4. Run `cd Clock/admin`, `cd Clock/client`, and `cd Clock/server` in each terminal respectively to change directory so it can find npm for each one.
 5. Run `npm update` in each terminal to update all dependencies.
-6. Once the installation is complete, run `npm run dev` in the server and run `npm start` in the other two to start the application.
+6. Once the installation is complete, run `npm start dev` in the server and run `npm start` in the other two to start the application.
 
 ## Usage
 
