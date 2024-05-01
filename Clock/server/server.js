@@ -29,21 +29,21 @@ var con = mysql.createConnection({
 
 con.connect(function(err) {
   if (err) {throw err};
-  console.log("Connected!");
+  console.log("Connected to sql server!");
 });
 
 // ----- Oauth Managment -----
 
+
 function checkValid(userID)
 {
-    console.log(userID);
     con.query("SELECT * FROM VALID_ID WHERE ID LIKE \"" + userID + "\"", function (err, result, fields) {
         if (err) throw err;
         if (result.length === 0) {return false;}
         else {return true;}
     });
 }
-//console.log(userID); console.log(result+"hi");
+
 
 // ----- File Managment -----
 
@@ -290,7 +290,7 @@ const weatherJob = Scheduler.scheduleJob("30 * * * *", () =>
 
 // ----- AWS -----
 
-
+/*
 // return the client webpage for AWS server (courtesy of ChatGPT)   :)
 app.use((req, res, next) => {
     // Check if the request path is '/'
@@ -304,7 +304,7 @@ app.use((req, res, next) => {
     // If the request path is not '/', let it continue to the next middleware
     next();
 });
-
+*/
 
 // ----- HTTP  -----
 
@@ -344,10 +344,7 @@ app.get("/layout", (req, res) =>{
     catch(e) {console.log(e);}
 });
 // let the 'admin' get the names of the current rooms
-app.get("/rooms", (req, res) =>{
-    console.log("room request!");
-    console.log(FileSystem.readdirSync("files"));
-    
+app.get("/rooms", (req, res) =>{    
     res.json(FileSystem.readdirSync("files"));
 });
 

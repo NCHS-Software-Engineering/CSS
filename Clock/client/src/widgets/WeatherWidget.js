@@ -72,7 +72,25 @@ function WeatherWidget(props = null) // props.id, props.col, props.row, props.wi
         setConfig(props.config);
     }, [props]);
 
-    if(!weatherData) return <div>Loading...</div>
+    if(!weatherData) return (
+        <Paper elevation={20}
+            style=
+            {{
+                backgroundColor: config.backgroundColor,
+                color: config.textColor,
+                "gridColumnStart": col,
+                "gridColumnEnd": col+width,
+                "gridRowStart": row,
+                "gridRowEnd": row+height,
+                "borderRadius": 20,
+                overflow: "hidden",
+
+                textAlign: "center"
+            }}
+        >
+            Loading...
+        </Paper>
+    );
 
     return (
         <Paper elevation={20}
