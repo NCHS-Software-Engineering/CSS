@@ -35,12 +35,12 @@ con.connect(function(err) {
 // ----- Oauth Managment -----
 
 
-function checkValid(userID)
+function checkValid(userID, callback)
 {
-    con.query("SELECT * FROM VALID_ID WHERE ID LIKE \"" + userID + "\"", function (err, result, fields) {
-        if (err) throw err;
-        if (result.length === 0) {return false;}
-        else {return true;}
+    con.query("SELECT * FROM VALID_ID WHERE ID LIKE \"" + userID + "\"", function(err, result, fields) {
+        if (err) {callback(err, null); return;}
+        if (result.length === 0) {callback(null,false);return;}
+        else {console.log(userID);callback(null,true);}
     });
 }
 
@@ -355,93 +355,137 @@ app.get("/rooms", (req, res) =>{
 app.post("/schedules", (req, res) =>{
     try
     {
-        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
-
-        const room = req.body.room;
-        const data = req.body.data;
-
-        const oldName = data.oldName;
-        const newName = data.newName;
-        const newSchedules = data.schedules;
-
-        FileSystem.writeFileSync("files/"+room+"/schedules.json", JSON.stringify(newSchedules)); // update server file
-        
-        // update the other files if needed
-        const defaultWeek = JSON.parse(FileSystem.readFileSync("files/"+room+"/defaultWeek.json"));
-        const calendar = JSON.parse(FileSystem.readFileSync("files/"+room+"/calendar.json"));
-
-        for (let i = 0; i < 7; i++)
-        {
-            if (defaultWeek[i] !== null)
-            {
-                if (defaultWeek[i] === oldName) defaultWeek[i] = newName;
-                if (newSchedules[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+        checkValid(req.body.token, (err, truth) => {
+            if (err) {
+                // handle error
+                console.log(err);
+                return;
             }
-        }
-        for (const key in calendar)
-        {
-            if (calendar[key].schedule !== null)
-            {
-                if (calendar[key].schedule === oldName) calendar[key].schedule = newName;
-                if (newSchedules[calendar[key].schedule] === undefined) delete calendar[key];
+            if (truth === false) {
+                res.send("SERVER: invalid userID");
+                return;
             }
-        }
-        
-        FileSystem.writeFileSync("files/"+room+"/defaultWeek.json", JSON.stringify(defaultWeek));
-        FileSystem.writeFileSync("files/"+room+"/calendar.json", JSON.stringify(calendar));
+            else {
+                const room = req.body.room;
+                const data = req.body.data;
 
-        // send update to all clients
-        getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
+                const oldName = data.oldName;
+                const newName = data.newName;
+                const newSchedules = data.schedules;
 
-        res.send("SERVER: schedule confirmation"); // send confirmation to 'admin';
+                FileSystem.writeFileSync("files/"+room+"/schedules.json", JSON.stringify(newSchedules)); // update server file
+                
+                // update the other files if needed
+                const defaultWeek = JSON.parse(FileSystem.readFileSync("files/"+room+"/defaultWeek.json"));
+                const calendar = JSON.parse(FileSystem.readFileSync("files/"+room+"/calendar.json"));
+
+                for (let i = 0; i < 7; i++)
+                {
+                    if (defaultWeek[i] !== null)
+                    {
+                        if (defaultWeek[i] === oldName) defaultWeek[i] = newName;
+                        if (newSchedules[defaultWeek[i]] === undefined) defaultWeek[i] = null;
+                    }
+                }
+                for (const key in calendar)
+                {
+                    if (calendar[key].schedule !== null)
+                    {
+                        if (calendar[key].schedule === oldName) calendar[key].schedule = newName;
+                        if (newSchedules[calendar[key].schedule] === undefined) delete calendar[key];
+                    }
+                }
+                
+                FileSystem.writeFileSync("files/"+room+"/defaultWeek.json", JSON.stringify(defaultWeek));
+                FileSystem.writeFileSync("files/"+room+"/calendar.json", JSON.stringify(calendar));
+
+                // send update to all clients
+                getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
+
+                res.send("SERVER: schedule confirmation"); // send confirmation to 'admin';
+            }
+        });
     }
     catch (e) {console.log(e);}
 });
 app.post("/defaultWeek", (req, res) =>{
     try
     {
-        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
-        
-        const room = req.body.room;
-        const data = req.body.data;
+        checkValid(req.body.token, (err, truth) => {
+            if (err) {
+                // handle error
+                console.log(err);
+                return;
+            }
+            if (truth === false) {
+                res.send("SERVER: invalid userID");
+                return;
+            }
+            else {
+                const room = req.body.room;
+                const data = req.body.data;
 
-        FileSystem.writeFileSync("files/"+room+"/defaultWeek.json", JSON.stringify(data));
+                FileSystem.writeFileSync("files/"+room+"/defaultWeek.json", JSON.stringify(data));
 
-        getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
+                getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
 
-        res.send("SERVER: defaultWeek confirmation");
+                res.send("SERVER: defaultWeek confirmation");
+            }
+        });
     }
     catch (e) {console.log(e);}
 });
 app.post("/calendar", (req, res) =>{
     try
     {
-        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+        checkValid(req.body.token, (err, truth) => {
+            if (err) {
+                // handle error
+                console.log(err);
+                return;
+            }
+            if (truth === false) {
+                res.send("SERVER: invalid userID");
+                return;
+            }
+            else {
+                const room = req.body.room;
+                const data = req.body.data;
 
-        const room = req.body.room;
-        const data = req.body.data;
+                FileSystem.writeFileSync("files/"+room+"/calendar.json", JSON.stringify(data));
 
-        FileSystem.writeFileSync("files/"+room+"/calendar.json", JSON.stringify(data));
+                getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
 
-        getCurrentSchedule(room, (res) => {scheduleMap[room] = res; broadcast(room);}); 
-
-        res.send("SERVER: calendar confirmation");
+                res.send("SERVER: calendar confirmation");
+            }
+        });
     }
     catch (e) {console.log(e);}
 });
 app.post("/layout", (req, res) =>{
     try
     {
-        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
+        checkValid(req.body.token, (err, truth) => {
+            if (err) {
+                // handle error
+                console.log(err);
+                return;
+            }
+            if (truth === false) {
+                res.send("SERVER: invalid userID");
+                return;
+            }
+            else {
+                const room = req.body.room;
+                const data = req.body.data;
+                
+                FileSystem.writeFileSync("files/"+room+"/layout.json", JSON.stringify(data));
 
-        const room = req.body.room;
-        const data = req.body.data;
-        
-        FileSystem.writeFileSync("files/"+room+"/layout.json", JSON.stringify(data));
+                broadcast(room);
 
-        broadcast(room);
-
-        res.send("SERVER: layout confirmation");
+                res.send("SERVER: layout confirmation");
+            }
+        });
     }
     catch (e) {console.log(e);}
 });
@@ -449,40 +493,51 @@ app.post("/layout", (req, res) =>{
 app.post("/rooms", (req, res) =>{
     try
     {
-        if (checkValid(req.body.token) === false) {res.send("SERVER: invalid userID"); return;}
-
-        const oldRoom = req.body.data.old;
-        const newRoom = req.body.data.new;
-
-        if (oldRoom === null) // create a new room
-        {
-            FileSystem.mkdirSync("files/" + newRoom);
-            checkRoom(newRoom);
-            scheduleMap[newRoom] = [];
-        }
-        else if (newRoom === null) // delete an old room
-        {
-            FileSystem.rmSync("files/" + oldRoom, {recursive: true, force: true});
-            delete scheduleMap[oldRoom];
-            for (ws in roomConnections[oldRoom])
-            {
-                ws.terminate();
+        checkValid(req.body.token, (err, truth) => {
+            if (err) {
+                // handle error
+                console.log(err);
+                return;
             }
-            delete roomConnections[oldRoom];
-        }
-        else // rename a room
-        {
-            FileSystem.renameSync("files/" + oldRoom, "files/" + newRoom);
-            delete scheduleMap[oldRoom];
-            for (ws in roomConnections[oldRoom])
-            {
-                ws.terminate();
+            if (truth === false) {
+                res.send("SERVER: invalid userID");
+                return;
             }
-            delete roomConnections[oldRoom];
-            scheduleMap[newRoom] = [];
-        }
+            else {
+                const oldRoom = req.body.data.old;
+                const newRoom = req.body.data.new;
 
-        res.send("SERVER: rooms confirmation");
+                if (oldRoom === null) // create a new room
+                {
+                    FileSystem.mkdirSync("files/" + newRoom);
+                    checkRoom(newRoom);
+                    scheduleMap[newRoom] = [];
+                }
+                else if (newRoom === null) // delete an old room
+                {
+                    FileSystem.rmSync("files/" + oldRoom, {recursive: true, force: true});
+                    delete scheduleMap[oldRoom];
+                    for (ws in roomConnections[oldRoom])
+                    {
+                        ws.terminate();
+                    }
+                    delete roomConnections[oldRoom];
+                }
+                else // rename a room
+                {
+                    FileSystem.renameSync("files/" + oldRoom, "files/" + newRoom);
+                    delete scheduleMap[oldRoom];
+                    for (ws in roomConnections[oldRoom])
+                    {
+                        ws.terminate();
+                    }
+                    delete roomConnections[oldRoom];
+                    scheduleMap[newRoom] = [];
+                }
+
+                res.send("SERVER: rooms confirmation");
+            }
+        });
     }
     catch (e) {console.log(e);}
 });
