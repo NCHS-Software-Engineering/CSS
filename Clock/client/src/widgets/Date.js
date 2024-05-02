@@ -19,20 +19,25 @@ function DateWidget(props = null) // props.id, props.col, props.row, props.width
     }, [props]);
 
 
-    const [display, setDisplay] = useState("");
+    const [display, setDisplay] = useState(updateDate());
+
+    function updateDate()
+    {
+        const tempDate = new Date();
+    
+        // Get today's date in the format "month name day, year"
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const today = tempDate.toLocaleDateString(undefined, options);
+
+        // Add the date to the display
+        var tempdisplay = today;
+
+        return tempdisplay;
+    }
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const tempDate = new Date();
-    
-            // Get today's date in the format "month name day, year"
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const today = tempDate.toLocaleDateString(undefined, options);
-    
-            // Add the date to the display
-            var tempdisplay = today;
-    
-            setDisplay(tempdisplay)
+            setDisplay(updateDate());
         }, 60000);
     
         return () => clearInterval(interval);

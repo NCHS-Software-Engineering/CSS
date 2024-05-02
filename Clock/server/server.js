@@ -68,7 +68,7 @@ function checkRoom(room) // check to make sure that a 'room' directory contains 
     }
     if (FileSystem.existsSync("files/" + room + "/layout.json") === false) // create an empty dictionary of all dates
     {
-        const data = {site:{backgroundColor:"#000000"}, widgetList:[]};
+        const data = {layoutIndex:0,layouts:[{site:{backgroundColor:"#000000"}, widgetList:[]},{site:{backgroundColor:"#000000"}, widgetList:[]},{site:{backgroundColor:"#000000"}, widgetList:[]}]};
         FileSystem.writeFileSync("files/" + room + "/layout.json", JSON.stringify(data));
     }
 }
@@ -202,7 +202,8 @@ async function broadcast(room) // send information to all connections
 }
 async function updateClient(ws, room) // send information to an individual client
 {
-    ws.send(JSON.stringify({schedule:scheduleMap[room], layout:JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")), weather:weather}));
+    const tempLayout = JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")).layouts[JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")).layoutIndex];
+    ws.send(JSON.stringify({schedule:scheduleMap[room], layout:tempLayout, weather:weather}));
 }
 
 // runs when a new client connects
@@ -339,7 +340,10 @@ app.get("/layout", (req, res) =>{
     try
     {
         const room = req.query.room;
-        res.json(JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")));
+        const index = (req.query.index === "-1") ? JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")).layoutIndex : req.query.index;
+        
+        const tempLayout = JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json")).layouts[index];
+        res.json({widgetList:tempLayout.widgetList, site:tempLayout.site, layoutIndex:index});
     }
     catch(e) {console.log(e);}
 });
@@ -479,7 +483,10 @@ app.post("/layout", (req, res) =>{
                 const room = req.body.room;
                 const data = req.body.data;
                 
-                FileSystem.writeFileSync("files/"+room+"/layout.json", JSON.stringify(data));
+                const tempLayoutData = JSON.parse(FileSystem.readFileSync("files/"+room+"/layout.json"));
+                tempLayoutData.layouts[data.layoutIndex] = {site:data.site, widgetList:data.widgetList};
+                tempLayoutData.layoutIndex = data.layoutIndex;
+                FileSystem.writeFileSync("files/"+room+"/layout.json", JSON.stringify(tempLayoutData));
 
                 broadcast(room);
 

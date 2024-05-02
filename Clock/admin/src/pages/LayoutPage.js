@@ -45,6 +45,8 @@ function LayoutPage()
     const [widgetList, setWidgetList] = useState([]); // The list of all widget locations/data
     const [siteLayout, setSiteLayout] = useState({backgroundColor:"#000000"});
 
+    const [layoutIndex, setLayoutIndex] = useState(-1); // the number of the currently used layout (0, 1, or 2)
+
     const [loading, setLoading] = useState(true);
 
     const [cursor, setCursor] = useState("auto");
@@ -61,18 +63,35 @@ function LayoutPage()
             headers:{
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({room:searchParams.get("room"), data:{site: siteData, widgetList: widgetData}, token:document.cookie.substring(document.cookie.indexOf("token=")+6, document.cookie.indexOf("token=")+27)})
+            body: JSON.stringify({room:searchParams.get("room"), data:{site: siteData, widgetList: widgetData, layoutIndex: layoutIndex}, token:document.cookie.substring(document.cookie.indexOf("token=")+6, document.cookie.indexOf("token=")+27)})
         });
     }
 
     // gets defaultWeek JSON object from server
     useEffect(() => {
-        fetch(`${baseURL}layout?room=`+searchParams.get("room"))
-        .then((res) => res.json())
-        .then((data) => {setWidgetList(data.widgetList); setSiteLayout(data.site); setLoading(false);}
-        );
+        getServerLayout(-1);
     }, []);
+
+    function getServerLayout(index)
+    {
+        fetch(`${baseURL}layout?room=`+searchParams.get("room")+'&index='+index)
+        .then((res) => res.json())
+        .then((data) => {setWidgetList(data.widgetList); setSiteLayout(data.site); setLayoutIndex(data.layoutIndex); setLoading(false);}
+        );
+    }
     
+
+    function selectLayout(index) // select layout e.g. layout 1, 2, 3
+    {
+        setLoading(true);
+
+        setSelectedRow(-1);
+        setSelectedCol(-1);
+        setSelectedWidget(null);
+
+        setLayoutIndex(index);
+        getServerLayout(index);
+    }
 
     function generateTable() // the table that represents the layout of the widgets
     {
@@ -492,13 +511,23 @@ function LayoutPage()
                         </table>
                     </Box>
                 
-                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding: 0.5, paddingTop: 3}}>
-                        <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("date")} subtitle={"Date"} type={"date"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>
-                        <WidgetBox image={typeToImage("weather")} subtitle={"Weather"} type={"weather"} callback={setSelectedWidget}/>
+                    <Box sx={{width: "100%", display: "flex", flexDirection: "row", padding: 0.2, marginTop: 2}}>
+                        <Box sx={{width: "65%", height: "100%", display: "flex", flexDirection: "row", overflowX: "auto", padding:0.5}}>
+                            <WidgetBox image={typeToImage("countdown")} subtitle={"Countdown"} type={"countdown"} callback={setSelectedWidget}/>
+                            <WidgetBox image={typeToImage("date")} subtitle={"Date"} type={"date"} callback={setSelectedWidget}/>
+                            <WidgetBox image={typeToImage("clock")} subtitle={"Clock"} type={"clock"} callback={setSelectedWidget}/>
+                            <WidgetBox image={typeToImage("periodName")} subtitle={"Period Name"} type={"periodName"} callback={setSelectedWidget}/>
+                            <WidgetBox image={typeToImage("textbox")} subtitle={"Text Box"} type={"textbox"} callback={setSelectedWidget}/>
+                            <WidgetBox image={typeToImage("weather")} subtitle={"Weather"} type={"weather"} callback={setSelectedWidget}/>
+                        </Box>
+                        <Box sx={{width:"5%", display:"flex", alignItems:"center", justifyContent:"center"}}>
+                            <Divider orientation="vertical"/>
+                        </Box>
+                        <Box sx={{width: "30%", height:"100%", display: "flex", flexDirection: "row", alignItems:"center", justifyContent:"space-around", overflowX: "auto"}}>
+                            <Button variant="outlined" sx={{height:"100%", aspectRatio: 1}} onClick={() => {selectLayout(0);}}>L1</Button>
+                            <Button variant="outlined" sx={{height:"100%", aspectRatio: 1}} onClick={() => {selectLayout(1);}}>L2</Button>
+                            <Button variant="outlined" sx={{height:"100%", aspectRatio: 1}} onClick={() => {selectLayout(2);}}>L3</Button>
+                        </Box>
                     </Box>
                 </Box>
 
