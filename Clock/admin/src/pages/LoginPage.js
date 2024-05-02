@@ -25,12 +25,14 @@ function LoginPage() {
   return (
       <div className="App">
         <Box sx={{height: '100vh', display: "flex", flexDirection:"column", justifyContent: 'center', alignItems: 'center'}}>
-          <Box sx={{height: "50%", width: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Box sx={{height: "45%", width: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
             <img src={logoDark} style={{aspectRatio: 1}} height="100%" alt="da logo"></img>
           </Box>
-          <p>Classroom Scheduling System Admin Portal</p>
-          <Box sx={{height: "50%", width: "100%", display: "flex", justifyContent: "center"}}>
-            {loggedin ? <Navigate to="/home" /> : <Button sx={{height: "30%", aspectRatio: 2/1}} variant="contained" color="primary" onClick={login}>Login</Button>}
+          <Box sx={{height: '10%'}}>
+            <h1>Classroom Scheduling System Admin Portal</h1>
+          </Box>
+          <Box sx={{height: "45%", width: "100%", display: "flex", justifyContent: "center"}}>
+            {loggedin ? <Navigate to="/home" /> : <Button sx={{height: "10%", aspectRatio: 2/1}} variant="contained" color="primary" onClick={login}>Login</Button>}
           </Box>
         </Box>
       </div>
