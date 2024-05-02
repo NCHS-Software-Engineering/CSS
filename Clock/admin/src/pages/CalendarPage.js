@@ -137,11 +137,11 @@ function CalendarPage()
                 {
                     if (calendar[dateKey].repeating)
                     {
-                        backgroundStyle = {background:"#cbc3e3"};
+                        backgroundStyle = {background:"#8086ff"};
                     }
                     else
                     {
-                        backgroundStyle = {background:"#ffcccb"};
+                        backgroundStyle = {background:"#ffca80"};
                     }
                 }
                 if (dateKey === selectedDateKey) // determine if this date is the selected date
