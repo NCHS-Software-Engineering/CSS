@@ -26,7 +26,11 @@ function Countdown(props = null) // props.id, props.deltaTime
   useEffect (() => {
     if (!props)return
     
-    if (!props.deltaTime); // TODO: determine what do do if the countdown is over (i.e. what to do when school day ends)
+    if (!props.deltaTime)
+    {
+      setDisplay("No School");
+      setBackColor(config.backgroundColor);
+    }
     else
     {
       const hours = Math.floor(props.deltaTime / (60 * 60 * 1000));
@@ -51,8 +55,6 @@ function Countdown(props = null) // props.id, props.deltaTime
       {
         setBackColor(config.backgroundColor);
       }
-
-      console.log(config.warningTime, config.blinkDuration)
     }
   }, [props])
   

@@ -14,7 +14,7 @@ function PeriodName(props = null) // props.id, props.periodName
   const [config, setConfig] = useState({});
 
   useEffect(() => {
-      setDisplay(props.periodName ? props.periodName : "");
+      setDisplay(props.periodName ? props.periodName : "No School");
 
       setCol(props.col + 1);
       setRow(props.row + 1);
