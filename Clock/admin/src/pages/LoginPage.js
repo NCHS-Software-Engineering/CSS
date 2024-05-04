@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Navigate } from "react-router-dom";
 
-function LoginPage() {
+function LoginPage(props = null) {
   const [loggedin, setLoggedin] = useState(false);
 
   const login = useGoogleLogin({
@@ -26,7 +26,7 @@ function LoginPage() {
       <div className="App">
         <Box sx={{height: '100vh', display: "flex", flexDirection:"column", justifyContent: 'center', alignItems: 'center'}}>
           <Box sx={{height: "45%", width: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-            <img src={logoDark} style={{aspectRatio: 1}} height="100%" alt="da logo"></img>
+            <img src={(props !== null && props.currentTheme === "dark") ? logoLight : logoDark} style={{aspectRatio: 1}} height="100%" alt="da logo"></img>
           </Box>
           <Box sx={{height: '10%'}}>
             <h1>Classroom Scheduling System Admin Portal</h1>

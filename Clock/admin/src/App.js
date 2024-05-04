@@ -66,7 +66,7 @@ function App() {
             </Routes>
             <Box sx={{width:"100%"}}>
               <Routes> {/* The paths to all of the pages are contained here */}  
-                <Route path="/" element = {<LoginPage />} /> {/* Take user to login page by default */}
+                <Route path="/" element = {<LoginPage currentTheme={mode}/>} /> {/* Take user to login page by default */}
                 <Route path="/home" element = {<HomePage />} /> {/* Room selection page */}
               
                 <Route path="/selection/preview" element = {<PreviewPage />} />
