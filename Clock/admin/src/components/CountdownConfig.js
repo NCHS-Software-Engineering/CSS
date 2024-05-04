@@ -34,7 +34,10 @@ function CountdownConfig(params=null) // params.id, params.config, params.callba
 
     useEffect(() =>
     {
-        runCallback();
+        const throttledCallback = setTimeout(() => {
+            runCallback();
+        }, 50);
+        return () => {clearTimeout(throttledCallback);};
     }, [backgroundColor, textColor, displaySeconds, blinkColor, warningTime, blinkDuration]);
 
 

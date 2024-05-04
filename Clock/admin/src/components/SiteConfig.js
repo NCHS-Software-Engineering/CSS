@@ -16,11 +16,14 @@ function SiteConfig(params=null) // params.config, params.callback
         setBackgroundColor((params.config && params.config.backgroundColor) ? params.config.backgroundColor : "#ffffff"); // rgb color of background
     }, [params]);
 
+
     useEffect(() =>
     {
-        runCallback();
+        const throttledCallback = setTimeout(() => {
+            runCallback();
+        }, 50);
+        return () => {clearTimeout(throttledCallback);};
     }, [backgroundColor]);
-
 
     return (
         <Box>
@@ -28,7 +31,7 @@ function SiteConfig(params=null) // params.config, params.callback
                 <p>Background Color: </p>
                 <MuiColorInput  
                     format="hex"
-                    value={backgroundColor}
+                    value={backgroundColor}                    
                     onChange={(newColor) => {setBackgroundColor(newColor);}} 
                 />
             </Box>

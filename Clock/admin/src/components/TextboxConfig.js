@@ -28,7 +28,10 @@ function TextboxConfig(params=null) // params.config, params.callback
 
     useEffect(() =>
     {
-        runCallback();
+        const throttledCallback = setTimeout(() => {
+            runCallback();
+        }, 50);
+        return () => {clearTimeout(throttledCallback);};
     }, [backgroundColor, textColor, text]);
 
 

@@ -26,7 +26,10 @@ function ClockConfig(params=null) // params.id, params.config, params.callback
 
     useEffect(() =>
     {
-        runCallback();
+        const throttledCallback = setTimeout(() => {
+            runCallback();
+        }, 50);
+        return () => {clearTimeout(throttledCallback);};
     }, [backgroundColor, textColor]);
 
 
