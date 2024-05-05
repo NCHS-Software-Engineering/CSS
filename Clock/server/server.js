@@ -40,7 +40,7 @@ function checkValid(userID, callback)
     con.query("SELECT * FROM VALID_ID WHERE ID LIKE \"" + userID + "\"", function(err, result, fields) {
         if (err) {callback(err, null); return;}
         if (result.length === 0) {callback(null,false);return;}
-        else {console.log(userID);callback(null,true);}
+        else {callback(null,true);}
     });
 }
 

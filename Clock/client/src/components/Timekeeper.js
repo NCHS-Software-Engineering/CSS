@@ -49,11 +49,11 @@ function Timekeeper(props = null) //  props.schedule, props.countdownCallback, p
           setPassingPeriod(true);
           if (i === 0)
           {
-            setPeriodName("Before School");
+            setPeriodName("Before School");
           }
           else
           {
-            setPeriodName("Passing Period");
+            setPeriodName("Passing Period");
           }
         }
         else // regular period
@@ -116,7 +116,7 @@ function Timekeeper(props = null) //  props.schedule, props.countdownCallback, p
             if (passingPeriod === false)
             {
               setPeriod(period + 1);
-              setPeriodName("Passing Period");
+              setPeriodName("Passing Period");
             }
             else
             {

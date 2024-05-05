@@ -30,13 +30,13 @@ function App() {
 
     const [displayList, setDisplayList] = useState([]);
 
-
-    const portNum = 8000; // Change this number in order to change which port the server is listening on
-    const serverUrl = 'ws://localhost:' + portNum; // may need to change this if we host the server on a different url
     
     // Deal with WebSocket stuff. should run only once at the start ()
     useEffect(() =>
     {
+        const portNum = 8000; // Change this number in order to change which port the server is listening on
+        const serverUrl = 'ws://localhost:' + portNum; // may need to change this if we host the server on a different url
+
         const ws = new WebSocket(serverUrl); // represents the client socket
 
         // send the server the room number
@@ -57,7 +57,9 @@ function App() {
             
             return () => {ws.close();};
         });
-    }, [serverUrl, room]);
+
+        return () => {ws.close();};
+    }, [room]);
 
     useEffect(() => 
     {
@@ -72,7 +74,7 @@ function App() {
             switch(w.type)
             {
                 case "countdown": 
-                    tempDisplayList.push(<Countdown id={i} deltaTime={countdown} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
+                    tempDisplayList.push(<Countdown id={i} deltaTime={countdown} periodName={periodName} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
                     break;
                 case "clock":
                     tempDisplayList.push(<RTC id={i} col={w.col} row={w.row} width={w.width} height={w.height} config={w.config}/>);
