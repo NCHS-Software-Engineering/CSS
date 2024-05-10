@@ -14,13 +14,18 @@ function LoginPage(props = null) {
   const login = useGoogleLogin({
         onSuccess: (codeResponse) => {axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`, {})
           .then((res) => {
-              //sessionStorage.setItem('token', res.data.id);
               document.cookie = "token=" + res.data.id + "; SameSite=Strict";
               setLoggedin(true);
             })
           .catch((err) => console.log(err));},
         onError: (error) => console.log('Login Failed:', error)
     });
+  
+  function guestLogin()
+  {
+    document.cookie = "token=guestID; SameSite=Strict";
+    setLoggedin(true);
+  }
   
   return (
       <div className="App">
@@ -33,6 +38,7 @@ function LoginPage(props = null) {
           </Box>
           <Box sx={{height: "45%", width: "100%", display: "flex", justifyContent: "center"}}>
             {loggedin ? <Navigate to="/home" /> : <Button sx={{height: "10%", aspectRatio: 2/1}} variant="contained" color="primary" onClick={login}>Login</Button>}
+            <Button sx={{height: "10%", aspectRatio: 4/1, marginLeft: 2}} variant="contained" color="primary" onClick={() => guestLogin()}>Guest Login</Button>
           </Box>
         </Box>
       </div>

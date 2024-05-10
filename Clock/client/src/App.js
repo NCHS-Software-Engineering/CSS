@@ -31,7 +31,7 @@ function App() {
     const [displayList, setDisplayList] = useState([]);
 
     
-    // Deal with WebSocket stuff. should run only once at the start ()
+    // Deal with WebSocket stuff. should run only once at the start
     useEffect(() =>
     {
         const portNum = 8000; // Change this number in order to change which port the server is listening on
