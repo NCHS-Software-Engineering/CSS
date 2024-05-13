@@ -68,6 +68,7 @@ function Sidebar(props = null) // props.currentTheme, props.switchTheme
 {
     const location = useLocation();
 
+
     const [open, setOpen] = useState(true);
 
 

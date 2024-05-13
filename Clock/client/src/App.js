@@ -35,7 +35,7 @@ function App() {
     useEffect(() =>
     {
         const portNum = 8000; // Change this number in order to change which port the server is listening on
-        const serverUrl = 'ws://localhost:' + portNum; // may need to change this if we host the server on a different url
+        const serverUrl = 'ws://' + window.location.hostname + ':' + portNum; // may need to change this if we host the server on a different url
 
         const ws = new WebSocket(serverUrl); // represents the client socket
 

@@ -13,7 +13,7 @@ function HomePage()
     const [tempName, setTempName] = useState(""); // the in edit name of the currenlty selected room
     const [overlay, setOverlay] = useState(false); // is the overlay visible
     
-    const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
+    const baseURL = "http://"+window.location.hostname+":8500/"; // This will likely need to be changed for a production build
 
 
     // TODO: and authorization header can be used to make sure that this user has admin credentials

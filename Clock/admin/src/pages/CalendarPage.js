@@ -20,7 +20,7 @@ function CalendarPage()
 
 
     const today = new Date(); // todays date/time info
-    const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
+    const baseURL = "http://"+window.location.hostname+":8500/"; // This will likely need to be changed for a production build
 
 
     // TODO: and authorization header can be used to make sure that this user has admin credentials

@@ -52,7 +52,7 @@ function LayoutPage()
     const [cursor, setCursor] = useState("auto");
 
 
-    const baseURL = "http://localhost:8500/"; // This will likely need to be changed for a production build
+    const baseURL = "http://"+window.location.hostname+":8500/"; // This will likely need to be changed for a production build
 
     // TODO: and authorization header can be used to make sure that this user has admin credentials
     function updateServerLayout(siteData, widgetData) // Sends the schedules to the server 
@@ -502,7 +502,7 @@ function LayoutPage()
                     <Box sx={{position: "relative", width: "100%", aspectRatio: 16/9}}>
                         {overlay ?
                         <Box sx={{zIndex:"1", pointerEvents:"none", opacity: 0.85, position: "absolute", width: "100%", height: "100%"}}>
-                            <iframe src={"http://localhost:3500?room="+searchParams.get("room")} style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
+                            <iframe src={"http://"+window.location.hostname+":3500?room="+searchParams.get("room")} style={{border: 0}} height="100%" width="100%" title="Clock Preview"></iframe> {/* May need to change 'src' for final build */}
                         </Box> : <></> }
                         <table style={{tableLayout: "fixed", borderCollapse: "collapse", width: "100%", height: "100%", userSelect: "none"}}>
                             <tbody>
