@@ -1,6 +1,6 @@
 # Classroom Scheduling System
 
-The CSS is a dynamic web application designed to allow teachers to modify and preview schedules on a clock interface. It is currently designed to run on desktop computers through a web browser.
+The CSS is a dynamic web application designed to allow teachers to modify and preview schedules on a clock interface. It is currently designed to run on desktop computers through a web browser. The application has a client component that is meant to be displayed in a classroom, and an administrator component that controls the client's display.
 
 ## Getting Started
 
@@ -11,24 +11,24 @@ These instructions will guide you on how to get the project up and running on yo
 To make this work you need to download the latest versions of [Visual Studio Code](https://code.visualstudio.com/download), [Git](https://git-scm.com/downloads), and [Node.js](https://nodejs.org/en) if you do not have it downloaded already.
 
 ## Dependencies
-@mui/material
-@mui/joy
-@mui/system
-@emotion/react
-@emotion/styled
-@fontsource/inconsolata
-@mui/x-date-pickers
-@react-oauth/google
-dayjs
-gapi-scripts
-mui-color-input
-nodemon
-react-color
-react-draggable-list
-react-router-dom
-react-scripts
+* @mui/material
+* @mui/joy
+* @mui/system
+* @emotion/react
+* @emotion/styled
+* @fontsource/inconsolata
+* @mui/x-date-pickers
+* @react-oauth/google
+* dayjs
+* gapi-scripts
+* mui-color-input
+* nodemon
+* react-color
+* react-draggable-list
+* react-router-dom
+* react-scripts
 
-Dependencies must be installed with --legacy-peer-deps
+Dependencies must be installed with npm syntax, followed by --legacy-peer-deps
 
 ### Installation
 
@@ -45,7 +45,7 @@ Once the application is running, it will direct you to the admin website. Here, 
 
 ## Data Storage
 
-The application uses JSON files for data storage of the schedules.
+The application uses JSON files for data storage of the schedules, and a database for Google Authentication IDs.
 
 ## Contributing
 
