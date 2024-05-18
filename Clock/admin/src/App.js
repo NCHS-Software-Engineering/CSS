@@ -81,6 +81,9 @@ function App() {
           </Box>
         </BrowserRouter>
       </Box>
+      <Box sx={{position:"fixed", bottom:0, right:0}}>
+        <p>Michael Mihailov (2025), Eric Gu (2024), Nick Patel (2025), & Nicole Liang (2024)</p>
+      </Box>
       </ThemeProvider>
   );
 }

@@ -145,8 +145,9 @@ function App() {
                 <Box sx={{display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%"}}>
                     <Paper elevation={7} sx={{display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%"}}>
                         <TextField variant="filled" label="Room Name" value={tempRoom} onInput={(e) => setTempRoom(e.target.value)}></TextField>
-                        <Divider sx={{marginTop: 1, marginBottom: 1, width:"100%"}}/>
-                        <Button variant="contained" size="large" onClick={() => {setRoomCookie(tempRoom); setRoom(tempRoom);}}>Save</Button>
+                        <Button sx={{marginTop: 1}} variant="contained" size="large" onClick={() => {setRoomCookie(tempRoom); setRoom(tempRoom);}}>Save</Button>
+                        <Divider sx={{marginTop: 2, marginBottom: 1, width:"100%"}}/>
+                        <p>Michael Mihailov (2025), Eric Gu (2024), Nick Patel (2025), & Nicole Liang (2024)</p>
                     </Paper>
                 </Box>
             </Modal>
