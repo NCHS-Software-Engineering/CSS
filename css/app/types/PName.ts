@@ -1,0 +1,1 @@
+export type PName = `P${number}` | "SOAR" | "Passing Period" | "UNKNOWN";
