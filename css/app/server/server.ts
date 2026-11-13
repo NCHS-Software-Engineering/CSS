@@ -104,6 +104,20 @@ async function getCurrentWeather(callback: (data: never) => void) {
         const data = {};
         const res = await fetch("https://api.weather.gov/points/41.7676,-88.157");
         if(!res.ok) throw new UnexpectedResponseError(res.status);
+        const json = await res.json();
+        const linkData = await fetch(json.properties.forecastHourly);
+        if(!linkData.ok) throw new UnexpectedResponseError(linkData.status);
+        const hour = await linkData.json();
+        if(!hour.properties) return console.error("Error when fetching weather (in hourly data)");
+        const hp = hour.properties.periods[0];
+        data.isDaytime = hp.isDaytime;
+        data.shortForecast = hp.shortForecast;
+        data.relativeHumidity = hp.relativeHumidity.value;
+        const fgrid = await fetch(linkData.properties.forecastGridData);
+        if(!fgrid.ok) throw new UnexpectedResponseError(fgrid.status);
+        const gdata = await fgrid.json();
+        if(!gdata.properties) return console.error("Error when fetching weather (in grid data)");
+        //
     } catch(e) {
         //
     }
