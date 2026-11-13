@@ -52,7 +52,7 @@ export default function Time(props: { schedule: Sched[], countdownCallback: (inT
                 ct += td.getMinutes() * 60 * 1000;
                 ct += td.getSeconds() * 1000;
                 // ternary to shorten script
-                let tmp = schedule[period][(passPrd ? "start" : "end")].split(":");
+                const tmp = schedule[period][(passPrd ? "start" : "end")].split(":");
                 // FIX: prefer NumberConstructor over parseInt
                 ft += Number(tmp[0]) * 60 * 60 * 1000;
                 ft += Number(tmp[1]) * 60 * 1000;
@@ -83,7 +83,7 @@ export default function Time(props: { schedule: Sched[], countdownCallback: (inT
     // (the interval causes a re-render)
     useEffect(() => props.countdownCallback(countdown), [countdown]);
     useEffect(() => props.periodNameCallback(prdName), [prdName]);
-    // just... use visibility hidden
-    // no need for width-height 0
-    return <div style={{ visibility: "hidden", pointerEvents: "none" }}></div>
+    // no-rendering
+    // perfectly valid react
+    return null;
 }
