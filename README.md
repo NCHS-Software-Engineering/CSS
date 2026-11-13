@@ -2,6 +2,11 @@
 
 The CSS is a dynamic web application designed to allow teachers to modify and preview schedules on a clock interface. It is currently designed to run on desktop computers through a web browser. The application has a client component that is meant to be displayed in a classroom, and an administrator component that controls the client's display.
 
+# CSS (Next Rework)
+While CSS is currently in a functional state, I took it upon myself (being already familiar with the Next.js ecosystem) to upgrade the project to Next.js.\
+This fork is the full-fledged rewrite of the React scripts into Next.js.\
+Be sure to read instructions carefully, as it is not the same as main.
+
 ## Getting Started
 
 These instructions will guide you on how to get the project up and running on your local machine for development and testing purposes.
