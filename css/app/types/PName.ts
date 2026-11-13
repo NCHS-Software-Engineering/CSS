@@ -1,1 +1,1 @@
-export type PName = `P${number}` | "SOAR" | "Passing Period" | "UNKNOWN";
+export type PName = `P${number}` | "SOAR" | "Before School" | "Passing Period" | "UNKNOWN";
