@@ -8,6 +8,7 @@ import { config } from "dotenv";
 import * as WebSocket from "ws";
 import InvalidRoomReceivedError from "../errors/InvalidRoomReceivedError";
 import { Sched } from "../types/Sched";
+import { Database } from "../types/Database";
 config();
 
 const secret = process.env.secret as string;
@@ -21,20 +22,17 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.json());
-const client = supabase.createClient(process.env.supabase_url as string, process.env.supabase_key as string);
-// factory for getting client relations
-// (avoid stale relations / query-builder usage)
-const factory = (tableName: string) => { return () => client.from(tableName); };
+const client = supabase.createClient<Database>(process.env.supabase_url as string, process.env.supabase_key as string);
 // schedule table relationship
-const sched = factory("sched");
+const sched = client.from("sched");
 // id-auth table
-const idAuth = factory("id");
+const idAuth = client.from("id" as any);
 
 // globals
 const schedMap: Record<string, Sched[]> = {};
 const conMap: Record<string, WebSocket[]> = {};
 (async () => {
-    const { error, data } = await sched().select();
+    const { error, data } = await sched.select();
     if(error) throw error;
     data.forEach((d, i) => {
         getCurrentSchedule(d.room, r => schedMap[d.room] = r);
@@ -46,12 +44,12 @@ const conMap: Record<string, WebSocket[]> = {};
 // to avoid ts thinking
 // both could be undefined
 async function checkValid(id: string, cb: (error?: Error, isValid?: boolean) => void) {
-    const { error, data } = await idAuth().select().filter("id", "eq", id);
+    const { error, data } = await idAuth.select().filter("id", "eq", id);
     if(error) return cb(error);
     cb(undefined, data.length != 0);
 }
 // lightweight helpers
-const getRoom = async (room: string) => await sched().select().filter("room", "eq", room);
+const getRoom = async (room: string) => await sched.select().filter("room", "eq", room);
 async function checkRoom(room: string) {
     // check if a room exists
     // should be jsonb
@@ -67,7 +65,7 @@ async function checkRoom(room: string) {
 async function getCurrentSchedule(room: string, callback: (result: Sched[]) => void) {
     const { error, data } = await getRoom(room);
     if(error) throw error;
-    const { calendar, schedules, defaultWeek } = data[0];
+    const { calendar, schedules, defaultWeek } = data[0].schedule as Record<string, any>;
     let dk;
     let sk;
     const __dk = () => date.getMonth() * 100 + date.getDate();
@@ -86,12 +84,12 @@ async function getCurrentSchedule(room: string, callback: (result: Sched[]) => v
     if(calendar[dk] && !calendar[dk].repeating) {
         // drop calendar[dk]
         delete calendar[dk];
-        await sched().select().filter("room", "eq", room).update({ ...data[0], calendar });
+        await sched.select().filter("room", "eq", room).update({ ...data[0], calendar });
     }
 }
 
 const port = process.env.PORT ?? 3001;
-const wss = new WebSocket.Server({ port: 8000 });
+const wss = new WebSocket.WebSocketServer({ port: 8000 });
 async function broadcast(room: string) {
     if(room in conMap) {
         conMap[room].forEach(w => updateClient(w, room));
