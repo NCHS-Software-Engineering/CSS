@@ -9,6 +9,7 @@ import * as WebSocket from "ws";
 import InvalidRoomReceivedError from "../errors/InvalidRoomReceivedError";
 import { Sched } from "../types/Sched";
 import { Database } from "../types/Database";
+import UnexpectedResponseError from "../errors/UnexpectedResponseError";
 config();
 
 const secret = process.env.secret as string;
@@ -30,7 +31,7 @@ const idAuth = client.from("id" as any);
 
 // globals
 const schedMap: Record<string, Sched[]> = {};
-const conMap: Record<string, WebSocket[]> = {};
+const conMap: Record<string, Set<WebSocket>> = {};
 (async () => {
     const { error, data } = await sched.select();
     if(error) throw error;
@@ -98,7 +99,51 @@ async function broadcast(room: string) {
 async function updateClient(ws: WebSocket, room: string) {
     ws.send(JSON.stringify({ schedule: schedMap[room] }));
 }
-wss.on("connection", (ws) => {});
+async function getCurrentWeather(callback: (data: never) => void) {
+    try {
+        const data = {};
+        const res = await fetch("https://api.weather.gov/points/41.7676,-88.157");
+        if(!res.ok) throw new UnexpectedResponseError(res.status);
+    } catch(e) {
+        //
+    }
+}
+wss.on("connection", (ws) => {
+    let first = false;
+    let room: string;
+    ws.on("message", (msg) => {
+        if(first) return;
+        first = true;
+        try {
+            room = msg.toString();
+            if(!schedMap[room]) {
+                updateClient(ws, room);
+                ws.terminate();
+            } else {
+                conMap[room] = conMap[room] ?? new Set();
+                conMap[room].add(ws);
+                updateClient(ws, room);
+            }
+        } catch(e) {
+            ws.terminate();
+            console.error(e);
+        }
+    });
+    ws.on("close", () => {
+        if(room) {
+            if(conMap[room]) {
+                // remove client
+                conMap[room].delete(ws);
+                // if set is empty
+                // then delete room from
+                // connections map
+                // (works because)
+                // (!0 is true)
+                if(!conMap[room].size) delete conMap[room];
+            }
+        }
+    });
+});
 app.listen(port, () => {
     console.log(`Server listening on ${port}`);
 });
