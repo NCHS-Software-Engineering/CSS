@@ -2,15 +2,15 @@ import * as supabase from "@supabase/supabase-js";
 import * as bcrypt from "bcrypt";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import express from "express";
+import express, { Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import { config } from "dotenv";
-import * as WebSocket from "ws";
 import InvalidRoomReceivedError from "../errors/InvalidRoomReceivedError";
 import { Sched } from "../types/Sched";
 import { Database } from "../types/Database";
 import UnexpectedResponseError from "../errors/UnexpectedResponseError";
 import * as Schedule from "node-schedule";
+import { WebSocketServer, WebSocket } from "ws";
 config();
 
 const secret = process.env.secret as string;
@@ -51,7 +51,7 @@ async function checkValid(id: string, cb: (error?: Error, isValid?: boolean) => 
     cb(undefined, data.length != 0);
 }
 // lightweight helpers
-const getRoom = async (room: string) => await sched.select().filter("room", "eq", room);
+const getRoom = async (room: string) => await sched.select().eq("room", room);
 async function checkRoom(room: string) {
     // check if a room exists
     // should be jsonb
@@ -86,12 +86,16 @@ async function getCurrentSchedule(room: string, callback: (result: Sched[]) => v
     if(calendar[dk] && !calendar[dk].repeating) {
         // drop calendar[dk]
         delete calendar[dk];
-        await sched.select().filter("room", "eq", room).update({ ...data[0], calendar });
+        await sched.update({ schedule: {
+            schedules,
+            defaultWeek,
+            calendar
+        } }).eq("room", room);
     }
 }
 
 const port = process.env.PORT ?? 3001;
-const wss = new WebSocket.WebSocketServer({ port: 8000 });
+const wss = new WebSocketServer({ port: 8000 });
 async function broadcast(room: string) {
     if(room in conMap) {
         conMap[room].forEach(w => updateClient(w, room));
@@ -144,9 +148,26 @@ async function getCurrentWeather(callback: (data: Weather) => void) {
         console.error(e);
     }
 }
-function createJob<T>(callback: (value: T) => void) {
-    //
+async function getRoomList() {
+    return (await sched.select()).data?.map(x => x.room);
 }
+Schedule.scheduleJob("0 0 * * *", async () => {
+    const rm = await getRoomList();
+    if(rm) {
+        for(let i = 0; i < rm.length; i++) await getCurrentSchedule(rm[i], (s) => {
+            schedMap[rm[i]] = s;
+            broadcast(rm[i]);
+        });
+    }
+});
+Schedule.scheduleJob("30 * * * *", async () => {
+    const rm = await getRoomList();
+    if(rm) {
+        // do once; don't do for each
+        await getCurrentWeather(() => {});
+        rm.forEach(broadcast);
+    }
+});
 
 wss.on("connection", (ws) => {
     let first = false;
@@ -184,6 +205,30 @@ wss.on("connection", (ws) => {
         }
     });
 });
+
+async function __getSched(req: Request, res: Response, field: string) {
+    const { room }: RRoom = req.body;
+    const { error, data } = await getRoom(room);
+    if(error) return res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: true, message: (data[0].schedule as Record<string, any>)[field] });
+}
+interface RRoom {
+    room: string;
+}
+// TODO: auth subsys
+// also install @BeanTheAlien/netmap
+// and apply sv net file
+app.get("/rooms", async (req, res) => {});
+app.get("/sched", async (req, res) => {
+    return await __getSched(req, res, "schedules");
+});
+app.get("/defweek", async (req, res) => {
+    return await __getSched(req, res, "defaultWeek");
+});
+app.get("/cal", async (req, res) => {
+    return await __getSched(req, res, "calendar");
+});
+
 app.listen(port, () => {
     console.log(`Server listening on ${port}`);
 });
