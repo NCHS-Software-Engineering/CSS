@@ -10,6 +10,7 @@ import InvalidRoomReceivedError from "../errors/InvalidRoomReceivedError";
 import { Sched } from "../types/Sched";
 import { Database } from "../types/Database";
 import UnexpectedResponseError from "../errors/UnexpectedResponseError";
+import * as Schedule from "node-schedule";
 config();
 
 const secret = process.env.secret as string;
@@ -99,9 +100,16 @@ async function broadcast(room: string) {
 async function updateClient(ws: WebSocket, room: string) {
     ws.send(JSON.stringify({ schedule: schedMap[room] }));
 }
-async function getCurrentWeather(callback: (data: never) => void) {
+interface Weather {
+    isDaytime: boolean;
+    shortForecast: string;
+    relativeHumidity: number;
+    skyCover: number;
+}
+var weather: Weather;
+async function getCurrentWeather(callback: (data: Weather) => void) {
     try {
-        const data = {};
+        const data: Partial<Weather> = {};
         const res = await fetch("https://api.weather.gov/points/41.7676,-88.157");
         if(!res.ok) throw new UnexpectedResponseError(res.status);
         const json = await res.json();
@@ -113,15 +121,33 @@ async function getCurrentWeather(callback: (data: never) => void) {
         data.isDaytime = hp.isDaytime;
         data.shortForecast = hp.shortForecast;
         data.relativeHumidity = hp.relativeHumidity.value;
-        const fgrid = await fetch(linkData.properties.forecastGridData);
+        const fgrid = await fetch(hour.properties.forecastGridData);
         if(!fgrid.ok) throw new UnexpectedResponseError(fgrid.status);
         const gdata = await fgrid.json();
         if(!gdata.properties) return console.error("Error when fetching weather (in grid data)");
-        //
+        const date = new Date();
+        const hr = date.getHours();
+        // chicago is UTC-5
+        const off = -5;
+        const cr = date.getDate();
+        for(const cc of gdata.properties.skyCover.values) {
+            const v = cc.validTime;
+            const [cd, ch, cs] = [[8, 10], [11, 13], [v.indexOf("PT") + 2, v.indexOf("H")]].map(x => Number(v.slice(x[0], x[1])));
+            const hc = ch + ((cd - cr) * 24) + off;
+            if(hr < hc + cs && hc <= hr) {
+                data.skyCover = cc.value;
+                weather = data as Weather;
+                callback(weather);
+            }
+        }
     } catch(e) {
-        //
+        console.error(e);
     }
 }
+function createJob<T>(callback: (value: T) => void) {
+    //
+}
+
 wss.on("connection", (ws) => {
     let first = false;
     let room: string;
