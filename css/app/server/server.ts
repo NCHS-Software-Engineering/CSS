@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-var */
 import * as supabase from "@supabase/supabase-js";
 import * as bcrypt from "bcrypt";
 import cors from "cors";
@@ -7,10 +9,11 @@ import * as jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import InvalidRoomReceivedError from "../errors/InvalidRoomReceivedError";
 import { Sched } from "../types/Sched";
-import { Database } from "../types/Database";
+import { Database, Json } from "../types/Database";
 import UnexpectedResponseError from "../errors/UnexpectedResponseError";
 import * as Schedule from "node-schedule";
 import { WebSocketServer, WebSocket } from "ws";
+import { randomBytes } from "crypto";
 config();
 
 const secret = process.env.secret as string;
@@ -29,6 +32,7 @@ const client = supabase.createClient<Database>(process.env.supabase_url as strin
 const sched = client.from("sched");
 // id-auth table
 const idAuth = client.from("id" as any);
+const users = client.from("users");
 
 // globals
 const schedMap: Record<string, Sched[]> = {};
@@ -36,7 +40,7 @@ const conMap: Record<string, Set<WebSocket>> = {};
 (async () => {
     const { error, data } = await sched.select();
     if(error) throw error;
-    data.forEach((d, i) => {
+    data.forEach((d) => {
         getCurrentSchedule(d.room, r => schedMap[d.room] = r);
     });
 })();
@@ -218,7 +222,98 @@ interface RRoom {
 // TODO: auth subsys
 // also install @BeanTheAlien/netmap
 // and apply sv net file
-app.get("/rooms", async (req, res) => {});
+
+function decode(jwtString: string) {
+    return jwt.verify(jwtString, secret);
+}
+function getUser(req: Request) {
+    return decode(req.cookies.token);
+}
+function validTk(req: Request) {
+    return !!getUser(req);
+}
+function signTk(res: Response, token: string) {
+    res.cookie("token", token, {
+        // 2-week lifespan
+        maxAge: 14 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "lax",
+        secure: true
+    });
+}
+
+interface UserInfo {
+    name: string;
+    password: string;
+}
+async function findUsr(name: string) {
+    return (await users.select().eq("name", name)).data?.[0];
+}
+async function hasUsr(name: string) {
+    return !!(await findUsr(name));
+}
+function genTk() {
+    return jwt.sign({ token: randomBytes(32).toHex() }, secret);
+}
+// user subsystem
+// signup
+app.post("/user/signup", async (req, res) => {
+    const { name, password }: UserInfo = req.body;
+    // if a user exists, throw 409 (Conflict)
+    // (prior to insert throwing on unique)
+    if(await hasUsr(name)) return res.status(409).json({ success: false, message: `A user with the name '${name}' already exists` });
+    const token = genTk();
+    const { error } = await users.insert({ name, password: bcrypt.hashSync(password, 10), token });
+    if(error) return res.status(500).json({ success: false, message: error.message });
+    signTk(res, token);
+    // 201 (Created)
+    res.status(201).json({ success: true, message: "Successfully signed up" });
+});
+// signin
+app.post("/user/signin", async (req, res) => {
+    const { name, password }: UserInfo = req.body;
+    const usr = await findUsr(name);
+    // respond with 417 (Expectation Failed)
+    if(!usr) return res.status(417).json({ success: false, message: `No user exists with the name '${name}'` });
+    // respond with 406 (Not Acceptable)
+    if(!bcrypt.compareSync(usr.password, password)) return res.status(406).json({ success: false, message: `Password could not be verified to match real password` });
+    const token = genTk();
+    const { error } = await users.update({ token }).eq("name", name);
+    if(error) return res.status(500).json({ success: false, message: error.message });
+    signTk(res, token);
+    // respond with 202 (Accepted)
+    res.status(202).json({ success: true, message: "Accepted signin" });
+});
+
+function unauth401(res: Response) {
+    return res.status(401).json({ success: false, message: "Request does not contain a valid 'token' cookie"});
+}
+// admin routes
+// (auth required)
+async function svAdminPush<T extends Json>(req: Request, res: Response, key: string) {
+    const { room, data: value }: RRoom & { data: T[] } = req.body;
+    // assert contains
+    const { data, error } = await sched.select().eq("room", room);
+    if(error) return res.status(500).json({ success: false, message: error.message });
+    // respond with 304 (Not Modified)
+    if(data.length == 0) return res.status(304).json({ success: false, message: `No schedule for '${room}' exists (did you mean to create this resource?)` });
+    const { error: err } = await sched.update({ schedule: { [key]: value } }).eq("room", room);
+    if(err) return res.status(500).json({ success: false, message: err.message });
+    // respond with 207 (Multi-Status)
+    return res.status(207).json({ success: true, message: "Administred update" });
+}
+app.get("/admin/rooms", async (req, res) => {
+    // respond with 401 (Unauthorized)
+    if(!validTk(req)) return unauth401(res);
+    const rooms = await getRoomList();
+    if(!rooms) return res.status(500).json({ success: false, message: "Failed to view rooms" });
+    res.json({ success: true, message: rooms });
+});
+app.post("/admin/schedule", async (req, res) => {
+    const { room }: RRoom & { schedule: Sched[] } = req.body;
+});
+
+// public routes
 app.get("/sched", async (req, res) => {
     return await __getSched(req, res, "schedules");
 });
