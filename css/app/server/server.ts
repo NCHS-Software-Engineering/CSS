@@ -255,6 +255,9 @@ async function hasUsr(name: string) {
 function genTk() {
     return jwt.sign({ token: randomBytes(32).toHex() }, secret);
 }
+function sverr500(res: Response, error: Error) {
+    return res.status(500).json({ success: false, message: error.message });
+}
 // user subsystem
 // signup
 app.post("/user/signup", async (req, res) => {
@@ -264,7 +267,7 @@ app.post("/user/signup", async (req, res) => {
     if(await hasUsr(name)) return res.status(409).json({ success: false, message: `A user with the name '${name}' already exists` });
     const token = genTk();
     const { error } = await users.insert({ name, password: bcrypt.hashSync(password, 10), token });
-    if(error) return res.status(500).json({ success: false, message: error.message });
+    if(error) return sverr500(res, error);
     signTk(res, token);
     // 201 (Created)
     res.status(201).json({ success: true, message: "Successfully signed up" });
@@ -279,7 +282,7 @@ app.post("/user/signin", async (req, res) => {
     if(!bcrypt.compareSync(usr.password, password)) return res.status(406).json({ success: false, message: `Password could not be verified to match real password` });
     const token = genTk();
     const { error } = await users.update({ token }).eq("name", name);
-    if(error) return res.status(500).json({ success: false, message: error.message });
+    if(error) return sverr500(res, error);
     signTk(res, token);
     // respond with 202 (Accepted)
     res.status(202).json({ success: true, message: "Accepted signin" });
@@ -291,26 +294,111 @@ function unauth401(res: Response) {
 // admin routes
 // (auth required)
 async function svAdminPush<T extends Json>(req: Request, res: Response, key: string) {
+    // respond with 401 (Unauthorized)
+    if(!validTk(req)) return unauth401(res);
     const { room, data: value }: RRoom & { data: T[] } = req.body;
     // assert contains
     const { data, error } = await sched.select().eq("room", room);
-    if(error) return res.status(500).json({ success: false, message: error.message });
+    if(error) return sverr500(res, error);
     // respond with 304 (Not Modified)
     if(data.length == 0) return res.status(304).json({ success: false, message: `No schedule for '${room}' exists (did you mean to create this resource?)` });
     const { error: err } = await sched.update({ schedule: { [key]: value } }).eq("room", room);
-    if(err) return res.status(500).json({ success: false, message: err.message });
+    if(err) return sverr500(res, err);
     // respond with 207 (Multi-Status)
     return res.status(207).json({ success: true, message: "Administred update" });
 }
+app.get("/admin/updateall", async (req, res) => {
+    const list = await getRoomList();
+    if(!list) return sverr500(res, new Error("Failed to receive rooms"));
+    const pm = JSON.stringify(schedMap);
+    for(const r of list) await getCurrentSchedule(r, (s) => {
+        schedMap[r] = s;
+        // can run the broadcast async
+        broadcast(r);
+    });
+    // in case nothing changed
+    // ensure correct response code
+    // was administred
+    // respond with 304 (Not Modified)
+    // (original schedMap is the same as new map)
+    // (still was a success, since we got the list and schedules)
+    if(pm == JSON.stringify(schedMap)) return res.status(304).json({ success: true, message: "No rooms were updated" })
+    // respond with 205 (Reset Content)
+    // (note that 205 is not supposed to have)
+    // (content in response, but we do anyway)
+    // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/205)
+    res.status(205).json({ success: true, message: "Updated rooms with new schedule" });
+});
 app.get("/admin/rooms", async (req, res) => {
     // respond with 401 (Unauthorized)
     if(!validTk(req)) return unauth401(res);
     const rooms = await getRoomList();
-    if(!rooms) return res.status(500).json({ success: false, message: "Failed to view rooms" });
+    if(!rooms) return sverr500(res, new Error("Failed to view rooms"));
     res.json({ success: true, message: rooms });
 });
-app.post("/admin/schedule", async (req, res) => {
-    const { room }: RRoom & { schedule: Sched[] } = req.body;
+app.post("/admin/sched", async (req, res) => {
+    return await svAdminPush<Sched>(req, res, "schedules");
+});
+app.post("/admin/defweek", async (req, res) => {
+    return await svAdminPush(req, res, "defaultWeek");
+});
+app.post("/admin/cal", async (req, res) => {
+    return await svAdminPush(req, res, "calendar");
+});
+async function rmExists(room: string) {
+    return await sched.select().eq("room", room);
+}
+// put a room
+app.post("/admin/put", async (req, res) => {
+    if(!validTk(req)) return unauth401(res);
+    const { room, schedule }: RRoom & { schedule?: Sched[] } = req.body;
+    const sch = schedule ?? [];
+    // verify not exists
+    const { data, error } = await rmExists(room);
+    if(error) return sverr500(res, error);
+    // respond with 304 (Not Modified)
+    if(data.length) return res.status(304).json({ success: false, message: `A room for '${room}' already exists (did you mean to update this resource?)` });
+    const { error: err } = await sched.insert({ room, schedule: {
+        schedules: sch,
+        defaultWeek: {},
+        calendar: {}
+    } });
+    if(err) return sverr500(res, err);
+    // respond with 201 (Created)
+    res.status(201).json({ success: true, message: `Put room '${room}' with schedule '${JSON.stringify(sch)}'` });
+});
+// drop a room
+app.post("/admin/drop", async (req, res) => {
+    if(!validTk(req)) return unauth401(res);
+    const { room }: RRoom = req.body;
+    const { data, error } = await rmExists(room);
+    if(error) return sverr500(res, error);
+    // respond with 404 (Not Found)
+    if(!data.length) return res.status(404).json({ success: false, message: `No room exists for room '${room}'` });
+    const { data: dat, error: err } = await sched.delete().eq("room", room).select();
+    if(err) return sverr500(res, err);
+    // if no rooms were dropped (shouldn't be possible)
+    // respond with 412 (Precondition Failed)
+    if(!dat.length) return res.status(412).json({ success: false, message: "Unexpected null-dropped rows" });
+    // respond with 302 (Found)
+    res.status(302).json({ success: true, message: `Discovered and dropped room '${room}'` });
+    // also drop from schedMap and conMap
+    delete schedMap[room];
+    // (drop each, in case multiple)
+    conMap[room].forEach(ws => ws.terminate());
+    delete conMap[room];
+});
+// rename a room
+app.post("/admin/ren", async (req, res) => {
+    if(!validTk(req)) return unauth401(res);
+    const { room, name }: RRoom & { name: string } = req.body;
+    const { data, error } = await rmExists(room);
+    if(error) return sverr500(res, error);
+    if(!data.length) return res.status(404).json({ success: false, message: `No room exists for room '${room}'` });
+    const { error: err } = await sched.update({ room: name }).eq("room", room);
+    if(err) return sverr500(res, err);
+    // respond with 205 (Reset Content)
+    res.status(205).json({ success: true, message: `Room changed from '${room}' => '${name}'` });
 });
 
 // public routes
