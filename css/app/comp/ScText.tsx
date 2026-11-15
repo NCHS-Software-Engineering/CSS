@@ -1,26 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Justify } from "../types/Justify";
 import NoElementError from "../errors/NoElementError";
+import NoTextLengthError from "../errors/NoTextLengthError";
 
 export default function ScText(props: { id: string, portionFilled?: number, justify?: Justify, text: string, width: number, height: number }) {
     // apply init during construction
-    const [pf, spf] = useState(props?.portionFilled ?? 0.9);
-    const [js, sjs] = useState<Justify>(props?.justify ?? "center");
-    const [id, sid] = useState(props?.id ?? "");
-    const [tx, stx] = useState(props?.text ?? "");
-    const [txl, stxl] = useState(props?.text.length ?? 12);
-    const [fs, sfs] = useState(12);
-    const [ww, sww] = useState(1);
-    const [wh, swh] = useState(1);
-    const [w, sw] = useState(props?.width ?? 1);
-    const [h, sh] = useState(props?.height ?? 1);
+    const [portionFilled, setPortionFilled] = useState(props?.portionFilled ?? 0.9);
+    const [justify, setJustify] = useState<Justify>(props?.justify ?? "center");
+    const [id, setID] = useState(props?.id ?? "");
+    const [tx, setTx] = useState(props?.text ?? "");
+    const [txLen, setTextLn] = useState(props?.text.length ?? 12);
+    const [fontSize, setFS] = useState(12);
+    const [windWidth, setWindWidth] = useState(() => typeof window != "undefined" ? window.innerWidth : 1);
+    const [windHeight, setWindHeight] = useState(() => typeof window != "undefined" ? window.innerHeight : 1);
+    const [width, setWidth] = useState(props?.width ?? 1);
+    const [height, setHeight] = useState(props?.height ?? 1);
+    const textElem = useRef<HTMLParagraphElement>(null);
     // dont do this whenever anything changes
     // only when text length is changed
     useEffect(() => {
-        if(txl != 0) throw new Error();
-    }, [txl]);
+        if(txLen != 0) throw new NoTextLengthError(tx);
+    }, [txLen]);
+    function wrs() {
+        setWindWidth(window.innerWidth);
+        setWindHeight(window.innerHeight);
+    }
     useEffect(() => {
-        wrs();
         const lf = () => wrs();
         window.addEventListener("resize", lf);
         // fix: has to be reference to function
@@ -29,25 +34,23 @@ export default function ScText(props: { id: string, portionFilled?: number, just
         return () => {
             window.removeEventListener("resize", lf);
         };
-    });
-    function wrs() {
-        sww(window.innerWidth);
-        swh(window.innerHeight);
-    }
+    }, []);
     function rs() {
-        let tfs = fs;
-        const e = document.getElementById(id + "text");
+        let tfs = fontSize;
+        // fix: DONT USE DOCUMENT.GETELEMENTBYID
+        // https://stackoverflow.com/questions/36996931/are-reactjs-and-jquery-mutual-exclusive
+        const e = textElem.current; // document.getElementById(id + "text");
         if(!e) throw new NoElementError(id + "text");
-        const r = (wh * (h / 9)) / e.scrollHeight;
+        const r = (windHeight * (height / 9)) / e.scrollHeight;
         tfs *= r;
-        const w16 = ww * (w / 16);
+        const w16 = windWidth * (width / 16);
         if(e.scrollWidth * r > w16) {
             tfs *= w16 / (e.scrollWidth * r);
         }
-        tfs *= pf;
-        if(Math.abs(tfs - fs) > 1) sfs(tfs);
+        tfs *= portionFilled;
+        if(Math.abs(tfs - fontSize) > 1) setFS(tfs);
     }
-    return <div id={id + "container"} style={{ display: "flex", alignItems: "center", justifyContent: js, width: "100%", height: "100%" }}>
-        <p id={id + "text"} style={{ display: "inline-block", fontSize: fs, overflow: "hidden" }}>{tx}</p>
+    return <div id={id + "container"} style={{ display: "flex", alignItems: "center", justifyContent: justify, width: "100%", height: "100%" }}>
+        <p id={id + "text"} style={{ display: "inline-block", fontSize: fontSize, overflow: "hidden" }} ref={textElem}>{tx}</p>
     </div>
 }
