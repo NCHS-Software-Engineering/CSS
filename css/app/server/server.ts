@@ -108,16 +108,16 @@ async function broadcast(room: string) {
 async function updateClient(ws: WebSocket, room: string) {
     ws.send(JSON.stringify({ schedule: schedMap[room] }));
 }
-interface Weather {
+export interface WeatherData {
     isDaytime: boolean;
     shortForecast: string;
     relativeHumidity: number;
     skyCover: number;
 }
-var weather: Weather;
-async function getCurrentWeather(callback: (data: Weather) => void) {
+var weather: WeatherData;
+async function getCurrentWeather(callback: (data: WeatherData) => void) {
     try {
-        const data: Partial<Weather> = {};
+        const data: Partial<WeatherData> = {};
         const res = await fetch("https://api.weather.gov/points/41.7676,-88.157");
         if(!res.ok) throw new UnexpectedResponseError(res.status);
         const json = await res.json();
@@ -144,7 +144,7 @@ async function getCurrentWeather(callback: (data: Weather) => void) {
             const hc = ch + ((cd - cr) * 24) + off;
             if(hr < hc + cs && hc <= hr) {
                 data.skyCover = cc.value;
-                weather = data as Weather;
+                weather = data as WeatherData;
                 callback(weather);
             }
         }
@@ -410,6 +410,10 @@ app.get("/defweek", async (req, res) => {
 });
 app.get("/cal", async (req, res) => {
     return await __getSched(req, res, "calendar");
+});
+
+app.get("/weather", (req, res) => {
+    res.send({ weather });
 });
 
 app.listen(port, () => {
