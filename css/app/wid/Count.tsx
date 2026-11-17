@@ -4,19 +4,18 @@ import { PName } from "../types/PName";
 import { Paper } from "@mui/material";
 import ScText from "../comp/ScText";
 import PprST from "../defs/PprST";
+import { Props } from "../types/Props";
+import { Config } from "../types/Config";
 
 // because theres a config
 // for some reason
 // dont know why
-interface CountConfig {
-    bg: string;
+interface CountConfig extends Config {
     //warn: number;
-    txClr: string;
     dsSecs: boolean;
 }
-export default function Count({ id, delta, row, col, width, height, config, prdNm }: {
-    id: string, delta?: number, row?: number, col?: number, width?: number,
-    height?: number, config: CountConfig, prdNm?: PName
+export default function Count({ id, delta, row, col, width, height, config, prdNm }: Props & {
+    delta?: number, config: CountConfig, prdNm?: PName
  }) {
     const bg = config.bg;
     const [tx, setTx] = useState(":)");

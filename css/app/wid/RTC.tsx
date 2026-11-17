@@ -15,7 +15,5 @@ export default function RTC({ id, row, col, width, height, config }: Props) {
         }, 100);
         return () => clearInterval(iv);
     }, []);
-    // FINISH WHEN UTIL
-    // TYPE PText EXISTS
     return <PprST props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }} tx={disp}/>;
 }

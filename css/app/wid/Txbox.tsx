@@ -32,7 +32,6 @@ export default function Txbox({ id, row, col, width, height, config, text }: Pro
         }
         return res;
     }
-    // again, change when util ready
     return <Ppr props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }}>
         <div style={{ width: "100%", height: "100%" }}>
             {split()}

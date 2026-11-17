@@ -9,6 +9,5 @@ export default function PdNm({ id, row, col, width, height, config, periodName }
     const [ccol, setCol] = useState((col ?? 0) + 1);
     const [cwidth, setWidth] = useState(width ?? 1);
     const [cheight, setHeight] = useState(height ?? 1);
-    // fix return when util ready
     return <PprST props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }} tx={periodName ?? "UNKNOWN"}/>;
 }
