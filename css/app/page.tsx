@@ -25,5 +25,10 @@ export default function Home() {
         });
         return () => ws.close();
     }, [room]);
-    // useEffect(() => {});
+    useEffect(() => {
+        const tds = [];
+        for(const w of wid) {
+            const typ = w.type;
+        }
+    });
 }
