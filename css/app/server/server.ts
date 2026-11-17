@@ -116,6 +116,7 @@ export interface WeatherData {
     shortForecast: string;
     relativeHumidity: number;
     skyCover: number;
+    temperature: number;
 }
 var weather: WeatherData;
 async function getCurrentWeather(callback: (data: WeatherData) => void) {
@@ -132,6 +133,7 @@ async function getCurrentWeather(callback: (data: WeatherData) => void) {
         data.isDaytime = hp.isDaytime;
         data.shortForecast = hp.shortForecast;
         data.relativeHumidity = hp.relativeHumidity.value;
+        data.temperature = hp.temperature;
         const fgrid = await fetch(hour.properties.forecastGridData);
         if(!fgrid.ok) throw new UnexpectedResponseError(fgrid.status);
         const gdata = await fgrid.json();

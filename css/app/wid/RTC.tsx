@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Props } from "../types/Props";
+import PprST from "../defs/PprST";
 
 export default function RTC({ id, row, col, width, height, config }: Props) {
     const [crow, setRow] = useState((row ?? 0) + 1);
@@ -16,5 +17,5 @@ export default function RTC({ id, row, col, width, height, config }: Props) {
     }, []);
     // FINISH WHEN UTIL
     // TYPE PText EXISTS
-    return null;
+    return <PprST props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }} tx={disp}/>;
 }

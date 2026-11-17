@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@beanthealien/net": "^1.0.1",
     "@mui/material": "^9.5.0",
     "@supabase/supabase-js": "^2.119.0",
     "bcrypt": "^6.0.0",

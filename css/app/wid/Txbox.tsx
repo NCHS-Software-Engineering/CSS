@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Props } from "../types/Props";
 import ScText from "../comp/ScText";
+import PprST from "../defs/PprST";
+import Ppr from "../defs/Ppr";
 
 export default function Txbox({ id, row, col, width, height, config, text }: Props & { text: string }) {
     const [crow, setRow] = useState((row ?? 0) + 1);
@@ -31,5 +33,9 @@ export default function Txbox({ id, row, col, width, height, config, text }: Pro
         return res;
     }
     // again, change when util ready
-    return null;
+    return <Ppr props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }}>
+        <div style={{ width: "100%", height: "100%" }}>
+            {split()}
+        </div>
+    </Ppr>;
 }

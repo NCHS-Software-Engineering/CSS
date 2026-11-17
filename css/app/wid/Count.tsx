@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PName } from "../types/PName";
 import { Paper } from "@mui/material";
 import ScText from "../comp/ScText";
+import PprST from "../defs/PprST";
 
 // because theres a config
 // for some reason
@@ -41,14 +42,5 @@ export default function Count({ id, delta, row, col, width, height, config, prdN
             setTx(td);
         }
     }, []);
-    return <Paper elevation={20} style={{ backgroundColor: bg, color: config.txClr,
-        gridColumnStart: ccol, gridColumnEnd: ccol + cwidth,
-        gridRowStart: crow, gridRowEnd: crow + cheight,
-        borderRadius: 20,
-        overflow: "hidden"
-     }}>
-        <div style={{ width: "100%", height: "100%" }}>
-            <ScText id={id} text={tx} width={cwidth} height={cheight}/>
-        </div>
-     </Paper>
+    return <PprST props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }} tx={tx}/>
 }
