@@ -49,6 +49,9 @@ const conMap: Record<string, Set<WebSocket>> = {};
 // i seperated callback
 // to avoid ts thinking
 // both could be undefined
+/**
+ * @deprecated Replaced with users table.
+ */
 async function checkValid(id: string, cb: (error?: Error, isValid?: boolean) => void) {
     const { error, data } = await idAuth.select().filter("id", "eq", id);
     if(error) return cb(error);
