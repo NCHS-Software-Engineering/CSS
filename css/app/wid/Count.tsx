@@ -6,6 +6,7 @@ import ScText from "../comp/ScText";
 import PprST from "../defs/PprST";
 import { Props } from "../types/Props";
 import { Config } from "../types/Config";
+import { Size } from "../types/Size";
 
 // because theres a config
 // for some reason
@@ -16,7 +17,7 @@ interface CountConfig extends Config {
 }
 export default function Count({ id, delta, row, col, width, height, config, prdNm }: Props & {
     delta?: number, config: CountConfig, prdNm?: PName
- }) {
+ }): React.JSX.Element & Required<Props> {
     const bg = config.bg;
     const [tx, setTx] = useState(":)");
     const [crow, setRow] = useState((row ?? 0) + 1);
