@@ -1,19 +1,34 @@
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Attributes } from "react";
 import { WeatherData } from "./server/server";
 import { PName } from "./types/PName";
 import { Sched } from "./types/Sched";
 import Count from "./wid/Count";
+import { PropElem } from "./types/PropElem";
+import { Props } from "./types/Props";
+import RTC from "./wid/RTC";
+import Dates from "./wid/Dates";
+import PdNm from "./wid/PdNm";
+import Weather from "./wid/Weather";
+import Txbox from "./wid/Txbox";
+import { useSearchParams } from "next/navigation";
+import { map } from "./sv";
 
 export default function Home() {
     const [room, setRoom] = useState("");
-    let ovr = false;
+    useEffect(() => {
+        if(room.length) return;
+        (async () => {
+            setRoom(await initRoom());
+        });
+    }, []);
+    const [ovr, setOvr] = useState(false);
     const [sched, setSched] = useState<Sched[]>([]);
     const [cd, setCD] = useState(0);
     const [prdNm, setPrdNm] = useState<PName>();
-    const [wid, setWid] = useState<React.JSX.Element[]>([]);
+    const [wid, setWid] = useState<PropElem[]>([]);
     const [weather, setWeather] = useState<WeatherData>();
-    const [disp, setDip] = useState<React.JSX.Element[]>();
+    const [disp, setDip] = useState<PropElem[]>();
     useEffect(() => {
         const port = 8000;
         const svURL = "ws://" + window.location.hostname + ":" + port;
@@ -31,12 +46,38 @@ export default function Home() {
         return () => ws.close();
     }, [room]);
     useEffect(() => {
-        const tds = [];
+        const tds: PropElem[] = [];
         for(let i = 0; i < wid.length; i++) {
             const w = wid[i];
             const typ = w.type;
-            //
-            if(typ == Count) tds.push(<Count id={String(i)} delta={cd} prdNm={prdNm} row={w.row} col={w.col} width={w.width} height={w.height} config={w.config}/>);
+            const serve = (func: React.ComponentType<any>, andProps?: Record<string, any>) => React.createElement(func, {
+                id: String(i),
+                row: w.props.row,
+                col: w.props.col,
+                width: w.props.width,
+                height: w.props.height,
+                config: w.props.config,
+                ...andProps
+            });
+            if(typ == Count) tds.push(serve(Count, {
+                delta: cd,
+                prdNm
+            }));
+            else if(typ == RTC) tds.push(serve(RTC));
+            else if(typ == Dates) tds.push(serve(Dates));
+            else if(typ == PdNm) tds.push(serve(PdNm, { periodName: prdNm }));
+            else if(typ == Weather) tds.push(serve(Weather));
+            else if(typ == Txbox) tds.push(serve(Txbox, { text: (w as React.ReactElement<Required<Props> & { text: string }>).props.text }));
         }
+        setDip(tds);
     }, []);
+    async function initRoom() {
+        const rm = useSearchParams();
+        return rm.get("room") ?? await map.json("roomCookie");
+    }
+    window.addEventListener("keydown", (e) => {
+        if(!ovr && e.code == "Escape") {
+            setOvr(false);
+        }
+    });
 }

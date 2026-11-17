@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PName } from "../types/PName";
 import { Sched } from "../types/Sched";
+import { PropElem } from "../types/PropElem";
 
 export default function Time(props: { schedule: Sched[], countdownCallback: (inTime: number) => void, periodNameCallback: (inPeriodName: PName) => void }) {
     const [schedule, setSched] = useState<Sched[]>(props.schedule);

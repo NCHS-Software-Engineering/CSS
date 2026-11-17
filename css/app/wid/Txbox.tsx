@@ -3,8 +3,9 @@ import { Props } from "../types/Props";
 import ScText from "../comp/ScText";
 import PprST from "../defs/PprST";
 import Ppr from "../defs/Ppr";
+import { PropElem } from "../types/PropElem";
 
-export default function Txbox({ id, row, col, width, height, config, text }: Props & { text: string }) {
+export default function Txbox({ id, row, col, width, height, config, text }: Props & { text: string }): PropElem {
     const [crow, setRow] = useState((row ?? 0) + 1);
     const [ccol, setCol] = useState((col ?? 0) + 1);
     const [cwidth, setWidth] = useState(width ?? 1);

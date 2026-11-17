@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Justify } from "../types/Justify";
 import NoElementError from "../errors/NoElementError";
 import NoTextLengthError from "../errors/NoTextLengthError";
+import { PropElem } from "../types/PropElem";
 
-export default function ScText(props: { id: string, portionFilled?: number, justify?: Justify, text: string, width: number, height: number }) {
+export default function ScText(props: { id: string, portionFilled?: number, justify?: Justify, text: string, width: number, height: number }): PropElem {
     // apply init during construction
     const [portionFilled, setPortionFilled] = useState(props?.portionFilled ?? 0.9);
     const [justify, setJustify] = useState<Justify>(props?.justify ?? "center");

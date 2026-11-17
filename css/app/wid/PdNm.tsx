@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Props } from "../types/Props";
 import PprST from "../defs/PprST";
 import { PName } from "../types/PName";
+import { PropElem } from "../types/PropElem";
 
-export default function PdNm({ id, row, col, width, height, config, periodName }: Props & { periodName?: PName }) {
+export default function PdNm({ id, row, col, width, height, config, periodName }: Props & { periodName?: PName }): PropElem {
     const [disp, setDisp] = useState(() => periodName ?? "No School");
     const [crow, setRow] = useState((row ?? 0) + 1);
     const [ccol, setCol] = useState((col ?? 0) + 1);

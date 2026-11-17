@@ -1,8 +1,9 @@
 import { Paper } from "@mui/material";
 import React from "react";
 import { Props } from "../types/Props";
+import { PropElem } from "../types/PropElem";
 
-export default function Ppr({ props, children }: { props: Required<Props>, children: React.JSX.Element }) {
+export default function Ppr({ props, children }: { props: Required<Props>, children: React.JSX.Element }): PropElem {
     return <Paper elevation={20} style={{
         backgroundColor: props.config.bg,
         color: props.config.txClr,

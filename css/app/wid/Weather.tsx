@@ -5,6 +5,7 @@ import { map } from "../sv";
 import PprST from "../defs/PprST";
 import Ppr from "../defs/Ppr";
 import ScText from "../comp/ScText";
+import { PropElem } from "../types/PropElem";
 
 const SVG = {
     sun: <svg width="100%" height="100%">
@@ -39,7 +40,7 @@ const SVG = {
         <path fill={`url("#linearGradient")`} stroke="#000" strokeWidth="2%" d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Z"/>
     </svg>
 } as const;
-export default function Weather({ id, row, col, width, height, config }: Props) {
+export default function Weather({ id, row, col, width, height, config }: Props): PropElem {
     // determine weather data by server query
     const [data, setData] = useState<WeatherData>();
     const [crow, setRow] = useState((row ?? 0) + 1);
