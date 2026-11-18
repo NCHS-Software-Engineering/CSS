@@ -111,7 +111,7 @@ async function broadcast(room: string) {
     }
 }
 async function updateClient(ws: WebSocket, room: string) {
-    ws.send(JSON.stringify({ schedule: schedMap[room] }));
+    ws.send(JSON.stringify({ schedule: schedMap[room], weather }));
 }
 export interface WeatherData {
     isDaytime: boolean;

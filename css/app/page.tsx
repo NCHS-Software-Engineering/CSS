@@ -48,7 +48,7 @@ export default function Home() {
         ws.addEventListener("message", (e) => {
             const d = JSON.parse(e.data);
             setSched(d.schedule);
-            setWid(d.widget);
+            //setWid(d.widget);
             setWeather(d.weather);
             return () => ws.close();
         });
