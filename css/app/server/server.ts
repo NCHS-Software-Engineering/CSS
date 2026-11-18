@@ -239,14 +239,20 @@ function getUser(req: Request) {
 function validTk(req: Request) {
     return !!getUser(req);
 }
-function signTk(res: Response, token: string) {
-    res.cookie("token", token, {
-        // 2-week lifespan
-        maxAge: 14 * 24 * 60 * 60 * 1000,
+function cookie(res: Response, key: string, value: string) {
+    res.cookie(key, value, {
+        // 8-week lifespan
+        maxAge: 8 * 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: "lax",
         secure: true
     });
+}
+function signTk(res: Response, token: string) {
+    cookie(res, "token", token);
+}
+function signRoom(res: Response, room: string) {
+    cookie(res, "room", room);
 }
 
 interface UserInfo {
@@ -260,7 +266,7 @@ async function hasUsr(name: string) {
     return !!(await findUsr(name));
 }
 function genTk() {
-    return jwt.sign({ token: randomBytes(32).toHex() }, secret);
+    return jwt.sign({ token: randomBytes(32).toHex() }, secret, { expiresIn: "8W" });
 }
 function sverr500(res: Response, error: Error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -418,9 +424,15 @@ app.get("/defweek", async (req, res) => {
 app.get("/cal", async (req, res) => {
     return await __getSched(req, res, "calendar");
 });
-
 app.get("/weather", (req, res) => {
     res.send({ weather });
+});
+app.get("/cookies/getroomcookie", (req, res) => {
+    res.send({ cookie: decode(req.cookies.room) });
+});
+app.post("/cookies/signroomcookie", (req, res) => {
+    const { room }: RRoom = req.body;
+    signRoom(res, jwt.sign({ room }, secret, { expiresIn: "8W" }));
 });
 
 // format routes

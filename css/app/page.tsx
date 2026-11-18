@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 import React, { useState, useEffect, Attributes } from "react";
 import { WeatherData } from "./server/server";
@@ -11,20 +12,25 @@ import Dates from "./wid/Dates";
 import PdNm from "./wid/PdNm";
 import Weather from "./wid/Weather";
 import Txbox from "./wid/Txbox";
-import { useSearchParams } from "next/navigation";
-import { map } from "./sv";
 import Time from "./comp/Time";
 import { Modal, Paper, TextField, Button } from "@mui/material";
 import { Box } from "@mui/system";
+import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { cookieMap, map } from "./sv";
 
 export default function Home() {
     const [room, setRoom] = useState("");
+    const searchParams = useSearchParams();
+    async function initRoom(param: ReadonlyURLSearchParams) {
+        return param.get("room") ?? await cookieMap.json("getroomcookie");
+    }
     useEffect(() => {
         if(room.length) return;
         (async () => {
-            setRoom(await initRoom());
-        });
-    }, []);
+            const res = await initRoom(searchParams);
+            setRoom(typeof res == "string" ? res : res.cookie.room);
+        })();
+    }, [room, searchParams]);
     const [ovr, setOvr] = useState(false);
     const [sched, setSched] = useState<Sched[]>([]);
     const [cd, setCD] = useState(0);
@@ -72,12 +78,9 @@ export default function Home() {
             else if(typ == Weather) tds.push(serve(Weather));
             else if(typ == Txbox) tds.push(serve(Txbox, { text: (w as React.ReactElement<Required<Props> & { text: string }>).props.text }));
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDip(tds);
     }, []);
-    async function initRoom() {
-        const rm = useSearchParams();
-        return rm.get("room") ?? await map.json("roomCookie");
-    }
     window.addEventListener("keydown", (e) => {
         if(!ovr && e.code == "Escape") {
             setOvr(false);
