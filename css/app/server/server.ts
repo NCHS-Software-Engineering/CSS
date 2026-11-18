@@ -33,6 +33,8 @@ const sched = client.from("sched");
 // id-auth table
 const idAuth = client.from("id" as any);
 const users = client.from("users");
+const format = client.from("format");
+const event = client.from("event");
 
 // globals
 const schedMap: Record<string, Sched[]> = {};
@@ -419,6 +421,96 @@ app.get("/cal", async (req, res) => {
 
 app.get("/weather", (req, res) => {
     res.send({ weather });
+});
+
+// format routes
+app.get("/format/peek", async (req, res) => {
+    const { room }: RRoom = req.body;
+    const { data, error } = await format.select().eq("room", room);
+    if(error) return sverr500(res, error);
+    res.json({ success: true, message: data });
+});
+interface StyleColor {
+    style: { color: string };
+}
+interface StyleImg {
+    style: { img: string };
+}
+interface StyleBoth {
+    style: { color: string, bg: string };
+}
+type FStyleGuide = StyleBoth | StyleColor | StyleImg;
+app.post("/format/put", async (req, res) => {
+    const { room, style }: RRoom & (StyleBoth | StyleColor | StyleImg) = req.body;
+    const { data, error } = await format.select().eq("room", room);
+    if(error) return sverr500(res, error);
+    // respond with 417 (Expectation Failed)
+    if(!data.length) return res.status(417).json({ success: false, message: `No formats for '${room}' (did you meant to create this resource?)` });
+    const { error: err } = await format.update({ room, ...style }).eq("room", room);
+    if(err) return sverr500(res, err);
+    // respond with 205 (Reset Content)
+    res.status(205).json({ success: true, message: "Put new styles" });
+});
+app.post("/format/create", async (req, res) => {
+    const { room, style }: RRoom & FStyleGuide = req.body;
+    const { data, error } = await format.select().eq("room", room);
+    if(error) return sverr500(res, error);
+    // respond with 405 (Method Not Allowed)
+    if(data.length) return res.status(405).json({ success: false, message: `Style already exists for '${room}' (did you mean to update this resource?)` });
+    const { error: err } = await format.insert({ room, ...style });
+    if(err) return sverr500(res, err);
+    // respond with 201 (Created)
+    res.status(201).json({ success: true, message: "Created style for room" });
+});
+app.post("/format/drop", async (req, res) => {
+    const { room }: RRoom = req.body;
+    const { data, error } = await format.select().eq("room", room);
+    if(error) return sverr500(res, error);
+    // respond with 404 (Not Found)
+    if(!data.length) return res.status(404).json({ success: false, message: `Cannot find a style guide for '${room}'` });
+    const { error: err } = await format.delete().eq("room", room);
+    if(err) return sverr500(res, err);
+    res.json({ success: true, message: `Dropped style guide for '${room}'` });
+});
+
+// event routes
+app.get("/event/all", async (req, res) => {
+    const { data, error } = await event.select();
+    if(error) return sverr500(res, error);
+    res.json({ list: data });
+});
+app.get("/event/at", async (req, res) => {
+    const { index }: { index: number } = req.body;
+    const { data, error } = await event.select().eq("id", index);
+    if(error) return sverr500(res, error);
+    // if the data is more than 1 (should not be possible)
+    // respond with 409 (Conflict)
+    if(data.length > 1) return res.status(409).json({ success: false, message: "Unexpected length of data more than 1" });
+    // respond with 204 (No Content)
+    if(!data.length) return res.status(204).json({ success: true, message: "No content to be displayed" });
+    // respond with 302 (Found)
+    res.json({ success: true, message: data });
+});
+app.get("/event/named", async (req, res) => {
+    const { name }: { name: string } = req.body;
+    const { data, error } = await event.select().eq("name", name);
+    if(error) return sverr500(res, error);
+    if(!data.length) return res.status(404).json({ success: true, message: "No content found for name" });
+    res.json({ success: true, message: data });
+});
+app.post("/event/gen", async (req, res) => {
+    const { name, time }: { name: string, time: string } = req.body;
+    // time should be in ISO 8601 format
+    // https://en.wikipedia.org/wiki/ISO_8601
+    // YYYY-MM-DDTHH:mm:ssZ
+    // otherwise, throw bad request
+    if(time.length != 20) return res.status(400).json({ success: false, message: `Time of input '${time}' is not ISO 8601 (length '${time.length}' does not match expected length of 20)` });
+    const { data, error } = await event.select().eq("name", name);
+    if(error) return sverr500(res, error);
+    if(data.length) return res.status(409).json({ success: false, message: "Existing event for name" });
+    const { error: err } = await event.insert({ name, time });
+    if(err) return sverr500(res, err);
+    res.status(201).json({ success: true, message: "Created event" });
 });
 
 app.listen(port, () => {
