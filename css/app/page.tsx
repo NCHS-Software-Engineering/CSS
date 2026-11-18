@@ -13,7 +13,7 @@ import PdNm from "./wid/PdNm";
 import Weather from "./wid/Weather";
 import Txbox from "./wid/Txbox";
 import Time from "./comp/Time";
-import { Modal, Paper, TextField, Button } from "@mui/material";
+import { Modal, Paper, TextField, Button, Divider } from "@mui/material";
 import { Box } from "@mui/system";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { cookieMap, map } from "./sv";
@@ -89,19 +89,16 @@ export default function Home() {
     return <div>
         <Time schedule={sched} countdownCallback={(d) => setCD(d)} periodNameCallback={(d) => setPrdNm(d)}/>
         {disp}
-        <Modal sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            overflowY: "scroll"
-        }}
-            open={ovr}
-            onClose={() => setOvr(false)}
-        >
+        <Modal sx={{ display: "flex", alignItems: "center", justifyContent: "center", overflowY: "scroll" }} open={ovr} onClose={() => setOvr(false)}>
             <Box sx={{ display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%" }}>
                 <Paper elevation={7} sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%" }}>
                     <TextField variant="filled" label="Room Name" value={room} onInput={(e) => setRoom((e.target as HTMLInputElement).value)}/>
-                    <Button></Button>
+                    <Button sx={{ marginTop: 1 }} variant="contained" size="large" onClick={async () => await cookieMap.json("signroomcookie", { room })}>Save</Button>
+                    <Divider sx={{ marginTop: 2, marginBottom: 1, width: "100%" }}/>
+                    <footer>
+                        <p>Original by Michael Mihailov (2025), Eric Gu (2024), Nick Patel (2025), & Nicole Liang (2024)</p>
+                        <p>Rework by Zach Hoersten, Ben Goldstein & Evan Hader</p>
+                    </footer>
                 </Paper>
             </Box>
         </Modal>
