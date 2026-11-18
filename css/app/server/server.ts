@@ -512,6 +512,15 @@ app.post("/event/gen", async (req, res) => {
     if(err) return sverr500(res, err);
     res.status(201).json({ success: true, message: "Created event" });
 });
+app.post("/event/drop", async (req, res) => {
+    const { name }: { name: string } = req.body;
+    const { data, error } = await event.select().eq("name", name);
+    if(error) return sverr500(res, error);
+    if(!data.length) return res.status(404).json({ success: false, message: `No event named '${name}' (did you mean to create this resource?)` });
+    const { error: err } = await event.delete().eq("name", name);
+    if(err) return sverr500(res, err);
+    res.json({ success: true, message: "Dropped event for name" });
+});
 
 app.listen(port, () => {
     console.log(`Server listening on ${port}`);
