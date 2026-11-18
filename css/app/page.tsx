@@ -14,6 +14,8 @@ import Txbox from "./wid/Txbox";
 import { useSearchParams } from "next/navigation";
 import { map } from "./sv";
 import Time from "./comp/Time";
+import { Modal, Paper, TextField, Button } from "@mui/material";
+import { Box } from "@mui/system";
 
 export default function Home() {
     const [room, setRoom] = useState("");
@@ -82,7 +84,7 @@ export default function Home() {
         }
     });
     return <div>
-        <Time schedule={sched} countdownCallback={(d) => setCount(d)} periodNameCallback={(d) => setPrdNm(d)}/>
+        <Time schedule={sched} countdownCallback={(d) => setCD(d)} periodNameCallback={(d) => setPrdNm(d)}/>
         {disp}
         <Modal sx={{
             display: "flex",
@@ -95,7 +97,7 @@ export default function Home() {
         >
             <Box sx={{ display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%" }}>
                 <Paper elevation={7} sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%" }}>
-                    <TextField variant="filled" label="Room Name" value={room} onInput={(e) => setRoom(e.target.value)}/>
+                    <TextField variant="filled" label="Room Name" value={room} onInput={(e) => setRoom((e.target as HTMLInputElement).value)}/>
                     <Button></Button>
                 </Paper>
             </Box>

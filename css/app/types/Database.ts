@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      event: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          time: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          time: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          time?: string
+        }
+        Relationships: []
+      }
+      format: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: number
+          img: string | null
+          room: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: number
+          img?: string | null
+          room: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: number
+          img?: string | null
+          room?: string
+        }
+        Relationships: []
+      }
       sched: {
         Row: {
           created_at: string

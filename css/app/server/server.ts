@@ -430,13 +430,13 @@ app.get("/format/peek", async (req, res) => {
     if(error) return sverr500(res, error);
     res.json({ success: true, message: data });
 });
-interface StyleColor {
+export interface StyleColor {
     style: { color: string };
 }
-interface StyleImg {
+export interface StyleImg {
     style: { img: string };
 }
-interface StyleBoth {
+export interface StyleBoth {
     style: { color: string, bg: string };
 }
 type FStyleGuide = StyleBoth | StyleColor | StyleImg;
