@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.3",
     "next": "16.4.6",
     "node-schedule": "^2.1.2",
+    "nodemailer": "^10.6.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "ws": "^8.23.0"

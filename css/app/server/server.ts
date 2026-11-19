@@ -14,17 +14,18 @@ import UnexpectedResponseError from "../errors/UnexpectedResponseError";
 import * as Schedule from "node-schedule";
 import { WebSocketServer, WebSocket } from "ws";
 import { randomBytes } from "crypto";
+import nodemailer from "nodemailer";
 config();
 
 /**
  * TODO:
  * - add nodemailer request admins for signing up user (no auto-signup)
  * - add verify user to be able to signup a user
- * - change name => email in user table
- * - deprecate and remove idAuth (cuz it will prolly error)
+ * - ~change name => email in user table~
+ * - ~deprecate and remove idAuth (cuz it will prolly error)~
  */
 
-const secret = process.env.secret as string;
+const secret = process.env.secret!;
 
 const app = express();
 app.use(cors({
@@ -35,14 +36,22 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.json());
-const client = supabase.createClient<Database>(process.env.supabase_url as string, process.env.supabase_key as string);
+const client = supabase.createClient<Database>(process.env.supabase_url!, process.env.supabase_key!);
+const transport = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: process.env.nodemailer_user!,
+        pass: process.env.nodemailer_pass!
+    }
+});
 // schedule table relationship
 const sched = client.from("sched");
 // id-auth table
-const idAuth = client.from("id" as any);
+// const idAuth = client.from("id" as any);
 const users = client.from("users");
 const format = client.from("format");
 const event = client.from("event");
+const esc = client.from("req");
 
 // globals
 const schedMap: Record<string, Sched[]> = {};
@@ -59,14 +68,13 @@ const conMap: Record<string, Set<WebSocket>> = {};
 // i seperated callback
 // to avoid ts thinking
 // both could be undefined
-/**
- * @deprecated Replaced with users table.
- */
+/*
 async function checkValid(id: string, cb: (error?: Error, isValid?: boolean) => void) {
     const { error, data } = await idAuth.select().filter("id", "eq", id);
     if(error) return cb(error);
     cb(undefined, data.length != 0);
 }
+*/
 // lightweight helpers
 const getRoom = async (room: string) => await sched.select().eq("room", room);
 async function checkRoom(room: string) {
@@ -234,9 +242,6 @@ async function __getSched(req: Request, res: Response, field: string) {
 interface RRoom {
     room: string;
 }
-// TODO: auth subsys
-// also install @BeanTheAlien/netmap
-// and apply sv net file
 
 function decode(jwtString: string) {
     return jwt.verify(jwtString, secret);
@@ -264,17 +269,17 @@ function signRoom(res: Response, room: string) {
 }
 
 interface UserInfo {
-    name: string;
+    email: string;
     password: string;
 }
-async function findUsr(name: string) {
-    return (await users.select().eq("name", name)).data?.[0];
+async function findUsr(email: string) {
+    return (await users.select().eq("email", email)).data?.[0];
 }
 async function hasUsr(name: string) {
     return !!(await findUsr(name));
 }
-function genTk() {
-    return jwt.sign({ token: randomBytes(32).toHex() }, secret, { expiresIn: "8W" });
+function genTk(time: jwt.SignOptions["expiresIn"] = "8W") {
+    return jwt.sign({ token: randomBytes(32).toHex() }, secret, { expiresIn: time });
 }
 function sverr500(res: Response, error: Error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -282,27 +287,51 @@ function sverr500(res: Response, error: Error) {
 // user subsystem
 // signup
 app.post("/user/signup", async (req, res) => {
-    const { name, password }: UserInfo = req.body;
+    const { email, password }: UserInfo = req.body;
     // if a user exists, throw 409 (Conflict)
     // (prior to insert throwing on unique)
-    if(await hasUsr(name)) return res.status(409).json({ success: false, message: `A user with the name '${name}' already exists` });
-    const token = genTk();
-    const { error } = await users.insert({ name, password: bcrypt.hashSync(password, 10), token });
+    if(await hasUsr(email)) return res.status(409).json({ success: false, message: `A user with the name '${email}' already exists` });
+    // short-life token
+    const token = genTk("3H");
+    const coreURI = "https://placeholder.com/admin/escalate?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&token=${encodeURIComponent(token)}";
+    // escalate and request signup verification
+    const mail = await transport.sendMail({
+        to: email,
+        from: "classroomschedulingsystem@noreply.com",
+        text: `<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+            <tr>
+                <td align="center" style="background-color: #7FF772; padding: 16px; border-radius: 15px; font-family: Helvetica, Arial, sans-serif; text-align: center; color: #000000;">
+                <h1 style="margin: 0 0 12px 0; font-size: 24px; font-weight: bold; color: #000000;">User ${email} Wants To Sign Up!</h1>
+                <p style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">User with email '${email}' wants to sign up.</p>
+                <p style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">Request Token: ${token}</p>
+                <p style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">Click <a href="${coreURI}&method=accept" style="font-weight: bold; color: #2171A3; text-decoration: underline;">here</a> to permit the signup.</p>
+                <p style="margin: 0; font-size: 16px; color: #000000;">Or click <a href="${coreURI}&method=deny" style="font-weight: bold; color: #2171A3; text-decoration: underline;">here</a> to deny the signup.</p>
+                <p style="margin-top: 20px; font-size: 10px; color: #737373;">Hi! This is an automatic email. Please don't respond. We won't receive anything.</p>
+                </td>
+            </tr>
+        </table>`
+    });
+    // respond with 418 (I'm a teapot)
+    if(mail.rejectedErrors) return res.status(418).json({ success: false, message: `Failed to send mail: ${JSON.stringify(mail.rejectedErrors.map(v => JSON.stringify(v)))}`, maildata: {
+        emailAccept: mail.accepted,
+        emailReject: mail.rejected,
+        response: mail.response
+    } });
+    const { error } = await esc.insert({ email, password: bcrypt.hashSync(password, 10), token });
     if(error) return sverr500(res, error);
-    signTk(res, token);
     // 201 (Created)
     res.status(201).json({ success: true, message: "Successfully signed up" });
 });
 // signin
 app.post("/user/signin", async (req, res) => {
-    const { name, password }: UserInfo = req.body;
-    const usr = await findUsr(name);
+    const { email, password }: UserInfo = req.body;
+    const usr = await findUsr(email);
     // respond with 417 (Expectation Failed)
-    if(!usr) return res.status(417).json({ success: false, message: `No user exists with the name '${name}'` });
+    if(!usr) return res.status(417).json({ success: false, message: `No user exists with the name '${email}'` });
     // respond with 406 (Not Acceptable)
     if(!bcrypt.compareSync(usr.password, password)) return res.status(406).json({ success: false, message: `Password could not be verified to match real password` });
     const token = genTk();
-    const { error } = await users.update({ token }).eq("name", name);
+    const { error } = await users.update({ token }).eq("email", email);
     if(error) return sverr500(res, error);
     signTk(res, token);
     // respond with 202 (Accepted)
@@ -420,6 +449,27 @@ app.post("/admin/ren", async (req, res) => {
     if(err) return sverr500(res, err);
     // respond with 205 (Reset Content)
     res.status(205).json({ success: true, message: `Room changed from '${room}' => '${name}'` });
+});
+app.post("/admin/escalate", async (req, res) => {
+    if(!validTk(req)) return unauth401(res);
+    const { email, password, token, method }: UserInfo & { token: string, method: "accept" | "deny" } = req.body;
+    // validate escalation
+    const { data, error } = await esc.select().eq("email", email);
+    if(error) return sverr500(res, error);
+    if(!data.length) return res.status(400).json({ success: false, message: "No escalated user found" });
+    const tv = jwt.verify(data[0].token, secret);
+    const tv2 = jwt.verify(token, secret);
+    if(!tv || !tv2) return res.status(405).json({ success: false, message: "Cannot validate user token" });
+    if(!bcrypt.compareSync(password, data[0].password)) return res.status(424).json({ success: false, message: "Invalid password input" });
+    const { error: derr } = await esc.delete().eq("email", email);
+    if(derr) return sverr500(res, derr);
+    if(method == "deny") return res.status(204).json({ success: true, message: "Denied user signup" });
+    const tk = genTk();
+    const { error: err } = await users.insert({ email: data[0].email, password: data[0].password, token: tk });
+    if(err) return sverr500(res, err);
+    signTk(res, tk);
+    // 201 (Created)
+    res.status(201).json({ success: true, message: "Successfully signed up" });
 });
 
 // public routes

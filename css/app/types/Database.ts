@@ -59,6 +59,30 @@ export type Database = {
         }
         Relationships: []
       }
+      req: {
+        Row: {
+          created_at: string
+          email: string
+          id: number
+          password: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: number
+          password: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: number
+          password?: string
+          token?: string
+        }
+        Relationships: []
+      }
       sched: {
         Row: {
           created_at: string
@@ -83,24 +107,24 @@ export type Database = {
       users: {
         Row: {
           created_at: string
+          email: string
           id: number
-          name: string
           password: string
           token: string | null
           uuid: string
         }
         Insert: {
           created_at?: string
+          email: string
           id?: number
-          name: string
           password: string
           token?: string | null
           uuid?: string
         }
         Update: {
           created_at?: string
+          email?: string
           id?: number
-          name?: string
           password?: string
           token?: string | null
           uuid?: string
