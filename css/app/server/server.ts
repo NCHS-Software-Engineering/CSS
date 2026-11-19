@@ -16,6 +16,13 @@ import { WebSocketServer, WebSocket } from "ws";
 import { randomBytes } from "crypto";
 config();
 
+/**
+ * TODO:
+ * - add nodemailer request admins for signing up user (no auto-signup)
+ * - add verify user to be able to signup a user
+ * - change name => email in user table
+ */
+
 const secret = process.env.secret as string;
 
 const app = express();
