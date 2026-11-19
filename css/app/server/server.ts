@@ -21,6 +21,7 @@ config();
  * - add nodemailer request admins for signing up user (no auto-signup)
  * - add verify user to be able to signup a user
  * - change name => email in user table
+ * - deprecate and remove idAuth (cuz it will prolly error)
  */
 
 const secret = process.env.secret as string;
