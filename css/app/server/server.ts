@@ -490,7 +490,8 @@ app.all("/weather", (req, res) => {
     res.send({ weather });
 });
 app.all("/cookies/getroomcookie", (req, res) => {
-    res.send({ cookie: decode(req.cookies.room) });
+    if(!req.cookies.room) return res.status(403).json({ success: false, message: "No cookie exists" });
+    res.json({ success: true, message: decode(req.cookies.room) });
 });
 app.all("/cookies/signroomcookie", (req, res) => {
     const { room }: RRoom = req.body;

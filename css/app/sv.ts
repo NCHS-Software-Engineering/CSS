@@ -49,7 +49,7 @@ interface EventRoute {
     drop: [{ name: string }, Res];
 }
 interface CookieRoute {
-    getroomcookie: { cookie: { room: string } };
+    getroomcookie: Res<string> | Res<{ room: string }>;
     signroomcookie: [{ room: string }, never];
 }
 export const map = new AdvancedNetMap<Route>("http://localhost:3001");

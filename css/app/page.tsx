@@ -23,7 +23,12 @@ export default function Home() {
     const [room, setRoom] = useState("");
     const searchParams = useSearchParams();
     async function initRoom(param: ReadonlyURLSearchParams) {
-        return param.get("room") ?? (await cookieMap.json("getroomcookie")).cookie.room;
+        const res = (await cookieMap.json("getroomcookie")).message;
+        if(typeof res == "string") {
+            await cookieMap.json("signroomcookie");
+            return await initRoom(param);
+        }
+        return param.get("room") ?? res.room;
     }
     useEffect(() => {
         if(room.length) return;
