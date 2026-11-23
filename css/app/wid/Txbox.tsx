@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Props } from "../types/Props";
 import ScText from "../comp/ScText";
@@ -12,8 +13,8 @@ export default function Txbox({ id, row, col, width, height, config, text }: Pro
     const [cheight, setHeight] = useState(height ?? 1);
     function split() {
         const lns: string[] = [];
-        var ln = "";
-        var len = 1;
+        let ln = "";
+        let len = 1;
         for(let i = 0; i < text.length; i++) {
             ln += text[i] == " " || text[i] == "\n" ? " " : text[i];
             if(text[i] == "\n") {

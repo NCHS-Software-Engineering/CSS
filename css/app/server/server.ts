@@ -29,7 +29,7 @@ const secret = process.env.secret!;
 
 const app = express();
 app.use(cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
@@ -140,9 +140,11 @@ var weather: WeatherData;
 async function getCurrentWeather(callback: (data: WeatherData) => void) {
     try {
         const data: Partial<WeatherData> = {};
+        // 1. Fetch points data
         const res = await fetch("https://api.weather.gov/points/41.7676,-88.157");
         if(!res.ok) throw new UnexpectedResponseError(res.status);
         const json = await res.json();
+        // 2. Fetch hourly forecast
         const linkData = await fetch(json.properties.forecastHourly);
         if(!linkData.ok) throw new UnexpectedResponseError(linkData.status);
         const hour = await linkData.json();
@@ -152,23 +154,25 @@ async function getCurrentWeather(callback: (data: WeatherData) => void) {
         data.shortForecast = hp.shortForecast;
         data.relativeHumidity = hp.relativeHumidity.value;
         data.temperature = hp.temperature;
-        const fgrid = await fetch(hour.properties.forecastGridData);
+        // 3. Fix: Fetch grid data from json.properties (points response), not hour
+        const fgrid = await fetch(json.properties.forecastGridData);
         if(!fgrid.ok) throw new UnexpectedResponseError(fgrid.status);
         const gdata = await fgrid.json();
         if(!gdata.properties) return console.error("Error when fetching weather (in grid data)");
-        const date = new Date();
-        const hr = date.getHours();
-        // chicago is UTC-5
-        const off = -5;
-        const cr = date.getDate();
+        const now = new Date().getTime();
+        // 4. Robust time interval matching using standard ISO parsing
         for(const cc of gdata.properties.skyCover.values) {
-            const v = cc.validTime;
-            const [cd, ch, cs] = [[8, 10], [11, 13], [v.indexOf("PT") + 2, v.indexOf("H")]].map(x => Number(v.slice(x[0], x[1])));
-            const hc = ch + ((cd - cr) * 24) + off;
-            if(hr < hc + cs && hc <= hr) {
+            const [timePart, durationPart] = cc.validTime.split("/");
+            const startTime = new Date(timePart).getTime(); 
+            // Extract hours from ISO duration (e.g., "PT1H" -> 1)
+            const match = durationPart?.match(/PT(\d+)H/);
+            const hours = match ? parseInt(match[1], 10) : 1;
+            const endTime = startTime + hours * 3600 * 1000;
+            if(now >= startTime && now < endTime) {
                 data.skyCover = cc.value;
-                weather = data as WeatherData;
+                const weather = data as WeatherData;
                 callback(weather);
+                break;
             }
         }
     } catch(e) {
@@ -286,7 +290,7 @@ function sverr500(res: Response, error: Error) {
 }
 // user subsystem
 // signup
-app.post("/user/signup", async (req, res) => {
+app.all("/user/signup", async (req, res) => {
     const { email, password }: UserInfo = req.body;
     // if a user exists, throw 409 (Conflict)
     // (prior to insert throwing on unique)
@@ -323,7 +327,7 @@ app.post("/user/signup", async (req, res) => {
     res.status(201).json({ success: true, message: "Successfully signed up" });
 });
 // signin
-app.post("/user/signin", async (req, res) => {
+app.all("/user/signin", async (req, res) => {
     const { email, password }: UserInfo = req.body;
     const usr = await findUsr(email);
     // respond with 417 (Expectation Failed)
@@ -357,7 +361,7 @@ async function svAdminPush<T extends Json>(req: Request, res: Response, key: str
     // respond with 207 (Multi-Status)
     return res.status(207).json({ success: true, message: "Administred update" });
 }
-app.get("/admin/updateall", async (req, res) => {
+app.all("/admin/updateall", async (req, res) => {
     const list = await getRoomList();
     if(!list) return sverr500(res, new Error("Failed to receive rooms"));
     const pm = JSON.stringify(schedMap);
@@ -379,27 +383,27 @@ app.get("/admin/updateall", async (req, res) => {
     // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/205)
     res.status(205).json({ success: true, message: "Updated rooms with new schedule" });
 });
-app.get("/admin/rooms", async (req, res) => {
+app.all("/admin/rooms", async (req, res) => {
     // respond with 401 (Unauthorized)
     if(!validTk(req)) return unauth401(res);
     const rooms = await getRoomList();
     if(!rooms) return sverr500(res, new Error("Failed to view rooms"));
     res.json({ success: true, message: rooms });
 });
-app.post("/admin/sched", async (req, res) => {
+app.all("/admin/sched", async (req, res) => {
     return await svAdminPush<Sched>(req, res, "schedules");
 });
-app.post("/admin/defweek", async (req, res) => {
+app.all("/admin/defweek", async (req, res) => {
     return await svAdminPush(req, res, "defaultWeek");
 });
-app.post("/admin/cal", async (req, res) => {
+app.all("/admin/cal", async (req, res) => {
     return await svAdminPush(req, res, "calendar");
 });
 async function rmExists(room: string) {
     return await sched.select().eq("room", room);
 }
 // put a room
-app.post("/admin/put", async (req, res) => {
+app.all("/admin/put", async (req, res) => {
     if(!validTk(req)) return unauth401(res);
     const { room, schedule }: RRoom & { schedule?: Sched[] } = req.body;
     const sch = schedule ?? [];
@@ -418,7 +422,7 @@ app.post("/admin/put", async (req, res) => {
     res.status(201).json({ success: true, message: `Put room '${room}' with schedule '${JSON.stringify(sch)}'` });
 });
 // drop a room
-app.post("/admin/drop", async (req, res) => {
+app.all("/admin/drop", async (req, res) => {
     if(!validTk(req)) return unauth401(res);
     const { room }: RRoom = req.body;
     const { data, error } = await rmExists(room);
@@ -439,7 +443,7 @@ app.post("/admin/drop", async (req, res) => {
     delete conMap[room];
 });
 // rename a room
-app.post("/admin/ren", async (req, res) => {
+app.all("/admin/ren", async (req, res) => {
     if(!validTk(req)) return unauth401(res);
     const { room, name }: RRoom & { name: string } = req.body;
     const { data, error } = await rmExists(room);
@@ -450,7 +454,7 @@ app.post("/admin/ren", async (req, res) => {
     // respond with 205 (Reset Content)
     res.status(205).json({ success: true, message: `Room changed from '${room}' => '${name}'` });
 });
-app.post("/admin/escalate", async (req, res) => {
+app.all("/admin/escalate", async (req, res) => {
     if(!validTk(req)) return unauth401(res);
     const { email, password, token, method }: UserInfo & { token: string, method: "accept" | "deny" } = req.body;
     // validate escalation
@@ -473,28 +477,28 @@ app.post("/admin/escalate", async (req, res) => {
 });
 
 // public routes
-app.get("/sched", async (req, res) => {
+app.all("/sched", async (req, res) => {
     return await __getSched(req, res, "schedules");
 });
-app.get("/defweek", async (req, res) => {
+app.all("/defweek", async (req, res) => {
     return await __getSched(req, res, "defaultWeek");
 });
-app.get("/cal", async (req, res) => {
+app.all("/cal", async (req, res) => {
     return await __getSched(req, res, "calendar");
 });
-app.get("/weather", (req, res) => {
+app.all("/weather", (req, res) => {
     res.send({ weather });
 });
-app.get("/cookies/getroomcookie", (req, res) => {
+app.all("/cookies/getroomcookie", (req, res) => {
     res.send({ cookie: decode(req.cookies.room) });
 });
-app.post("/cookies/signroomcookie", (req, res) => {
+app.all("/cookies/signroomcookie", (req, res) => {
     const { room }: RRoom = req.body;
     signRoom(res, jwt.sign({ room }, secret, { expiresIn: "8W" }));
 });
 
 // format routes
-app.get("/format/peek", async (req, res) => {
+app.all("/format/peek", async (req, res) => {
     const { room }: RRoom = req.body;
     const { data, error } = await format.select().eq("room", room);
     if(error) return sverr500(res, error);
@@ -510,7 +514,7 @@ export interface StyleBoth {
     style: { color: string, bg: string };
 }
 type FStyleGuide = StyleBoth | StyleColor | StyleImg;
-app.post("/format/put", async (req, res) => {
+app.all("/format/put", async (req, res) => {
     const { room, style }: RRoom & (StyleBoth | StyleColor | StyleImg) = req.body;
     const { data, error } = await format.select().eq("room", room);
     if(error) return sverr500(res, error);
@@ -521,7 +525,7 @@ app.post("/format/put", async (req, res) => {
     // respond with 205 (Reset Content)
     res.status(205).json({ success: true, message: "Put new styles" });
 });
-app.post("/format/create", async (req, res) => {
+app.all("/format/create", async (req, res) => {
     const { room, style }: RRoom & FStyleGuide = req.body;
     const { data, error } = await format.select().eq("room", room);
     if(error) return sverr500(res, error);
@@ -532,7 +536,7 @@ app.post("/format/create", async (req, res) => {
     // respond with 201 (Created)
     res.status(201).json({ success: true, message: "Created style for room" });
 });
-app.post("/format/drop", async (req, res) => {
+app.all("/format/drop", async (req, res) => {
     const { room }: RRoom = req.body;
     const { data, error } = await format.select().eq("room", room);
     if(error) return sverr500(res, error);
@@ -544,12 +548,12 @@ app.post("/format/drop", async (req, res) => {
 });
 
 // event routes
-app.get("/event/all", async (req, res) => {
+app.all("/event/all", async (req, res) => {
     const { data, error } = await event.select();
     if(error) return sverr500(res, error);
-    res.json({ list: data });
+    res.json({ success: true, message: data });
 });
-app.get("/event/at", async (req, res) => {
+app.all("/event/at", async (req, res) => {
     const { index }: { index: number } = req.body;
     const { data, error } = await event.select().eq("id", index);
     if(error) return sverr500(res, error);
@@ -561,14 +565,14 @@ app.get("/event/at", async (req, res) => {
     // respond with 302 (Found)
     res.json({ success: true, message: data });
 });
-app.get("/event/named", async (req, res) => {
+app.all("/event/named", async (req, res) => {
     const { name }: { name: string } = req.body;
     const { data, error } = await event.select().eq("name", name);
     if(error) return sverr500(res, error);
     if(!data.length) return res.status(404).json({ success: true, message: "No content found for name" });
     res.json({ success: true, message: data });
 });
-app.post("/event/gen", async (req, res) => {
+app.all("/event/gen", async (req, res) => {
     const { name, time }: { name: string, time: string } = req.body;
     // time should be in ISO 8601 format
     // https://en.wikipedia.org/wiki/ISO_8601
@@ -582,7 +586,7 @@ app.post("/event/gen", async (req, res) => {
     if(err) return sverr500(res, err);
     res.status(201).json({ success: true, message: "Created event" });
 });
-app.post("/event/drop", async (req, res) => {
+app.all("/event/drop", async (req, res) => {
     const { name }: { name: string } = req.body;
     const { data, error } = await event.select().eq("name", name);
     if(error) return sverr500(res, error);

@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { Props } from "../types/Props";
 import { WeatherData } from "../server/server";
@@ -52,7 +53,7 @@ export default function Weather({ id, row, col, width, height, config }: Props):
         if(data) return;
         // send request via @beanthealien/net
         // (mapping defined in ../sv.ts)
-        (async () => setData(await map.json("weather")));
+        (async () => setData((await map.json("weather")).weather))();
     });
     if(!data) return <PprST props={{ row: crow, col: ccol, width: cwidth, height: cheight, config, id }} tx="Waiting for data..."/>
     return <Ppr props={{ row: crow, col: ccol, width: cwidth, height: cheight, config, id }}>

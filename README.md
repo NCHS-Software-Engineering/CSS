@@ -7,6 +7,14 @@ While CSS is currently in a functional state, I took it upon myself (being alrea
 This fork is the full-fledged rewrite of the React scripts into Next.js.\
 Be sure to read instructions carefully, as it is not the same as main.
 
+# REQUIRED SERVER SECRETS
+Please ask for these secrets. Things will fail if you don't have them.
+- project_id
+- supabase_url
+- supabase_key
+- nodemailer_user
+- nodemailer_pass
+
 ## Getting Started
 
 These instructions will guide you on how to get the project up and running on your local machine for development and testing purposes.
@@ -52,13 +60,11 @@ Dependencies must be installed with npm syntax, followed by --legacy-peer-deps
 ### Installation
 1. Open Visual Studio Code and clone the repository on a local computer.
 2. Open the repository when prompted.
-4. Split your terminal into **two** separate terminals for running the client and server.
+4. Split your terminal into **two** separate terminals for running the client and server (Ctrl+Shift+5 on Windows or click down arrow and "Split Terminal").
 5. Navigate to `css/app/` in each terminal.
 6. Run `npm i` in either terminal.
-8. Navigate to `/server` in the second terminal.
-9. Run `npx typescript server.ts`  in the second terminal if there is no `server.js` file present.
-10. Run `node server.js` in the second terminal.
-11. Run `npm run dev` in the first terminal.
+7. Run `npm run sv` in the second terminal.
+8. Run `npm run dev` in the first terminal.
 
 ## Usage
 

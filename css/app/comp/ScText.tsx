@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { Justify } from "../types/Justify";
 import NoElementError from "../errors/NoElementError";

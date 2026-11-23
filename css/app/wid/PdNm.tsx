@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Props } from "../types/Props";
 import PprST from "../defs/PprST";

@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 import React, { useState, useEffect, Attributes } from "react";
@@ -22,13 +23,13 @@ export default function Home() {
     const [room, setRoom] = useState("");
     const searchParams = useSearchParams();
     async function initRoom(param: ReadonlyURLSearchParams) {
-        return param.get("room") ?? await cookieMap.json("getroomcookie");
+        return param.get("room") ?? (await cookieMap.json("getroomcookie")).cookie.room;
     }
     useEffect(() => {
         if(room.length) return;
         (async () => {
             const res = await initRoom(searchParams);
-            setRoom(typeof res == "string" ? res : res.cookie.room);
+            setRoom(res);
         })();
     }, [room, searchParams]);
     const [ovr, setOvr] = useState(false);
@@ -81,11 +82,14 @@ export default function Home() {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setDip(tds);
     }, []);
-    window.addEventListener("keydown", (e) => {
-        if(!ovr && e.code == "Escape") {
-            setOvr(false);
+    useEffect(() => {
+        if(!window) return;
+        const e = (e: KeyboardEvent) => {
+            if(!ovr && e.code == "Escape") setOvr(false);
         }
-    });
+        window.addEventListener("keydown", e);
+        return () => window.removeEventListener("keydown", e);
+    }, []);
     return <div>
         <Time schedule={sched} countdownCallback={(d) => setCD(d)} periodNameCallback={(d) => setPrdNm(d)}/>
         {disp}

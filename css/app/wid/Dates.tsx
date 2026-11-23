@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { Props } from "../types/Props";
 import PprST from "../defs/PprST";
@@ -8,12 +9,11 @@ export default function Dates({ id, row, col, width, height, config }: Props): P
     const [ccol, setCol] = useState((col ?? 0) + 1);
     const [cwidth, setWidth] = useState(width ?? 1);
     const [cheight, setHeight] = useState(height ?? 1);
-    const [disp, setDisp] = useState("");
+    const [disp, setDisp] = useState(updDate());
     function updDate() {
         const date = new Date();
         return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
     }
-    setDisp(updDate());
     useEffect(() => {
         const itv = setInterval(() => setDisp(updDate()), 60000);
         return () => clearInterval(itv);

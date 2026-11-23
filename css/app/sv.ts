@@ -1,3 +1,4 @@
+"use client";
 import { AdvancedNetMap } from "@beanthealien/net";
 import { StyleBoth, StyleColor, StyleImg, WeatherData } from "./server/server";
 import { Database } from "./types/Database";
@@ -41,7 +42,7 @@ interface FormatRoute {
     drop: [{ room: string }, Res];
 }
 interface EventRoute {
-    all: Res | { list: DB<"event">[] };
+    all: Res | Res<DB<"event">[]>;
     at: [{ index: number }, Res | Res<DB<"event">[]>];
     named: [{ name: string }, Res | Res<DB<"event">[]>];
     gen: [{ name: string, time: string }, Res];

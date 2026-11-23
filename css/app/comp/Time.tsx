@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { PName } from "../types/PName";
 import { Sched } from "../types/Sched";

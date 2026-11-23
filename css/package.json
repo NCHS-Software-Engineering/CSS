@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sv": "cd ./app/server/ && npx tsx ./server.ts"
   },
   "dependencies": {
-    "@beanthealien/net": "^2.0.0",
+    "@beanthealien/net": "^2.0.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/material": "^9.5.0",
     "@supabase/supabase-js": "^2.119.0",
     "bcrypt": "^6.0.0",

@@ -1,3 +1,4 @@
+"use client";
 import ScText from "../comp/ScText";
 import { PropElem } from "../types/PropElem";
 import { Props } from "../types/Props";

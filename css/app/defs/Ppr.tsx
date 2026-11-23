@@ -1,3 +1,4 @@
+"use client";
 import { Paper } from "@mui/material";
 import React from "react";
 import { Props } from "../types/Props";
