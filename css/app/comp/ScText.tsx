@@ -21,7 +21,9 @@ export default function ScText(props: { id: string, portionFilled?: number, just
     // dont do this whenever anything changes
     // only when text length is changed
     useEffect(() => {
-        if(txLen != 0) throw new NoTextLengthError(tx);
+        // FIX: change txLen != 0 => !txLen
+        // i was on something when i wrote txLen != 0
+        if(!tx.length && tx != "" && !txLen) throw new NoTextLengthError(tx);
     }, [txLen]);
     function wrs() {
         setWindWidth(window.innerWidth);

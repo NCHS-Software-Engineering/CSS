@@ -13,8 +13,10 @@ import { Database, Json } from "../types/Database";
 import UnexpectedResponseError from "../errors/UnexpectedResponseError";
 import * as Schedule from "node-schedule";
 import { WebSocketServer, WebSocket } from "ws";
-import { randomBytes } from "crypto";
+import { randomBytes, randomUUID } from "crypto";
 import nodemailer from "nodemailer";
+import { Config } from "../types/Config";
+import { Props } from "../types/Props";
 config();
 
 /**
@@ -126,8 +128,108 @@ async function broadcast(room: string) {
         conMap[room].forEach(w => updateClient(w, room));
     }
 }
+export interface SvLayoutWidgetList {
+    type: "count" | "date" | "pdnm" | "rtc" | "txbox" | "weather";
+    props: Props & {
+        text?: string;
+        config: Config & {
+            dsSecs?: boolean;
+            text?: string;
+        };
+    };
+}
 async function updateClient(ws: WebSocket, room: string) {
-    ws.send(JSON.stringify({ schedule: schedMap[room], weather, widget: [] }));
+    // NOTE: current response includes generic response
+    // (sake of intellisense support)
+    const then = (wid: SvLayoutWidgetList) => wid;
+    ws.send(JSON.stringify({ schedule: schedMap[room], weather, widget: [
+        then({
+            type: "date",
+            props: {
+                id: randomUUID(),
+                row: 8,
+                col: 7,
+                width: 2,
+                height: 1,
+                config: {
+                    bg: "#000",
+                    txClr: "#5200ff"
+                }
+            }
+        }),
+        then({
+            type: "weather",
+            props: {
+                id: randomUUID(),
+                row: 3,
+                col: 9,
+                width: 3,
+                height: 5,
+                config: {
+                    bg: "#9ca0ff",
+                    txClr: "#fff"
+                }
+            }
+        }),
+        then({
+            type: "pdnm",
+            props: {
+                id: randomUUID(),
+                row: 1,
+                col: 1,
+                width: 14,
+                height: 1,
+                config: {
+                    bg: "#ff5858",
+                    txClr: "#fff"
+                }
+            }
+        }),
+        then({
+            type: "txbox",
+            props: {
+                id: randomUUID(),
+                row: 3,
+                col: 13,
+                width: 2,
+                height: 4,
+                config: {
+                    bg: "#fff",
+                    txClr: "#000",
+                    text: "hello biden"
+                }
+            }
+        }),
+        then({
+            type: "count",
+            props: {
+                id: randomUUID(),
+                row: 6,
+                col: 1,
+                width: 7,
+                height: 2,
+                config: {
+                    bg: "#a46f6f",
+                    txClr: "#000",
+                    dsSecs: true
+                }
+            }
+        }),
+        then({
+            type: "rtc",
+            props: {
+                id: randomUUID(),
+                row: 3,
+                col: 1,
+                width: 7,
+                height: 2,
+                config: {
+                    bg: "#5cc4ff",
+                    txClr: "#000"
+                }
+            }
+        })
+    ] }));
 }
 export interface WeatherData {
     isDaytime: boolean;

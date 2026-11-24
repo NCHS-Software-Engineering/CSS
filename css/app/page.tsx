@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { WeatherData } from "./server/server";
+import { SvLayoutWidgetList, WeatherData } from "./server/server";
 import { PName } from "./types/PName";
 import { Sched } from "./types/Sched";
 import Count from "./wid/Count";
@@ -17,20 +17,9 @@ import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { cookieMap } from "./sv";
 import { Config } from "./types/Config";
 
-interface __SvLayWid {
-    type: "count" | "date" | "pdnm" | "rtc" | "txbox" | "weather";
-    props: Props & {
-        text?: string;
-        config: Config & {
-            dsSecs?: boolean;
-            text?: string;
-        };
-    };
-}
-
 interface ServerMessage {
     schedule: Sched[];
-    widget: __SvLayWid[];
+    widget: SvLayoutWidgetList[];
     weather: WeatherData;
 }
 
@@ -55,7 +44,7 @@ export default function Home() {
     const [sched, setSched] = useState<Sched[]>([]);
     const [cd, setCD] = useState(0);
     const [prdNm, setPrdNm] = useState<PName>();
-    const [wid, setWid] = useState<__SvLayWid[]>([]);
+    const [wid, setWid] = useState<SvLayoutWidgetList[]>([]);
     useEffect(() => {
         const port = 8000;
         const svURL = "ws://" + window.location.hostname + ":" + port;
@@ -78,7 +67,7 @@ export default function Home() {
         window.addEventListener("keydown", e);
         return () => window.removeEventListener("keydown", e);
     }, [ovr]);
-    function renderWidget(w: __SvLayWid, i: number) {
+    function renderWidget(w: SvLayoutWidgetList, i: number) {
         const props = { ...w.props, id: String(i) };
         switch(w.type) {
             case "count":

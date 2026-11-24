@@ -53,9 +53,9 @@ interface CookieRoute {
     signroomcookie: [{ room: string }, never];
     hascookie: { result: boolean };
 }
-export const map = new AdvancedNetMap<Route>("http://localhost:3001");
-export const cookieMap = map.fork<CookieRoute>("/cookies/");
-export const usrRoute = map.fork<UserRoute>("/users/");
-export const adminRoute = map.fork<AdminRoute>("/admin/");
-export const fmtRoute = map.fork<FormatRoute>("/format/");
-export const eventRoute = map.fork<EventRoute>("/event/");
+export const map = new AdvancedNetMap<Route>("http://localhost:3001/");
+export const cookieMap = map.fork<CookieRoute>("cookies/");
+export const usrRoute = map.fork<UserRoute>("users/");
+export const adminRoute = map.fork<AdminRoute>("admin/");
+export const fmtRoute = map.fork<FormatRoute>("format/");
+export const eventRoute = map.fork<EventRoute>("event/");
