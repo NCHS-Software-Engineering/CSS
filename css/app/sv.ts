@@ -51,6 +51,7 @@ interface EventRoute {
 interface CookieRoute {
     getroomcookie: Res<string> | Res<{ room: string }>;
     signroomcookie: [{ room: string }, never];
+    hascookie: { result: boolean };
 }
 export const map = new AdvancedNetMap<Route>("http://localhost:3001");
 export const cookieMap = map.fork<CookieRoute>("/cookies/");

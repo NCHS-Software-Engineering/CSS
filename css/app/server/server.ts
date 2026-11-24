@@ -127,7 +127,7 @@ async function broadcast(room: string) {
     }
 }
 async function updateClient(ws: WebSocket, room: string) {
-    ws.send(JSON.stringify({ schedule: schedMap[room], weather }));
+    ws.send(JSON.stringify({ schedule: schedMap[room], weather, widget: [] }));
 }
 export interface WeatherData {
     isDaytime: boolean;
@@ -488,6 +488,9 @@ app.all("/cal", async (req, res) => {
 });
 app.all("/weather", (req, res) => {
     res.send({ weather });
+});
+app.all("/cookies/hascookie", (req, res) => {
+    res.send({ result: !!req.cookies.room });
 });
 app.all("/cookies/getroomcookie", (req, res) => {
     if(!req.cookies.room) return res.status(403).json({ success: false, message: "No cookie exists" });

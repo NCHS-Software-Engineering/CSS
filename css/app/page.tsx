@@ -1,12 +1,9 @@
 "use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import Image from "next/image";
-import React, { useState, useEffect, Attributes } from "react";
+import { useState, useEffect } from "react";
 import { WeatherData } from "./server/server";
 import { PName } from "./types/PName";
 import { Sched } from "./types/Sched";
 import Count from "./wid/Count";
-import { PropElem } from "./types/PropElem";
 import { Props } from "./types/Props";
 import RTC from "./wid/RTC";
 import Dates from "./wid/Dates";
@@ -17,33 +14,48 @@ import Time from "./comp/Time";
 import { Modal, Paper, TextField, Button, Divider } from "@mui/material";
 import { Box } from "@mui/system";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
-import { cookieMap, map } from "./sv";
+import { cookieMap } from "./sv";
+import { Config } from "./types/Config";
+
+interface __SvLayWid {
+    type: "count" | "date" | "pdnm" | "rtc" | "txbox" | "weather";
+    props: Props & {
+        text?: string;
+        config: Config & {
+            dsSecs?: boolean;
+            text?: string;
+        };
+    };
+}
+
+interface ServerMessage {
+    schedule: Sched[];
+    widget: __SvLayWid[];
+    weather: WeatherData;
+}
 
 export default function Home() {
     const [room, setRoom] = useState("");
     const searchParams = useSearchParams();
     async function initRoom(param: ReadonlyURLSearchParams) {
+        if(param.has("room")) return param.get("room")!;
+        if(!(await cookieMap.json("hascookie")).result) return;
         const res = (await cookieMap.json("getroomcookie")).message;
-        if(typeof res == "string") {
-            await cookieMap.json("signroomcookie");
-            return await initRoom(param);
-        }
+        if(typeof res == "string") return;
         return param.get("room") ?? res.room;
     }
     useEffect(() => {
         if(room.length) return;
         (async () => {
             const res = await initRoom(searchParams);
-            setRoom(res);
+            if(res) setRoom(res);
         })();
     }, [room, searchParams]);
     const [ovr, setOvr] = useState(false);
     const [sched, setSched] = useState<Sched[]>([]);
     const [cd, setCD] = useState(0);
     const [prdNm, setPrdNm] = useState<PName>();
-    const [wid, setWid] = useState<PropElem[]>([]);
-    const [weather, setWeather] = useState<WeatherData>();
-    const [disp, setDip] = useState<PropElem[]>();
+    const [wid, setWid] = useState<__SvLayWid[]>([]);
     useEffect(() => {
         const port = 8000;
         const svURL = "ws://" + window.location.hostname + ":" + port;
@@ -52,41 +64,12 @@ export default function Home() {
             ws.send(room);
         });
         ws.addEventListener("message", (e) => {
-            const d = JSON.parse(e.data);
+            const d: ServerMessage = JSON.parse(e.data);
             setSched(d.schedule);
-            //setWid(d.widget);
-            setWeather(d.weather);
-            return () => ws.close();
+            setWid(d.widget);
         });
         return () => ws.close();
     }, [room]);
-    useEffect(() => {
-        const tds: PropElem[] = [];
-        for(let i = 0; i < wid.length; i++) {
-            const w = wid[i];
-            const typ = w.type;
-            const serve = (func: React.ComponentType<any>, andProps?: Record<string, any>) => React.createElement(func, {
-                id: String(i),
-                row: w.props.row,
-                col: w.props.col,
-                width: w.props.width,
-                height: w.props.height,
-                config: w.props.config,
-                ...andProps
-            });
-            if(typ == Count) tds.push(serve(Count, {
-                delta: cd,
-                prdNm
-            }));
-            else if(typ == RTC) tds.push(serve(RTC));
-            else if(typ == Dates) tds.push(serve(Dates));
-            else if(typ == PdNm) tds.push(serve(PdNm, { periodName: prdNm }));
-            else if(typ == Weather) tds.push(serve(Weather));
-            else if(typ == Txbox) tds.push(serve(Txbox, { text: (w as React.ReactElement<Required<Props> & { text: string }>).props.text }));
-        }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setDip(tds);
-    }, []);
     useEffect(() => {
         if(!window) return;
         const e = (e: KeyboardEvent) => {
@@ -94,10 +77,36 @@ export default function Home() {
         }
         window.addEventListener("keydown", e);
         return () => window.removeEventListener("keydown", e);
-    }, []);
+    }, [ovr]);
+    function renderWidget(w: __SvLayWid, i: number) {
+        const props = { ...w.props, id: String(i) };
+        switch(w.type) {
+            case "count":
+                return <Count key={i} {...props} config={{ ...props.config, dsSecs: props.config.dsSecs ?? false }} delta={cd} prdNm={prdNm}/>;
+            case "rtc":
+                return <RTC key={i} {...props}/>;
+            case "date":
+                return <Dates key={i} {...props}/>;
+            case "pdnm":
+                return <PdNm key={i} {...props} periodName={prdNm}/>;
+            case "weather":
+                return <Weather key={i} {...props}/>;
+            case "txbox": {
+                const text = props.text ?? props.config.text;
+                if(!text) {
+                    console.error(`Textbox widget at index ${i} is missing its text`);
+                    return null;
+                }
+                return <Txbox key={i} {...props} text={text}/>;
+            }
+            default:
+                console.error(`Unsupported widget type received: ${w.type}`);
+                return null;
+        }
+    }
     return <div>
         <Time schedule={sched} countdownCallback={(d) => setCD(d)} periodNameCallback={(d) => setPrdNm(d)}/>
-        {disp}
+        {wid.map(renderWidget)}
         <Modal sx={{ display: "flex", alignItems: "center", justifyContent: "center", overflowY: "scroll" }} open={ovr} onClose={() => setOvr(false)}>
             <Box sx={{ display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%" }}>
                 <Paper elevation={7} sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%" }}>
