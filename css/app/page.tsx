@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { SvLayoutWidgetList, WeatherData } from "./server/server";
+import { FStyleGuide, SvLayoutWidgetList, WeatherData } from "./server/server";
 import { PName } from "./types/PName";
 import { Sched } from "./types/Sched";
 import Count from "./wid/Count";
@@ -14,7 +14,7 @@ import Time from "./comp/Time";
 import { Modal, Paper, TextField, Button, Divider } from "@mui/material";
 import { Box } from "@mui/system";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
-import { cookieMap } from "./sv";
+import { cookieMap, fmtRoute } from "./sv";
 import { Config } from "./types/Config";
 
 interface ServerMessage {
@@ -25,6 +25,7 @@ interface ServerMessage {
 
 export default function Home() {
     const [room, setRoom] = useState("");
+    const [peekLay, setPeek] = useState<FStyleGuide>();
     const searchParams = useSearchParams();
     async function initRoom(param: ReadonlyURLSearchParams) {
         if(param.has("room")) return param.get("room")!;
@@ -58,6 +59,13 @@ export default function Home() {
             setWid(d.widget);
         });
         return () => ws.close();
+    }, [room]);
+    useEffect(() => {
+        (async () => {
+            const res = await fmtRoute.json("peek", { room });
+            if(typeof res.message == "string") return;
+            setPeek(res.message as FStyleGuide);
+        })();
     }, [room]);
     useEffect(() => {
         if(!window) return;
@@ -99,6 +107,10 @@ export default function Home() {
         <Modal sx={{ display: "flex", alignItems: "center", justifyContent: "center", overflowY: "scroll" }} open={ovr} onClose={() => setOvr(false)}>
             <Box sx={{ display: "flex", flexDirection: "column", width: "14cm", maxWidth: "90%" }}>
                 <Paper elevation={7} sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 1, width: "100%" }}>
+                    {peekLay &&
+                        ("img" in peekLay ? <img width="100%" height="100%" src={peekLay.img}/> : <></>) && 
+                        ("color" in peekLay ? <div style={{ width: "100%", height: "100%", backgroundColor: peekLay.color }}/> : <></>)
+                    }
                     <TextField variant="filled" label="Room Name" value={room} onInput={(e) => setRoom((e.target as HTMLInputElement).value)}/>
                     <Button sx={{ marginTop: 1 }} variant="contained" size="large" onClick={async () => await cookieMap.json("signroomcookie", { room })}>Save</Button>
                     <Divider sx={{ marginTop: 2, marginBottom: 1, width: "100%" }}/>

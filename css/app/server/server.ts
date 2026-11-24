@@ -617,11 +617,11 @@ export interface StyleImg {
     style: { img: string };
 }
 export interface StyleBoth {
-    style: { color: string, bg: string };
+    style: { color: string, img: string };
 }
-type FStyleGuide = StyleBoth | StyleColor | StyleImg;
+export type FStyleGuide = { color?: string, img?: string };
 app.all("/format/put", async (req, res) => {
-    const { room, style }: RRoom & (StyleBoth | StyleColor | StyleImg) = req.body;
+    const { room, style }: RRoom & { style: FStyleGuide } = req.body;
     const { data, error } = await format.select().eq("room", room);
     if(error) return sverr500(res, error);
     // respond with 417 (Expectation Failed)
@@ -632,7 +632,7 @@ app.all("/format/put", async (req, res) => {
     res.status(205).json({ success: true, message: "Put new styles" });
 });
 app.all("/format/create", async (req, res) => {
-    const { room, style }: RRoom & FStyleGuide = req.body;
+    const { room, style }: RRoom & { style: FStyleGuide } = req.body;
     const { data, error } = await format.select().eq("room", room);
     if(error) return sverr500(res, error);
     // respond with 405 (Method Not Allowed)

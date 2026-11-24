@@ -1,6 +1,6 @@
 "use client";
 import { AdvancedNetMap } from "@beanthealien/net";
-import { StyleBoth, StyleColor, StyleImg, WeatherData } from "./server/server";
+import { StyleBoth, StyleColor, StyleImg, WeatherData, FStyleGuide } from "./server/server";
 import { Database } from "./types/Database";
 import { Sched } from "./types/Sched";
 type DB<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Row"];
@@ -34,11 +34,10 @@ interface AdminRoute {
     drop: [{ room: string }, Res];
     ren: [{ room: string, name: string }, Res];
 }
-type StyleType = StyleColor | StyleImg | StyleBoth;
 interface FormatRoute {
     peek: [{ room: string }, Res | Res<DB<"format">>];
-    put: [{ room: string, style: StyleType }, Res];
-    create: [{ room: string, style: StyleType }, Res];
+    put: [{ room: string, style: FStyleGuide }, Res];
+    create: [{ room: string, style: FStyleGuide }, Res];
     drop: [{ room: string }, Res];
 }
 interface EventRoute {
