@@ -1,0 +1,21 @@
+"use client";
+import { useEffect, useState } from "react";
+import { Props } from "../types/Props";
+import PprST from "../defs/PprST";
+import { PropElem } from "../types/PropElem";
+
+export default function RTC({ id, row, col, width, height, config }: Props): PropElem {
+    const [crow, setRow] = useState((row ?? 0) + 1);
+    const [ccol, setCol] = useState((col ?? 0) + 1);
+    const [cwidth, setWidth] = useState(width ?? 1);
+    const [cheight, setHeight] = useState(height ?? 1);
+    const [disp, setDisp] = useState("");
+    useEffect(() => {
+        const iv = setInterval(() => {
+            const date = new Date();
+            setDisp(date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: true }));
+        }, 100);
+        return () => clearInterval(iv);
+    }, []);
+    return <PprST props={{ width: cwidth, height: cheight, config, row: crow, col: ccol, id }} tx={disp}/>;
+}
