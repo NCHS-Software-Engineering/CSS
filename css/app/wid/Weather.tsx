@@ -50,14 +50,15 @@ export default function Weather({ id, row, col, width, height, config }: Props):
     const [cheight, setHeight] = useState(height ?? 1);
     useEffect(() => {
         // no requery
-        if(data) return;
+        // if(data) return;
         // send request via @beanthealien/net
         // (mapping defined in ../sv.ts)
         // TODO: weather not working???
-        (async () => setData((await map.json("weather")).weather))();
-        const res = (async () => await map.json("weather"))();
-        res.then(console.log);
+        (async () => setData(data ?? (await map.json("weather")).weather))();
     }, []);
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
     if(!data) return <PprST props={{ row: crow, col: ccol, width: cwidth, height: cheight, config, id }} tx="Waiting for data..."/>
     return <Ppr props={{ row: crow, col: ccol, width: cwidth, height: cheight, config, id }}>
         <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden" }}>

@@ -272,7 +272,10 @@ async function getCurrentWeather(callback: (data: WeatherData) => void) {
             const endTime = startTime + hours * 3600 * 1000;
             if(now >= startTime && now < endTime) {
                 data.skyCover = cc.value;
-                const weather = data as WeatherData;
+                // FIX: don't define new const
+                // weather (overshadow)
+                // (global weather var)
+                weather = data as WeatherData;
                 callback(weather);
                 break;
             }
