@@ -586,6 +586,7 @@ app.all("/admin/escalate", async (req, res) => {
 });
 type DataFormat = "json" | "csv";
 app.all("/admin/export", async (req, res) => {
+    if(!validTk(req)) return unauth401(res);
     const { fmt }: { fmt?: DataFormat } = req.body;
     const fm = fmt ?? "json";
     const out = [sched, users, format, event, esc].map(d => (fm == "csv" ? d.select().csv() : d.select()));
