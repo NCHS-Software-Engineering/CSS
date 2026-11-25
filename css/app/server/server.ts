@@ -446,6 +446,10 @@ app.all("/user/signin", async (req, res) => {
     // respond with 202 (Accepted)
     res.status(202).json({ success: true, message: "Accepted signin" });
 });
+// validate token
+app.all("/user/amok", async (req, res) => {
+    res.send({ ok: validTk(req) });
+});
 
 function unauth401(res: Response) {
     return res.status(401).json({ success: false, message: "Request does not contain a valid 'token' cookie"});
@@ -579,6 +583,22 @@ app.all("/admin/escalate", async (req, res) => {
     signTk(res, tk);
     // 201 (Created)
     res.status(201).json({ success: true, message: "Successfully signed up" });
+});
+type DataFormat = "json" | "csv";
+app.all("/admin/export", async (req, res) => {
+    const { fmt }: { fmt?: DataFormat } = req.body;
+    const fm = fmt ?? "json";
+    const out = [sched, users, format, event, esc].map(d => (fm == "csv" ? d.select().csv() : d.select()));
+    for(const _ of out) {
+        const __ = await _;
+        if(__.error) return sverr500(res, __.error);
+    }
+    const _ = [];
+    for(const __ of out) {
+        const ___ = await __;
+        _.push(___.data);
+    }
+    res.json({ success: true, message: _ });
 });
 
 // public routes

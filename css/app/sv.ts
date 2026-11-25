@@ -23,8 +23,9 @@ interface UInfo {
 interface UserRoute {
     signup: [UInfo, Res];
     signin: [UInfo, Res];
+    amok: { ok: boolean };
 }
-interface AdminRoute {
+export interface AdminRoute {
     updateall: Res;
     rooms: Res;
     sched: [{ schedules: Sched[] }, Res];
@@ -33,6 +34,7 @@ interface AdminRoute {
     put: [{ room: string, schedule?: Sched[] }, Res];
     drop: [{ room: string }, Res];
     ren: [{ room: string, name: string }, Res];
+    export: [{ fmt: "json" | "csv" }, Res<[DB<"sched">, DB<"users">, DB<"event">, DB<"format">, DB<"req">]>];
 }
 interface FormatRoute {
     peek: [{ room: string }, Res | Res<DB<"format">>];
