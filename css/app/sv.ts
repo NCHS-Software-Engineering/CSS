@@ -9,10 +9,10 @@ interface Res<T = string> {
     success: boolean;
     message: T;
 }
-interface Route {
+export interface Route {
     weather: { weather: WeatherData };
     roomCookie: string;
-    sched: [{ room: string }, Res | Res<Sched[]>];
+    sched: [{ room: string }, Res<Sched[]>];
     defweek: [{ room: string }, Res<never[]>];
     cal: [{ room: string }, Res<never[]>];
 }
@@ -20,14 +20,14 @@ interface UInfo {
     name: string;
     password: string;
 }
-interface UserRoute {
+export interface UserRoute {
     signup: [UInfo, Res];
     signin: [UInfo, Res];
     amok: { ok: boolean };
 }
 export interface AdminRoute {
     updateall: Res;
-    rooms: Res;
+    rooms: Res<string[]>;
     sched: [{ schedules: Sched[] }, Res];
     defweek: [{ defaultWeek: never[] }, Res];
     cal: [{ calendar: never[] }, Res];
@@ -36,20 +36,20 @@ export interface AdminRoute {
     ren: [{ room: string, name: string }, Res];
     export: [{ fmt: "json" | "csv" }, Res<[DB<"sched">, DB<"users">, DB<"event">, DB<"format">, DB<"req">]>];
 }
-interface FormatRoute {
-    peek: [{ room: string }, Res | Res<DB<"format">>];
+export interface FormatRoute {
+    peek: [{ room: string }, Res<DB<"format">>];
     put: [{ room: string, style: FStyleGuide }, Res];
     create: [{ room: string, style: FStyleGuide }, Res];
     drop: [{ room: string }, Res];
 }
-interface EventRoute {
+export interface EventRoute {
     all: Res | Res<DB<"event">[]>;
     at: [{ index: number }, Res | Res<DB<"event">[]>];
     named: [{ name: string }, Res | Res<DB<"event">[]>];
     gen: [{ name: string, time: string }, Res];
     drop: [{ name: string }, Res];
 }
-interface CookieRoute {
+export interface CookieRoute {
     getroomcookie: Res<string> | Res<{ room: string }>;
     signroomcookie: [{ room: string }, never];
     hascookie: { result: boolean };
