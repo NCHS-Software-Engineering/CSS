@@ -388,15 +388,19 @@ async function hasUsr(name: string) {
     return !!(await findUsr(name));
 }
 function genTk(time: jwt.SignOptions["expiresIn"] = "8W") {
-    return jwt.sign({ token: randomBytes(32).toHex() }, secret, { expiresIn: time });
+    // FIX: no .toHex() method
+    return jwt.sign({ token: randomBytes(32).toString("hex") }, secret, { expiresIn: time });
 }
 function sverr500(res: Response, error: Error) {
     return res.status(500).json({ success: false, message: error.message });
 }
+// --- UPDATE THIS TO INCLUDE MORE ONLY-ROUTE-TO ADDRESSES ---
+type __AuthEmailStubs = "goldstein" | "hoersten" | "hader";
+export type OnlyRouteTo = __AuthEmailStubs | __AuthEmailStubs[];
 // user subsystem
 // signup
 app.all("/user/signup", async (req, res) => {
-    const { email, password }: UserInfo = req.body;
+    const { email, password, only }: UserInfo & { only?: OnlyRouteTo } = req.body;
     // if a user exists, throw 409 (Conflict)
     // (prior to insert throwing on unique)
     if(await hasUsr(email)) return res.status(409).json({ success: false, message: `A user with the name '${email}' already exists` });
@@ -404,18 +408,32 @@ app.all("/user/signup", async (req, res) => {
     const token = genTk("3H");
     const coreURI = "https://placeholder.com/admin/escalate?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&token=${encodeURIComponent(token)}";
     // escalate and request signup verification
+    // FIX: don't send to the signup-er
+    // FIX: use 'html' to send HTML ('text' sends plaintext)
+    // FIX: correct from address (and set my email as the actual sender)
+    // this is the primary admin
+    // (who sent the message and who will receive responses?)
+    const primaryAdmin = "ben.allen.goldstein@gmail.com";
+    const authAdmins = [primaryAdmin, "zthoersten@stu.naperville203.org", "emhader@stu.naperville203.org"];
+    // the 'only' property defines specific admins to route to
+    // before sending, create new send list that filters
+    // for emails included in 'only' (if it exists)
+    const final = !only ? authAdmins : authAdmins.filter(x => Array.isArray(only) ? only.some(y => x.includes(y)) : x.includes(only));
     const mail = await transport.sendMail({
-        to: email,
-        from: "classroomschedulingsystem@noreply.com",
-        text: `<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+        to: final,
+        from: "No-Reply <noreply@clock.redhawks.us>",
+        sender: primaryAdmin,
+        replyTo: primaryAdmin,
+        subject: `User ${email} Wants To Sign Up!`,
+        html: `<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
             <tr>
-                <td align="center" style="background-color: #7FF772; padding: 16px; border-radius: 15px; font-family: Helvetica, Arial, sans-serif; text-align: center; color: #000000;">
-                <h1 style="margin: 0 0 12px 0; font-size: 24px; font-weight: bold; color: #000000;">User ${email} Wants To Sign Up!</h1>
-                <p style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">User with email '${email}' wants to sign up.</p>
-                <p style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">Request Token: ${token}</p>
-                <p style="margin: 0 0 10px 0; font-size: 16px; color: #000000;">Click <a href="${coreURI}&method=accept" style="font-weight: bold; color: #2171A3; text-decoration: underline;">here</a> to permit the signup.</p>
-                <p style="margin: 0; font-size: 16px; color: #000000;">Or click <a href="${coreURI}&method=deny" style="font-weight: bold; color: #2171A3; text-decoration: underline;">here</a> to deny the signup.</p>
-                <p style="margin-top: 20px; font-size: 10px; color: #737373;">Hi! This is an automatic email. Please don't respond. We won't receive anything.</p>
+                <td align="center" style="background-color: #16a4e6; padding: 16px; border-radius: 15px; font-family: Helvetica, Arial, sans-serif; text-align: center;">
+                <h1 style="margin: 0 0 12px 0; font-size: 24px; font-weight: bold;">User ${email} Wants To Sign Up!</h1>
+                <p style="margin: 0 0 10px 0; font-size: 16px;">User with email ${email} wants to sign up.</p>
+                <p style="margin: 0 0 10px 0; font-size: 16px;">Request Token: ${token.slice(0, 11)}...</p>
+                <p style="margin: 0 0 10px 0; font-size: 16px;">Click <a href="${coreURI}&method=accept" style="font-weight: bold; text-decoration: underline;">here</a> to permit the signup.</p>
+                <p style="margin: 0; font-size: 16px;">Or click <a href="${coreURI}&method=deny" style="font-weight: bold; text-decoration: underline;">here</a> to deny the signup.</p>
+                <p style="margin-top: 20px; font-size: 10px; color: #737373;">This is an automatic email. Responses will be forwarded to '${primaryAdmin}'.</p>
                 </td>
             </tr>
         </table>`

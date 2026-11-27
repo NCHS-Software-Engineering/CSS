@@ -15,10 +15,9 @@ export default function RoomAction() {
         meta[key] = value;
         setPartMeta(meta);
     }
-    return <Action<typeof read | void> read={async () => {
+    return <Action<void> read={async () => {
         const out = await adminRoute.json("rooms");
         setRead(out.message);
-        return out.message;
     }} write={async () => {
         if(!rmMeta) return;
         await adminRoute.json("put", {
@@ -26,7 +25,6 @@ export default function RoomAction() {
             schedule: rmMeta.sched
         });
         setMeta(undefined);
-        return;
     }}>
         <div>{read && JSON.stringify(read, null, 4)}</div>
         <form style={{ padding: "10px", borderRadius: "10px" }} onSubmit={(e) => {
@@ -36,7 +34,7 @@ export default function RoomAction() {
             <input type="text" placeholder="Enter room name here..." id="room" name="room"/>
             <div>
                 {schedList && schedList.map((x, i) => {
-                    return <div key={i}>
+                    return <div key={i} style={{ padding: "15px", borderRadius: "10px", backgroundColor: "#003f7a", marginBottom: "10px" }}>
                         <p>Period: {x.name}</p>
                         <p>Start: {x.start}</p>
                         <p>End: {x.end}</p>

@@ -1,6 +1,6 @@
 "use client";
 import { AdvancedNetMap } from "@beanthealien/net";
-import { StyleBoth, StyleColor, StyleImg, WeatherData, FStyleGuide } from "./server/server";
+import { StyleBoth, StyleColor, StyleImg, WeatherData, FStyleGuide, OnlyRouteTo } from "./server/server";
 import { Database } from "./types/Database";
 import { Sched } from "./types/Sched";
 type DB<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Row"];
@@ -17,11 +17,11 @@ export interface Route {
     cal: [{ room: string }, Res<never[]>];
 }
 interface UInfo {
-    name: string;
+    email: string;
     password: string;
 }
 export interface UserRoute {
-    signup: [UInfo, Res];
+    signup: [UInfo & { only?: OnlyRouteTo }, Res];
     signin: [UInfo, Res];
     amok: { ok: boolean };
 }
@@ -56,7 +56,7 @@ export interface CookieRoute {
 }
 export const map = new AdvancedNetMap<Route>("http://localhost:3001/");
 export const cookieMap = map.fork<CookieRoute>("cookies/");
-export const usrRoute = map.fork<UserRoute>("users/");
+export const usrRoute = map.fork<UserRoute>("user/");
 export const adminRoute = map.fork<AdminRoute>("admin/");
 export const fmtRoute = map.fork<FormatRoute>("format/");
 export const eventRoute = map.fork<EventRoute>("event/");
