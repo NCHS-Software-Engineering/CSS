@@ -395,7 +395,7 @@ function sverr500(res: Response, error: Error) {
     return res.status(500).json({ success: false, message: error.message });
 }
 // --- UPDATE THIS TO INCLUDE MORE ONLY-ROUTE-TO ADDRESSES ---
-type __AuthEmailStubs = "goldstein" | "hoersten" | "hader";
+type __AuthEmailStubs = "goldstein" | "hoersten" | "hader" | "drop";
 export type OnlyRouteTo = __AuthEmailStubs | __AuthEmailStubs[];
 // user subsystem
 // signup
@@ -407,6 +407,10 @@ app.all("/user/signup", async (req, res) => {
     // short-life token
     const token = genTk("3H");
     const coreURI = "https://placeholder.com/admin/escalate?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&token=${encodeURIComponent(token)}";
+    // if the 'drop' value is included
+    // then intentionally break
+    // (drop request before further action is taken)
+    if(only && (only == "drop" || only.includes("drop"))) return res.json({ success: true, message: "Signup request intentionally dropped" });
     // escalate and request signup verification
     // FIX: don't send to the signup-er
     // FIX: use 'html' to send HTML ('text' sends plaintext)
