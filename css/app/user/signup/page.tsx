@@ -19,7 +19,7 @@ export default function SignUp() {
             await usrRoute.json("signup", {
                 email: fd.get("email") as string,
                 password: fd.get("pass") as string,
-                only: "drop"
+                only: "goldstein"
             });
             setWait(false);
         }}>
